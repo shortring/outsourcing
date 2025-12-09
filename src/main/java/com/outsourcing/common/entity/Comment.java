@@ -1,5 +1,6 @@
 package com.outsourcing.common.entity;
 
+import com.outsourcing.common.entity.task.Task;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
