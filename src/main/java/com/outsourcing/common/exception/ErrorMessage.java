@@ -19,7 +19,8 @@ public enum ErrorMessage {
     BAD_REQUEST_WRONG_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
 
     // 401
-    UNAUTHORIZED_WRONG_ID_PW(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
+    UNAUTHORIZED_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),
+    UNAUTHORIZED_WRONG_ID_PASSWORD(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
     UNAUTHORIZED_NEED_CERTIFICATION(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
 
     // 403
