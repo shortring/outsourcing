@@ -33,6 +33,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 2025-12-09 : 탁진수 : Query DSL, annotation, persistence
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api:2.1.1")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api:3.1.0")
+
+    // 2025-12-09 17:55 : 탁진수 : validation.
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.named('test') {

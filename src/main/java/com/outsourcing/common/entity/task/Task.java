@@ -71,8 +71,6 @@ public class Task extends BaseTimeEntity {
                 : dueDate;
     }
 
-
-
     public void update(String title, String description, TaskPriority priority, User assignee, Instant dueDate, Instant now) {
         this.title = title;
         this.description = description;
