@@ -38,7 +38,7 @@ public class TeamService {
     @Transactional
     public TeamGetDetailResponseDto getDetailTeam (Long teamId) {
         Team findTeam = teamRepository.findById(teamId).orElseThrow
-                ( () -> new IllegalArgumentException(""));
+                ( () -> new IllegalArgumentException("존재하지 않는 팀입니다."));
 
         TeamGetDetailResponseDto responseDto = new TeamGetDetailResponseDto(
                 findTeam.getId(),
