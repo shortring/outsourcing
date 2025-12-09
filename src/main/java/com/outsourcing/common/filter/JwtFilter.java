@@ -42,8 +42,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorizationHeader == null || authorizationHeader.isBlank()) {
             log.info("Jwt 토큰이 필요 합니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
-            return;
+            throw new RuntimeException("인증이 필요합니다.");
+            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
+            //return;
         }
 
         String jwt = authorizationHeader.substring(7);

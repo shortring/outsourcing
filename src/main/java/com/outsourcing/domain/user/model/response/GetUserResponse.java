@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Getter
 @RequiredArgsConstructor
-public class CreateUserResponse {
+public class GetUserResponse {
     private final Long id;
     private final String username;
     private final String email;
@@ -18,8 +18,8 @@ public class CreateUserResponse {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    public static CreateUserResponse from(UserDto dto) {
-        return new CreateUserResponse(
+    public static GetUserResponse from(UserDto dto) {
+        return new GetUserResponse(
                 dto.getId(),
                 dto.getUsername(),
                 dto.getEmail(),
