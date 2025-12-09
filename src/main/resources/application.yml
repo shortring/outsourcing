@@ -20,4 +20,5 @@ spring:
         generate_statistics: true
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret:
+    key: ${JWT_SECRET}
