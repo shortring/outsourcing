@@ -1,0 +1,29 @@
+package com.outsourcing.domain.comment.model.dto;
+
+import com.outsourcing.common.entity.Comment;
+import com.outsourcing.common.entity.Task;
+import com.outsourcing.common.entity.User;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public class CommentDto {
+
+    private final Long id;
+    private final User user;
+    private final Task task;
+    private final Comment parentComment;
+    private final String content;
+
+    public static CommentDto from(Comment comment) {
+
+        return new CommentDto(
+                comment.getId(),
+                comment.getUser(),
+                comment.getTask(),
+                comment.getParentComment(),
+                comment.getContent()
+        );
+    }
+}
