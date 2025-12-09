@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class TeamCreateRequestDto {
+public class CreateTeamRequestDto {
     private String name;
     private String description;
 }

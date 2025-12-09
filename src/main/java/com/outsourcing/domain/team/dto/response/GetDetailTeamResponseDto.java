@@ -7,9 +7,13 @@ import java.time.Instant;
 
 @Getter
 @RequiredArgsConstructor
-public class TeamCreateResponseDto {
+public class GetDetailTeamResponseDto {
+
     private final Long id;
     private final String name;
     private final String description;
     private final Instant createdAt;
+//    private final [List<>] members;
+
+
 }
