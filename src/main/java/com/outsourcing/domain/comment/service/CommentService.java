@@ -5,12 +5,17 @@ import com.outsourcing.common.entity.Task;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
+import com.outsourcing.domain.comment.model.response.GetCommentResponse;
+import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.repository.CommentRepository;
 import com.outsourcing.domain.task.TaskRepository;
 import com.outsourcing.domain.user.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +48,19 @@ public class CommentService {
         commentRepository.save(comment);
 
         return CreateCommentResponse.from(comment);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<GetCommentResponse> readComment(Long taskId, int page, int size) {
+        getTask(taskId);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Comment> comments = commentRepository.findAllByTaskId(pageable, taskId);
+
+        Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
+
+        return PageResponse.from(commentResponsePage);
     }
 
     private User getUser(Long userId) {
