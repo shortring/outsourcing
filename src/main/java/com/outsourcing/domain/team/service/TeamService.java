@@ -70,10 +70,13 @@ public class TeamService {
                 findTeam.getDescription(),
                 findTeam.getCreatedAt()
         );
-
         return responseDto;
+    }
 
-
+    // 팀 삭제
+    @Transactional
+    public void deleteTeam (Long id) {
+        teamRepository.deleteById(id);
     }
 
 

@@ -58,5 +58,16 @@ public class TeamController {
         return response;
     }
 
+    @DeleteMapping("/{teamId}")
+    public ResponseEntity<ApiResponse<Void>> deleteTeamApi (@PathVariable ("teamId") Long teamId) {
+        teamService.deleteTeam(teamId);
+
+        ApiResponse<Void> apiResponse = new ApiResponse(true, "팀이 삭제되었습니다.", null);
+
+        ResponseEntity<ApiResponse<Void>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
+        return response;
+    }
+
 
 }
