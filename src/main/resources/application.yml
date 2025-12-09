@@ -2,7 +2,7 @@ spring:
   config:
     import: optional:file:.env
   application:
-    name: NewsFeed
+    name: outsourcing
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
