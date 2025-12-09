@@ -2,8 +2,10 @@ package com.outsourcing.domain.team.service;
 
 import com.outsourcing.common.entity.Team;
 import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
+import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
 import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
 import com.outsourcing.domain.team.dto.response.GetDetailTeamResponseDto;
+import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,30 @@ public class TeamService {
         );
 
         return responseDto;
+    }
+
+    // 팀 수정
+    @Transactional
+    public UpdateTeamResponseDto updateTeam (Long id, UpdateTeamRequestDto requestDto) {
+        Team findTeam = teamRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("존재하지 않는 팀입니다.")
+        );
+
+        findTeam.update(
+                requestDto.getName(),
+                requestDto.getDescription()
+        );
+
+        UpdateTeamResponseDto responseDto = new UpdateTeamResponseDto(
+                findTeam.getId(),
+                findTeam.getName(),
+                findTeam.getDescription(),
+                findTeam.getCreatedAt()
+        );
+
+        return responseDto;
+
+
     }
 
 
