@@ -1,5 +1,6 @@
 package com.outsourcing.common.entity;
 
+import com.outsourcing.common.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String username;//사용자 아이디
 
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -29,14 +31,21 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;//실명
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private UserRole role;
 
-    public User(String username, String email, String password, String name) {
+    public User(String username, String email, String password, String name, UserRole role) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.role = role;
+    }
 
+    public void modify(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 }
