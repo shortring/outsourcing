@@ -1,12 +1,15 @@
 package com.outsourcing.domain.user.service;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.common.utils.JwtUtil;
 import com.outsourcing.domain.user.model.UserDto;
 import com.outsourcing.domain.user.model.request.CreateUserRequest;
 import com.outsourcing.domain.user.model.request.LoginRequest;
+import com.outsourcing.domain.user.model.request.UpdateUserRequest;
 import com.outsourcing.domain.user.model.response.CreateUserResponse;
 import com.outsourcing.domain.user.model.response.GetUserResponse;
+import com.outsourcing.domain.user.model.response.UpdateUserResponse;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    //사용자 생성
     @Transactional
     public CreateUserResponse signup(CreateUserRequest request) {
 
@@ -48,8 +52,13 @@ public class UserService {
         return CreateUserResponse.from(dto);
     }
 
+    //프로필 조회
     @Transactional(readOnly = true)
-    public GetUserResponse getUser(Long userId) {
+    public GetUserResponse getUser(Long userId, CustomUserDetails userDetails) {
+
+        if(!userId.equals(userDetails.getUserId())){
+            throw new IllegalArgumentException("다른 사용자의 정보는 조회할 수 없습니다.");
+        }
 
         UserDto user = userRepository.findDtoById(userId).orElseThrow(
                 () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
@@ -58,16 +67,57 @@ public class UserService {
         return GetUserResponse.from(user);
     }
 
+    //사용자 전체 조회
     @Transactional(readOnly = true)
-    public List<GetUserResponse> getAllUser(Long userId) {
+    public List<GetUserResponse> getAllUser() {
 
-        List<UserDto> user = userRepository.findAllBy(userId);
-
-        return user.stream()
+        return userRepository.findAll()
+                .stream()
+                .map(UserDto::from)
                 .map(GetUserResponse::from)
                 .toList();
     }
+    //사용자 수정
+    @Transactional
+    public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request, CustomUserDetails userDetails) {
 
+        if(!userId.equals(userDetails.getUserId())){
+            throw new IllegalArgumentException("본인만 수정 가능합니다.");
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+        );
+
+        if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
+        user.modify(
+                request.getName(),
+                request.getEmail(),
+                request.getPassword());
+
+        UserDto dto = UserDto.from(user);
+
+        return UpdateUserResponse.from(dto);
+    }
+
+    //회원 탈퇴
+    @Transactional
+    public void deleteUser(Long userId, CustomUserDetails userDetails) {
+
+        if(!userId.equals(userDetails.getUserId())){
+            throw new IllegalArgumentException("본인만 탈퇴 가능합니다.");
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+        );
+        userRepository.delete(user);
+    }
+
+    //로그인
     @Transactional
     public String login(LoginRequest request) {
         String username = request.getUsername();
@@ -81,7 +131,8 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 다릅니다.");
         }
 
-        return jwtUtil.generateToken(user.getUsername(), user.getRole());
+        return jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
 
     }
+
 }

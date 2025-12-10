@@ -39,4 +39,10 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.role = role;
     }
+
+    public void modify(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 }

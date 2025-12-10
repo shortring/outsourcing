@@ -47,13 +47,14 @@ public class JwtUtil {
 
 
     // 토큰 생성
-    public String generateToken(String username, UserRole role) {
+    public String generateToken(String username, UserRole role, Long userId) {
 
         Date now = new Date();
 
         return BEARER_PREFIX + Jwts.builder()
                 .claim("username", username)
                 .claim("auth", role)
+                .claim("userId", userId)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + TOKEN_TIME))
                 .signWith(key, Jwts.SIG.HS256)
@@ -87,10 +88,17 @@ public class JwtUtil {
 
         return extractAllClaims(token).get("username", String.class);
     }
+
     public String extractRole(String token) {
 
         return extractAllClaims(token).get("auth", String.class);
     }
+
+    public Long extractUserId(String token) {
+
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
 }
 
 
