@@ -27,8 +27,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<ApiResponse<TaskResponse>> createTask(@Valid @RequestBody CreateTaskRequest request){
         TaskResponse data=taskService.createTask(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "작업이 생성되었습니다.", data, Instant.now().toString())
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("작업이 생성되었습니다.", data));
     }
 
     @PutMapping("/{taskId}")
@@ -37,7 +36,7 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskRequest request
     ){
         TaskResponse data=taskService.updateTask(taskId, request);
-        return ResponseEntity.ok(new ApiResponse<>(true, "작업이 수정되었습니다.", data, Instant.now().toString()));
+        return ResponseEntity.ok(ApiResponse.success( "작업이 수정되었습니다.", data));
     }
 
     @PatchMapping("/{taskId}/status")
@@ -46,7 +45,7 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskStatusRequest request
     ){
         TaskResponse data=taskService.updateTaskStatus(taskId, request);
-        return ResponseEntity.ok(new ApiResponse<>(true, "작업 상태가 변경되었습니다.", data, Instant.now().toString()));
+        return ResponseEntity.ok(ApiResponse.success( "작업 상태가 변경되었습니다.", data));
     }
 
     /*
@@ -56,13 +55,13 @@ public class TaskController {
     @DeleteMapping("/{taskId}")
     public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId){
         taskService.deleteTask(taskId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "작업이 삭제되었습니다.", null, Instant.now().toString())); // 오버로딩 -> null
+        return ResponseEntity.ok(ApiResponse.success("작업이 삭제되었습니다.", null)); // 오버로딩 -> null
     }
 
     @GetMapping("/{taskId}")
     public ResponseEntity<ApiResponse<TaskResponse>> getTask(@PathVariable Long taskId){
         TaskResponse data=taskService.getTask(taskId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "작업 조회 성공", data, Instant.now().toString()));
+        return ResponseEntity.ok(ApiResponse.success("작업 조회 성공", data));
     }
 
     // Get + QueryParam.
@@ -82,7 +81,7 @@ public class TaskController {
         PagedResponse<TaskResponse> data=taskService.getListTask(
                 page, size, status, keyword, assigneeId
         );
-        return ResponseEntity.ok(new ApiResponse<>(true, "작업 목록 조회 성공", data, Instant.now().toString()));
+        return ResponseEntity.ok(ApiResponse.success("작업 목록 조회 성공", data));
     }
 }
 
