@@ -26,7 +26,7 @@ public class TeamController {
         CreateTeamResponseDto responseDto = teamService.createTeam(requestDto);
 
 
-        ApiResponse<CreateTeamResponseDto> apiResponse = new ApiResponse<>(true, "팀이 생성되었습니다.", responseDto);
+        ApiResponse<CreateTeamResponseDto> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
 
         ResponseEntity<ApiResponse<CreateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         return response;
@@ -37,7 +37,7 @@ public class TeamController {
     public ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> getDetailTeamApi (@PathVariable ("teamId") Long teamId) {
         GetDetailTeamResponseDto responseDto = teamService.getDetailTeam(teamId);
 
-        ApiResponse<GetDetailTeamResponseDto> apiResponse = new ApiResponse<>(true, "팀 조회 성공", responseDto);
+        ApiResponse<GetDetailTeamResponseDto> apiResponse = ApiResponse.success("팀 조회 성공", responseDto);
 
         ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
@@ -51,7 +51,7 @@ public class TeamController {
 
         UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, requestDto);
 
-        ApiResponse<UpdateTeamResponseDto> apiResponse = new ApiResponse<>(true, "팀 정보가 수정되었습니다.", responseDto);
+        ApiResponse<UpdateTeamResponseDto> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
 
         ResponseEntity<ApiResponse<UpdateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
@@ -62,7 +62,7 @@ public class TeamController {
     public ResponseEntity<ApiResponse<Void>> deleteTeamApi (@PathVariable ("teamId") Long teamId) {
         teamService.deleteTeam(teamId);
 
-        ApiResponse<Void> apiResponse = new ApiResponse(true, "팀이 삭제되었습니다.", null);
+        ApiResponse<Void> apiResponse = ApiResponse.success("팀이 삭제되었습니다.", null);
 
         ResponseEntity<ApiResponse<Void>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
