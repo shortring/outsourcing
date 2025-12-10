@@ -4,9 +4,11 @@ import com.outsourcing.common.entity.Comment;
 import com.outsourcing.common.entity.Task;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
+import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
 import com.outsourcing.domain.comment.model.response.GetCommentResponse;
 import com.outsourcing.domain.comment.model.response.PageResponse;
+import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.repository.CommentRepository;
 import com.outsourcing.domain.task.TaskRepository;
 import com.outsourcing.domain.user.UserRepository;
@@ -61,6 +63,21 @@ public class CommentService {
         Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
 
         return PageResponse.from(commentResponsePage);
+    }
+
+    @Transactional
+    public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request) {
+        getTask(taskId);
+        
+        // 유저 검증 로직 들어가야 함
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Comment가 존재하지 않습니다."));
+
+        comment.updateComment(request.getContent());
+        commentRepository.flush();
+
+        return UpdateCommentResponse.from(comment);
     }
 
     private User getUser(Long userId) {

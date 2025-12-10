@@ -1,9 +1,11 @@
 package com.outsourcing.domain.comment.controller;
 
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
+import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
 import com.outsourcing.domain.comment.model.response.GetCommentResponse;
 import com.outsourcing.domain.comment.model.response.PageResponse;
+import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,5 +38,16 @@ public class CommentController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(commentService.readComment(taskId, page, size));
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<UpdateCommentResponse> updateComment(
+            @PathVariable Long taskId,
+            @PathVariable Long commentId,
+            @RequestBody UpdateCommentRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(commentService.updateComment(taskId, commentId, request));
     }
 }
