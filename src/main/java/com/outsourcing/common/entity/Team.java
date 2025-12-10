@@ -1,10 +1,14 @@
 package com.outsourcing.common.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@Entity
+@Table(name="teams")
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
 public class Team extends BaseTimeEntity {
 
     @Id
@@ -17,4 +21,13 @@ public class Team extends BaseTimeEntity {
     @Column(nullable = true)
     private String description;
 
+    public Team(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }
