@@ -21,4 +21,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     // 추가 시 이미 팀에 속한 유저인지 검증
     boolean existsByTeamAndUser(Team team, User user);
+
+    List<TeamMember> findAllByTeamId(Long teamId);
 }
