@@ -14,7 +14,7 @@ import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.teamMember.dto.request.TeamAddMemberRequest;
 import com.outsourcing.domain.teamMember.dto.response.TeamAddMemberResponse;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
-import com.outsourcing.domain.user.UserRepository;
+import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
