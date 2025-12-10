@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,10 +61,16 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GetCommentResponse> getComment(Long taskId, int page, int size) {
+    public PageResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
         getTask(taskId);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = null;
+
+        if (sort.equals("newest")) {
+            pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        } else {
+            pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        }
 
         Page<Comment> comments = commentRepository.findAllByTaskId(pageable, taskId);
 

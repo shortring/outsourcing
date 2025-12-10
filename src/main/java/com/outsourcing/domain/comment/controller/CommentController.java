@@ -33,12 +33,13 @@ public class CommentController {
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<GetCommentResponse>>> getComment(
             @PathVariable Long taskId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "newest") String sort) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("댓글 목록을 조회했습니다.", commentService.getComment(taskId, page, size)));
+                .body(ApiResponse.success("댓글 목록을 조회했습니다.", commentService.getComment(taskId, page, size, sort)));
     }
 
     @PutMapping("/{commentId}")
