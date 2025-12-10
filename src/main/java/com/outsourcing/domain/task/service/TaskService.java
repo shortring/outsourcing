@@ -5,6 +5,7 @@ import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.domain.dashboard.TempUserRepository;
 import com.outsourcing.domain.task.dto.CreateTaskRequest;
 import com.outsourcing.domain.task.dto.TaskResponse;
 import com.outsourcing.domain.task.dto.UpdateTaskRequest;
@@ -26,7 +27,7 @@ import java.time.Instant;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
+    private final TempUserRepository userRepository;
     private final TaskQueryRepository taskQueryRepository;
 
 

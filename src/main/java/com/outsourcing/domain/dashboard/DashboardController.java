@@ -9,14 +9,14 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/dashboard/")
+@RequestMapping("/api/dashboard")
 public class DashboardController {
 
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
     public StatsDashboardResponse getStats() {
-        return dashboardService.stats();
+        return dashboardService.stats(1L);
     }
 
     @GetMapping("/tasks/summary")
