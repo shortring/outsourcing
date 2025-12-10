@@ -42,7 +42,7 @@ public enum ErrorMessage {
 
     // 409
     CONFLICT_EXIST_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 사용자명입니다."),
-    CONFLICT_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 사용하는 이메일입니다."),
+    CONFLICT_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     CONFLICT_EXIST_TEAM_NAME(HttpStatus.CONFLICT, "이미 존재하는 팀 이름입니다."),
     CONFLICT_EXIST_MEMBER_IN_TEAM(HttpStatus.CONFLICT, "팀에 멤버가 존재하여 삭제할 수 없습니다."),
     CONFLICT_ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속한 멤버입니다.")
