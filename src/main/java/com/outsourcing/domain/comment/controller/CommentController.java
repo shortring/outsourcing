@@ -50,4 +50,16 @@ public class CommentController {
                 .status(HttpStatus.OK)
                 .body(commentService.updateComment(taskId, commentId, request));
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long taskId,
+            @PathVariable Long commentId) {
+
+        commentService.deleteComment(taskId, commentId);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 }

@@ -71,13 +71,21 @@ public class CommentService {
         
         // 유저 검증 로직 들어가야 함
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("Comment가 존재하지 않습니다."));
+        Comment comment = getComment(commentId);
 
         comment.updateComment(request.getContent());
         commentRepository.flush();
 
         return UpdateCommentResponse.from(comment);
+    }
+
+    @Transactional
+    public void deleteComment(Long taskId, Long commentId) {
+        getTask(taskId);
+
+        Comment comment = getComment(commentId);
+
+        commentRepository.delete(comment);
     }
 
     private User getUser(Long userId) {
@@ -88,5 +96,10 @@ public class CommentService {
     private Task getTask(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task가 존재하지 않습니다."));
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Comment가 존재하지 않습니다."));
     }
 }
