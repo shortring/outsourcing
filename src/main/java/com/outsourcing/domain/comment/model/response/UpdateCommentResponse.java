@@ -1,7 +1,7 @@
 package com.outsourcing.domain.comment.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.outsourcing.common.entity.Comment;
+import com.outsourcing.domain.comment.model.dto.CommentDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,14 +19,14 @@ public class UpdateCommentResponse {
 
     private final String content;
 
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final Long parentId; // 질문 드리기 API 명세에서 여기 null 허용이 의도된건지?
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Long parentId;
 
     private final Instant createdAt;
 
     private final Instant updatedAt;
 
-    public static UpdateCommentResponse from(Comment comment) {
+    public static UpdateCommentResponse from(CommentDto comment) {
 
         Long parentId = (comment.getParentComment() == null) ? null : comment.getParentComment().getId();
 

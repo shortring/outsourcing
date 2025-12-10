@@ -2,6 +2,7 @@ package com.outsourcing.domain.comment.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.outsourcing.common.entity.Comment;
+import com.outsourcing.domain.comment.model.dto.CommentDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +29,7 @@ public class CreateCommentResponse {
 
     private final Instant updatedAt;
 
-    public static CreateCommentResponse from(Comment comment) {
+    public static CreateCommentResponse from(CommentDto comment) {
 
         Long parentId = (comment.getParentComment() == null) ? null : comment.getParentComment().getId();
 

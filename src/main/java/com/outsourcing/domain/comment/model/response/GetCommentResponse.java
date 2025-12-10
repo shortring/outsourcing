@@ -5,11 +5,15 @@ import com.outsourcing.common.entity.Comment;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
+
 @Getter
 @RequiredArgsConstructor
 public class GetCommentResponse {
 
     private final Long id;
+
+    private final String content;
 
     private final Long taskId;
 
@@ -17,10 +21,12 @@ public class GetCommentResponse {
 
     private final DetailUserResponse user;
 
-    private final String content;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Long parentId;
+
+    private final Instant createdAt;
+
+    private final Instant updatedAt;
 
     public static GetCommentResponse from(Comment comment) {
 
@@ -28,11 +34,13 @@ public class GetCommentResponse {
 
         return new GetCommentResponse(
                 comment.getId(),
+                comment.getContent(),
                 comment.getTask().getId(),
                 comment.getUser().getId(),
                 DetailUserResponse.from(comment.getUser()),
-                comment.getContent(),
-                parentId
+                parentId,
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
         );
     }
 

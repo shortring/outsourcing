@@ -8,6 +8,7 @@ import com.outsourcing.domain.comment.model.response.GetCommentResponse;
 import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<ApiResponse<CreateCommentResponse>> createComment(
             @PathVariable Long taskId,
-            @RequestBody CreateCommentRequest request) {
+            @Valid @RequestBody CreateCommentRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
