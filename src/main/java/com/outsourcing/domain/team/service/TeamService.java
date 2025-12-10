@@ -13,7 +13,6 @@ import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.teamMember.dto.request.TeamAddMemberRequest;
 import com.outsourcing.domain.teamMember.dto.response.TeamAddMemberResponse;
-import com.outsourcing.domain.teamMember.dto.response.TeamMemberResponseDto;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import com.outsourcing.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
