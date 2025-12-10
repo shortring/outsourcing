@@ -1,8 +1,10 @@
 package com.outsourcing.domain.comment.service;
 
 import com.outsourcing.common.entity.Comment;
-import com.outsourcing.common.entity.Task;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.entity.task.Task;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
@@ -34,10 +36,15 @@ public class CommentService {
 
         Comment parentComment = null;
 
-        // 일반 댓글이 아닌 답글일 때
+        // 일반 댓글이 아닌 답글을 달겠다는 요청일 때
         if (request.getParentId() != null) {
-            parentComment = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+            parentComment = getComment(request.getParentId());
+            
+            // 무한 댓글(답글에 답글...구조)을 막기 위해 parentId의 부모 댓글이 null인지 검증
+            // null이 아니면 답글에 또 답글을 달려고 하는 것이므로 예외 처리
+            if (parentComment.getParentComment() != null) {
+                throw new CustomException(ErrorMessage.BAD_REQUEST_REPLY_TO_REPLY_NOT_ALLOWED);
+            }
         }
 
         Comment comment = new Comment(
@@ -53,7 +60,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GetCommentResponse> readComment(Long taskId, int page, int size) {
+    public PageResponse<GetCommentResponse> getComment(Long taskId, int page, int size) {
         getTask(taskId);
 
         Pageable pageable = PageRequest.of(page, size);
@@ -74,6 +81,7 @@ public class CommentService {
         Comment comment = getComment(commentId);
 
         comment.updateComment(request.getContent());
+
         commentRepository.flush();
 
         return UpdateCommentResponse.from(comment);
@@ -90,16 +98,16 @@ public class CommentService {
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_USER));
     }
 
     private Task getTask(Long taskId) {
         return taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("Task가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
     }
 
     private Comment getComment(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("Comment가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_COMMENT));
     }
 }

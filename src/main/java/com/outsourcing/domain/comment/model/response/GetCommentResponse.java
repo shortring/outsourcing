@@ -19,17 +19,20 @@ public class GetCommentResponse {
 
     private final String content;
 
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    private final Long parentId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Long parentId;
 
     public static GetCommentResponse from(Comment comment) {
+
+        Long parentId = (comment.getParentComment() == null) ? null : comment.getParentComment().getId();
 
         return new GetCommentResponse(
                 comment.getId(),
                 comment.getTask().getId(),
                 comment.getUser().getId(),
                 DetailUserResponse.from(comment.getUser()),
-                comment.getContent()
+                comment.getContent(),
+                parentId
         );
     }
 

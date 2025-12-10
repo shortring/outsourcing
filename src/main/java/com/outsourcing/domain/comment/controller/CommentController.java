@@ -1,5 +1,6 @@
 package com.outsourcing.domain.comment.controller;
 
+import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
@@ -20,46 +21,46 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CreateCommentResponse> createComment(
+    public ResponseEntity<ApiResponse<CreateCommentResponse>> createComment(
             @PathVariable Long taskId,
             @RequestBody CreateCommentRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(commentService.createComment(taskId, request));
+                .body(ApiResponse.success("댓글이 작성되었습니다.", commentService.createComment(taskId, request)));
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<GetCommentResponse>> readComment(
+    public ResponseEntity<ApiResponse<PageResponse<GetCommentResponse>>> getComment(
             @PathVariable Long taskId,
-            @RequestParam(defaultValue = "0") int page, // 현재 페이지
-            @RequestParam(defaultValue = "10") int size) { // 크기
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(commentService.readComment(taskId, page, size));
+                .body(ApiResponse.success("댓글 목록을 조회했습니다.", commentService.getComment(taskId, page, size)));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<UpdateCommentResponse> updateComment(
+    public ResponseEntity<ApiResponse<UpdateCommentResponse>> updateComment(
             @PathVariable Long taskId,
             @PathVariable Long commentId,
             @RequestBody UpdateCommentRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(commentService.updateComment(taskId, commentId, request));
+                .body(ApiResponse.success("댓글이 수정되었습니다.", commentService.updateComment(taskId, commentId, request)));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(
+    public ResponseEntity<ApiResponse<Void>> deleteComment(
             @PathVariable Long taskId,
             @PathVariable Long commentId) {
 
         commentService.deleteComment(taskId, commentId);
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("댓글이 삭제되었습니다.", null));
     }
 }

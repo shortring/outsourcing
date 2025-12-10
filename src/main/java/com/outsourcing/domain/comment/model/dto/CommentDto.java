@@ -1,8 +1,8 @@
 package com.outsourcing.domain.comment.model.dto;
 
 import com.outsourcing.common.entity.Comment;
-import com.outsourcing.common.entity.Task;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.entity.task.Task;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
