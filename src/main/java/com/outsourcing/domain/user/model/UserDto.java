@@ -2,13 +2,13 @@ package com.outsourcing.domain.user.model;
 
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserDto {
     private final Long id;
     private final String username;

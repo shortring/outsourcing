@@ -3,12 +3,8 @@ package com.outsourcing.domain.user.controller;
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.user.model.request.CreateUserRequest;
-import com.outsourcing.domain.user.model.request.LoginRequest;
 import com.outsourcing.domain.user.model.request.UpdateUserRequest;
-import com.outsourcing.domain.user.model.response.CreateUserResponse;
-import com.outsourcing.domain.user.model.response.GetUserResponse;
-import com.outsourcing.domain.user.model.response.LoginResponse;
-import com.outsourcing.domain.user.model.response.UpdateUserResponse;
+import com.outsourcing.domain.user.model.response.*;
 import com.outsourcing.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<ApiResponse<CreateUserResponse>> createUserApi(@Valid @RequestBody CreateUserRequest request) {
 
         CreateUserResponse result = userService.signup(request);
@@ -34,7 +30,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("회원가입이 완료되었습니다.", result));
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<GetUserResponse>> getUserApi(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         GetUserResponse result = userService.getUser(userId ,userDetails);
@@ -42,7 +38,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 정보 조회 성공", result));
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<GetUserResponse>>> getUsersApi() {
 
         List<GetUserResponse> result = userService.getAllUser();
@@ -50,7 +46,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 목록 조회 성공", result));
     }
 
-    @PutMapping("/users/{userId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserApi(@PathVariable Long userId, @Valid @RequestBody UpdateUserRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         UpdateUserResponse result = userService.updateUser(userId, request, userDetails);
@@ -58,20 +54,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 목록 조회 성공", result));
     }
 
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteUserApi(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         userService.deleteUser(userId, userDetails);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.",null));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
-        String token = userService.login(request);
-
-        return ResponseEntity.ok(new LoginResponse(token));
     }
 
 

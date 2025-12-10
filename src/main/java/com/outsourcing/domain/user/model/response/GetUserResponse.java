@@ -2,13 +2,13 @@ package com.outsourcing.domain.user.model.response;
 
 import com.outsourcing.common.enums.UserRole;
 import com.outsourcing.domain.user.model.UserDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class GetUserResponse {
     private final Long id;
     private final String username;

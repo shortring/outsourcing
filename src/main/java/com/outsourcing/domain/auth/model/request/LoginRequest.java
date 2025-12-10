@@ -1,4 +1,4 @@
-package com.outsourcing.domain.user.model.request;
+package com.outsourcing.domain.auth.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

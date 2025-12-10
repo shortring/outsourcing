@@ -5,7 +5,6 @@ import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.common.utils.JwtUtil;
 import com.outsourcing.domain.user.model.UserDto;
 import com.outsourcing.domain.user.model.request.CreateUserRequest;
-import com.outsourcing.domain.user.model.request.LoginRequest;
 import com.outsourcing.domain.user.model.request.UpdateUserRequest;
 import com.outsourcing.domain.user.model.response.CreateUserResponse;
 import com.outsourcing.domain.user.model.response.GetUserResponse;
@@ -20,7 +19,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -56,7 +54,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetUserResponse getUser(Long userId, CustomUserDetails userDetails) {
 
-        if(!userId.equals(userDetails.getUserId())){
+        if (!userId.equals(userDetails.getUserId())) {
             throw new IllegalArgumentException("다른 사용자의 정보는 조회할 수 없습니다.");
         }
 
@@ -77,11 +75,12 @@ public class UserService {
                 .map(GetUserResponse::from)
                 .toList();
     }
+
     //사용자 수정
     @Transactional
     public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request, CustomUserDetails userDetails) {
 
-        if(!userId.equals(userDetails.getUserId())){
+        if (!userId.equals(userDetails.getUserId())) {
             throw new IllegalArgumentException("본인만 수정 가능합니다.");
         }
 
@@ -96,7 +95,7 @@ public class UserService {
         user.modify(
                 request.getName(),
                 request.getEmail(),
-                request.getPassword());
+                passwordEncoder.encode(request.getPassword()));
 
         UserDto dto = UserDto.from(user);
 
@@ -107,7 +106,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId, CustomUserDetails userDetails) {
 
-        if(!userId.equals(userDetails.getUserId())){
+        if (!userId.equals(userDetails.getUserId())) {
             throw new IllegalArgumentException("본인만 탈퇴 가능합니다.");
         }
 
@@ -115,24 +114,6 @@ public class UserService {
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
         userRepository.delete(user);
-    }
-
-    //로그인
-    @Transactional
-    public String login(LoginRequest request) {
-        String username = request.getUsername();
-        String password = request.getPassword();
-
-        User user = userRepository.findUserByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
-        );
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 다릅니다.");
-        }
-
-        return jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
-
     }
 
 }

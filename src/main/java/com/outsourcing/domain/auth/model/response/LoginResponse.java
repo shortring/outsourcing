@@ -1,4 +1,4 @@
-package com.outsourcing.domain.user.model.response;
+package com.outsourcing.domain.auth.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

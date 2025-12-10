@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
         //토큰을 발급 받는 로그인의 경우에는 토큰 검사를 하지 않아도 통과
         String requestURI = request.getRequestURI();
 
-        if (requestURI.equals("/api/login") || (requestURI.equals("/api/users") && request.getMethod().equals("POST"))) {
+        if (requestURI.equals("/api/auth/login") || (requestURI.equals("/api/users") && request.getMethod().equals("POST"))) {
             filterChain.doFilter(request, response);
             return;
         }
