@@ -12,7 +12,6 @@ import com.outsourcing.domain.task.dto.UpdateTaskStatusRequest;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,14 +29,13 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskQueryRepository taskQueryRepository;
 
-
     @Transactional
-    public TaskResponse createTask(CreateTaskRequest request){
+    public TaskResponse createTask(CreateTaskRequest request) {
 
-       User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new IllegalArgumentException("User not found"));
+        User assigneeUser = userRepository.findById(request.assigneeId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Task task=new Task(
+        Task task = new Task(
                 request.title(),
                 request.description(),
                 request.priority(),
@@ -54,15 +52,14 @@ public class TaskService {
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTask(Long taskId, UpdateTaskRequest request){
+    public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
 
-        User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new IllegalArgumentException("User not found"));
+        User assigneeUser = userRepository.findById(request.assigneeId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
-
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
 
         task.update(
@@ -79,10 +76,10 @@ public class TaskService {
 
     // Status를 변경해도 수정일 갱신은 되지 않음.
     @Transactional
-    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request){
+    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request) {
 
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
         task.changeStatus(request.status());
 
@@ -90,40 +87,40 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(Long taskId){
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+    public void deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
         taskRepository.delete(task);
     }
 
     // email
-    @Transactional(readOnly=true)
-    public TaskResponse getTask(Long taskId){
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+    @Transactional(readOnly = true)
+    public TaskResponse getTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
         return TaskResponse.from(task);
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public PagedResponse<TaskResponse> getListTask(
             int rawPage,
             int rawSize,
             TaskStatus status,
             String keyword,
             Long assigneeId
-    ){
+    ) {
 
         // 1. pageCondition : 정규화.
-        PageCondition pageCondition=PageCondition.of(rawPage, rawSize);
+        PageCondition pageCondition = PageCondition.of(rawPage, rawSize);
 
         // 2. -> Pageable
-        Pageable pageable= PageRequest.of(pageCondition.page(),  pageCondition.size());
+        Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
         // 3. Task -> TaskResponse
-        Page<Task> taskPage=taskQueryRepository.search(pageable, status, keyword, assigneeId);
-        Page<TaskResponse> responseDto=taskPage.map(TaskResponse::from);
+        Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
+        Page<TaskResponse> responseDto = taskPage.map(TaskResponse::from);
 
         // 4. TaskResponse -> PagedResponse
         return PagedResponse.from(responseDto);

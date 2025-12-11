@@ -11,11 +11,11 @@ public record PageCondition(
     private static final int DEFAULT_MAX_SIZE = 50;
 
     public static PageCondition of(Integer rawPage, Integer rawSize) {
-        int page=(rawPage==null)
+        int page = (rawPage == null)
                 ? DEFAULT_PAGE
                 : Math.max(rawPage, DEFAULT_PAGE);
 
-        int size=(rawSize==null||rawSize<=0)
+        int size = (rawSize == null || rawSize <= 0)
                 ? DEFAULT_SIZE
                 : Math.min(rawSize, DEFAULT_MAX_SIZE); // 요구사항 밖.
 

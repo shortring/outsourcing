@@ -15,7 +15,7 @@ public class CorsConfig {
     private String[] allowedOrigins;
 
     @Bean
-    public UrlBasedCorsConfigurationSource corsConfigurationSource(){
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
 

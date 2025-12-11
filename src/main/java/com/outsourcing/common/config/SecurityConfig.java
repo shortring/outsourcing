@@ -22,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
-    private  final UrlBasedCorsConfigurationSource configurationSource;
+    private final UrlBasedCorsConfigurationSource configurationSource;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

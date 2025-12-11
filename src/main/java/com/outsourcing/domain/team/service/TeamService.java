@@ -31,7 +31,7 @@ public class TeamService {
 
     // 팀 생성
     @Transactional
-    public CreateTeamResponseDto createTeam (CreateTeamRequestDto requestDto) {
+    public CreateTeamResponseDto createTeam(CreateTeamRequestDto requestDto) {
         Team team = new Team(
                 requestDto.getName(),
                 requestDto.getDescription()
@@ -50,7 +50,7 @@ public class TeamService {
 
     // 멤버 추가
     @Transactional
-    public List<TeamAddMemberResponse> addMemberTeam (Long teamId, TeamAddMemberRequest request) {
+    public List<TeamAddMemberResponse> addMemberTeam(Long teamId, TeamAddMemberRequest request) {
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -78,7 +78,7 @@ public class TeamService {
 
     // 멤버 삭제
     @Transactional
-    public void removeMemberTeam (Long teamId, Long userId) {
+    public void removeMemberTeam(Long teamId, Long userId) {
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(teamId, userId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM_MEMBER));
 
@@ -87,7 +87,7 @@ public class TeamService {
 
     // 팀 상세 조회 (팀의 정보와 팀에 속한 멤버 조회)
     @Transactional
-    public GetDetailTeamResponseDto getDetailTeam (Long teamId) {
+    public GetDetailTeamResponseDto getDetailTeam(Long teamId) {
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -102,10 +102,10 @@ public class TeamService {
 
     // 팀 수정
     @Transactional
-    public UpdateTeamResponseDto updateTeam (Long id, UpdateTeamRequestDto requestDto) {
+    public UpdateTeamResponseDto updateTeam(Long id, UpdateTeamRequestDto requestDto) {
         Team findTeam = teamRepository.findById(id).orElseThrow
                 (() -> new IllegalArgumentException("존재하지 않는 팀입니다.")
-        );
+                );
 
         findTeam.update(
                 requestDto.getName(),
@@ -123,10 +123,9 @@ public class TeamService {
 
     // 팀 삭제
     @Transactional
-    public void deleteTeam (Long id) {
+    public void deleteTeam(Long id) {
         teamRepository.deleteById(id);
     }
-
 
 
 }

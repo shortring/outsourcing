@@ -5,10 +5,10 @@ import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.common.utils.JwtUtil;
-import com.outsourcing.domain.auth.repository.AuthRepository;
 import com.outsourcing.domain.auth.model.request.LoginRequest;
 import com.outsourcing.domain.auth.model.request.VerifyPasswordRequest;
 import com.outsourcing.domain.auth.model.response.VerifyPasswordResponse;
+import com.outsourcing.domain.auth.repository.AuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,10 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
     //로그인
     @Transactional
-    public String loginAip(LoginRequest request) {
+    public String loginApi(LoginRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
 
@@ -39,7 +40,7 @@ public class AuthService {
     }
 
     @Transactional
-    public VerifyPasswordResponse verifyPasswordAip(VerifyPasswordRequest request, CustomUserDetails userDetails) {
+    public VerifyPasswordResponse verifyPasswordApi(VerifyPasswordRequest request, CustomUserDetails userDetails) {
         User user = authRepository.findById(userDetails.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );

@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     private String[] allowedOrigins;
 
     @Override
-    public void addCorsMappings(CorsRegistry registry){
+    public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins) //허용할 도매인 설정
                 .allowedMethods("*")            // 허용할 http 메소드 설정

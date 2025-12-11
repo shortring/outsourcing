@@ -11,8 +11,8 @@ import java.time.Instant;
 
 @Getter
 @Entity
-@Table(name="tasks")
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@Table(name = "tasks")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Task extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,7 +66,7 @@ public class Task extends BaseTimeEntity {
                 ? priority
                 : TaskPriority.HIGH;
         this.assignee = assignee;
-        this.dueDate = dueDate==null
+        this.dueDate = dueDate == null
                 ? Instant.now()
                 : dueDate;
     }
@@ -83,8 +83,8 @@ public class Task extends BaseTimeEntity {
     }
 
     // 스테이터스 변경.
-    public void changeStatus(TaskStatus status){
-        this.status = (status!=null)
+    public void changeStatus(TaskStatus status) {
+        this.status = (status != null)
                 ? status
                 : TaskStatus.TODO;
     }
