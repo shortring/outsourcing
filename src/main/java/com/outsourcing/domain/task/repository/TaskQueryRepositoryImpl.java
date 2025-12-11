@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -59,17 +60,28 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
                 .fetch();
 
         // 7. 합계.
-        Long total=jpaQueryFactory
-                .select(task.count())
-                .from(task)
-                .where(builder)
-                .fetchOne(); // Long
+//        Long total=jpaQueryFactory
+//                .select(task.count())
+//                .from(task)
+//                .where(builder)
+//                .fetchOne(); // Long
+//
+//        // 8. Page
+//        return new PageImpl<>(tasks,
+//                pageable,
+//                Optional.ofNullable(total)
+//                        .orElse(0L)
+//        );
 
-        // 8. Page
-        return new PageImpl<>(tasks,
+        return PageableExecutionUtils.getPage(
+                tasks,
                 pageable,
-                Optional.ofNullable(total)
-                        .orElse(0L)
-        );
+                ()->Optional.ofNullable(jpaQueryFactory
+                        .select(task.count())
+                        .from(task)
+                        .where(builder)
+                        .fetchOne()
+                ).orElse(0L));
+
     }
 }
