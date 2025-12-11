@@ -26,32 +26,32 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
 
         // 1. Q클래스 선언.
         QTask task = QTask.task;
-        QUser assignee =  QUser.user;
+        QUser assignee = QUser.user;
 
         BooleanBuilder builder = new BooleanBuilder();
 
         // 2. 키워드
-        if(keyword!=null
+        if (keyword != null
                 && !keyword.isBlank()) {
             builder.and(task.title.containsIgnoreCase(keyword)
                     .or(task.description.containsIgnoreCase(keyword)));
         }
 
         // 3. 상태
-        if(status!=null){
+        if (status != null) {
             builder.and(task.status.eq(status));
         }
 
         // 5. 담당자 : assignedId
-        if(assigneeId!=null){
+        if (assigneeId != null) {
             builder.and(task.assignee.id.eq(assigneeId));
         }
 
 
         // 6. 리스트
-        List<Task> tasks=jpaQueryFactory
+        List<Task> tasks = jpaQueryFactory
                 .selectFrom(task)
-                .leftJoin(task.assignee,assignee).fetchJoin()
+                .leftJoin(task.assignee, assignee).fetchJoin()
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -75,7 +75,7 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
         return PageableExecutionUtils.getPage(
                 tasks,
                 pageable,
-                ()->Optional.ofNullable(jpaQueryFactory
+                () -> Optional.ofNullable(jpaQueryFactory
                         .select(task.count())
                         .from(task)
                         .where(builder)

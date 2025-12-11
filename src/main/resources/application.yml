@@ -1,6 +1,7 @@
 spring:
   application:
     name: outsourcing
+    config.import: optional:file:.env[.properties]
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -20,3 +21,7 @@ spring:
 jwt:
   secret:
     key: ${JWT_SECRET}
+
+cors:
+  allowed:
+    origins: http://localhost:3000

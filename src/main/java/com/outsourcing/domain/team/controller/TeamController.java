@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping ("/api/teams")
+@RequestMapping("/api/teams")
 
 public class TeamController {
 
@@ -26,9 +26,8 @@ public class TeamController {
 
     // 팀 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi (@RequestBody CreateTeamRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi(@RequestBody CreateTeamRequestDto requestDto) {
         CreateTeamResponseDto responseDto = teamService.createTeam(requestDto);
-
 
         ApiResponse<CreateTeamResponseDto> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
 
@@ -71,7 +70,7 @@ public class TeamController {
 
     // 팀 상세 조회 ()
     @GetMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> getDetailTeamApi (@PathVariable ("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> getDetailTeamApi(@PathVariable("teamId") Long teamId) {
         GetDetailTeamResponseDto responseDto = teamService.getDetailTeam(teamId);
 
         ApiResponse<GetDetailTeamResponseDto> apiResponse = ApiResponse.success("팀 조회 성공", responseDto);
@@ -82,8 +81,8 @@ public class TeamController {
     }
 
     @PutMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi (
-            @PathVariable ("teamId") Long teamId,
+    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi(
+            @PathVariable("teamId") Long teamId,
             @RequestBody UpdateTeamRequestDto requestDto) {
 
         UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, requestDto);
@@ -96,7 +95,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTeamApi (@PathVariable ("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTeamApi(@PathVariable("teamId") Long teamId) {
         teamService.deleteTeam(teamId);
 
         ApiResponse<Void> apiResponse = ApiResponse.success("팀이 삭제되었습니다.", null);

@@ -17,6 +17,8 @@ public enum ErrorMessage {
     BAD_REQUEST_WRONG_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
     BAD_REQUEST_WRONG_EMAIL_FORM(HttpStatus.BAD_REQUEST, "올바른 이메일 형식이 아닙니다."),
     BAD_REQUEST_WRONG_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
+    BAD_REQUEST_REPLY_TO_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "답글에 또 다시 답글을 달 수 없습니다."),
+    BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH(HttpStatus.BAD_REQUEST, "작업이 일치하지 않습니다."),
 
     // 401
     UNAUTHORIZED_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),
@@ -45,9 +47,7 @@ public enum ErrorMessage {
     CONFLICT_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     CONFLICT_EXIST_TEAM_NAME(HttpStatus.CONFLICT, "이미 존재하는 팀 이름입니다."),
     CONFLICT_EXIST_MEMBER_IN_TEAM(HttpStatus.CONFLICT, "팀에 멤버가 존재하여 삭제할 수 없습니다."),
-    CONFLICT_ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속한 멤버입니다.")
-
-    ;
+    CONFLICT_ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속한 멤버입니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -21,7 +21,6 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String username;//사용자 아이디
 
-
     @Column(nullable = false, unique = true)
     private String email;
 

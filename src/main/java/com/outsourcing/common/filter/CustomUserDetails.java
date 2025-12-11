@@ -22,11 +22,13 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
     }
+
     // 사용자 비밀번호 반환
     @Override
     public String getPassword() {
         return this.password;
     }
+
     //스프링 시큐리티의 username = username
     @Override
     public String getUsername() {
