@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 
 
 @RestController
@@ -25,28 +24,28 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TaskResponse>> createTask(@Valid @RequestBody CreateTaskRequest request){
-        TaskResponse data=taskService.createTask(request);
+    public ResponseEntity<ApiResponse<TaskResponse>> createTaskApi(@Valid @RequestBody CreateTaskRequest request){
+        TaskResponse data=taskService.createTaskApi(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("작업이 생성되었습니다.", data)
         );
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskResponse>> updateTask(
+    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskApi(
             @PathVariable Long taskId,
             @Valid @RequestBody UpdateTaskRequest request
     ){
-        TaskResponse data=taskService.updateTask(taskId, request);
+        TaskResponse data=taskService.updateTaskApi(taskId, request);
         return ResponseEntity.ok(ApiResponse.success("작업이 수정되었습니다.", data));
     }
 
     @PatchMapping("/{taskId}/status")
-    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskStatus(
+    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskStatusApi(
             @PathVariable Long taskId,
             @Valid @RequestBody UpdateTaskStatusRequest request
     ){
-        TaskResponse data=taskService.updateTaskStatus(taskId, request);
+        TaskResponse data=taskService.updateTaskStatusApi(taskId, request);
         return ResponseEntity.ok(ApiResponse.success("작업 상태가 변경되었습니다.", data));
     }
 
@@ -55,20 +54,20 @@ public class TaskController {
         apiRequest<T>('DELETE', url, config); ??
   */
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long taskId){
-        taskService.deleteTask(taskId);
+    public ResponseEntity<ApiResponse<Void>> deleteTaskApi(@PathVariable Long taskId){
+        taskService.deleteTaskApi(taskId);
         return ResponseEntity.ok(ApiResponse.success("작업이 삭제되었습니다.", null)); // 오버로딩 -> null
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskResponse>> getTask(@PathVariable Long taskId){
-        TaskResponse data=taskService.getTask(taskId);
+    public ResponseEntity<ApiResponse<TaskResponse>> getTaskApi(@PathVariable Long taskId){
+        TaskResponse data=taskService.getTaskApi(taskId);
         return ResponseEntity.ok(ApiResponse.success("작업 조회 성공", data));
     }
 
     // Get + QueryParam.
     @GetMapping
-    public ResponseEntity<ApiResponse<PagedResponse<TaskResponse>>> getListTasks(
+    public ResponseEntity<ApiResponse<PagedResponse<TaskResponse>>> getListTasksApi(
             @RequestParam(defaultValue="0") int page,
             @RequestParam(defaultValue="10") int size,
             @RequestParam(required=false) TaskStatus status,
@@ -80,7 +79,7 @@ public class TaskController {
         String keyword=(search!=null&&!search.isBlank()) // search - query 정합성.
                 ? search
                 : query;
-        PagedResponse<TaskResponse> data=taskService.getListTask(
+        PagedResponse<TaskResponse> data=taskService.getListTaskApi(
                 page, size, status, keyword, assigneeId
         );
         return ResponseEntity.ok(ApiResponse.success("작업 목록 조회 성공", data));

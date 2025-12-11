@@ -32,7 +32,7 @@ public class TaskService {
 
 
     @Transactional
-    public TaskResponse createTask(CreateTaskRequest request){
+    public TaskResponse createTaskApi(CreateTaskRequest request){
 
        User assigneeUser=userRepository.findById(request.assigneeId())
                 .orElseThrow(()->new IllegalArgumentException("User not found"));
@@ -54,7 +54,7 @@ public class TaskService {
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTask(Long taskId, UpdateTaskRequest request){
+    public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request){
         Instant now = Instant.now();
 
         User assigneeUser=userRepository.findById(request.assigneeId())
@@ -78,7 +78,7 @@ public class TaskService {
 
     // Status를 변경해도 수정일 갱신은 되지 않음.
     @Transactional
-    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request){
+    public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request){
 
         Task task=taskRepository.findById(taskId)
                 .orElseThrow(()->new IllegalArgumentException("Task not found"));
@@ -89,7 +89,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(Long taskId){
+    public void deleteTaskApi(Long taskId){
         Task task=taskRepository.findById(taskId)
                 .orElseThrow(()->new IllegalArgumentException("Task not found"));
 
@@ -98,7 +98,7 @@ public class TaskService {
 
     // email
     @Transactional(readOnly=true)
-    public TaskResponse getTask(Long taskId){
+    public TaskResponse getTaskApi(Long taskId){
         Task task=taskRepository.findById(taskId)
                 .orElseThrow(()->new IllegalArgumentException("Task not found"));
 
@@ -106,7 +106,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly=true)
-    public PagedResponse<TaskResponse> getListTask(
+    public PagedResponse<TaskResponse> getListTaskApi(
             int rawPage,
             int rawSize,
             TaskStatus status,
