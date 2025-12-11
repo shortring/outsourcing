@@ -19,18 +19,17 @@ public class DashboardController {
 
     @GetMapping("/stats")
     public ResponseEntity<ApiResponse<StatsDashboardResponse>> getStats() {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("대시보드 통계 조회 성공",dashboardService.stats(1L)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("대시보드 통계 조회 성공", dashboardService.stats(1L)));
     }
 
-    @GetMapping("/tasks/summary")
+    @GetMapping("/tasks")
     public ResponseEntity<ApiResponse<SummaryMyTaskResponse>> getMyTaskSummary() {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("내 작업 요약 조회 성공", dashboardService.myTaskSummary(1L)));
     }
 
-
-    @GetMapping("/tasks/trend/weekly")
-    public WeeklyTaskTrendDashboardResponse getWeeklyTaskTrend() {
-        return dashboardService.weeklyTaskTrend();
+    @GetMapping("/tasks/weekly-trend")
+    public ResponseEntity<ApiResponse<List<WeeklyTaskTrendDashboardResponse>>> getWeeklyTaskTrend() {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("주간 작업 추세 조회 성공", dashboardService.weeklyTaskTrend()));
     }
 
 }
