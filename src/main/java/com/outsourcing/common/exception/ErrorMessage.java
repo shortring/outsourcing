@@ -18,6 +18,7 @@ public enum ErrorMessage {
     BAD_REQUEST_WRONG_EMAIL_FORM(HttpStatus.BAD_REQUEST, "올바른 이메일 형식이 아닙니다."),
     BAD_REQUEST_WRONG_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
     BAD_REQUEST_REPLY_TO_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "답글에 또 다시 답글을 달 수 없습니다."),
+    BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH(HttpStatus.BAD_REQUEST, "작업이 일치하지 않습니다."),
 
     // 401
     UNAUTHORIZED_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),

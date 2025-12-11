@@ -14,7 +14,7 @@ import com.outsourcing.domain.comment.model.response.GetCommentResponse;
 import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.repository.CommentRepository;
-import com.outsourcing.domain.task.TaskRepository;
+import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +41,13 @@ public class CommentService {
 
         // 일반 댓글이 아닌 답글을 달겠다는 요청일 때
         if (request.getParentId() != null) {
+
             parentComment = getComment(request.getParentId());
+
+            // 답글을 달겠다는 요청일 때, 요청의 부모 댓글의 taskId와 pathVariable의 taskId가 같은지 검증
+            if (!parentComment.getTask().getId().equals(taskId)) {
+                throw new CustomException(ErrorMessage.BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH);
+            }
             
             // 무한 댓글(답글에 답글...구조)을 막기 위해 parentId의 부모 댓글이 null인지 검증
             // null이 아니면 답글에 또 답글을 달려고 하는 것이므로 예외 처리
