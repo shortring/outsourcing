@@ -11,7 +11,7 @@ public record PagedResponse<T>(
         int size,
         int number
 ) {
-    public static <T> PagedResponse<T> from(Page<T> page){
+    public static <T> PagedResponse<T> from(Page<T> page) {
         return new PagedResponse<>(
                 page.getContent(),
                 page.getTotalElements(),
