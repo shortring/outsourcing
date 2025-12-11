@@ -1,6 +1,8 @@
 package com.outsourcing.domain.user.service;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.user.model.UserDto;
 import com.outsourcing.domain.user.model.request.CreateUserRequest;
@@ -28,11 +30,11 @@ public class UserService {
     public CreateUserResponse signup(CreateUserRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("이미 존재하는 사용자명입니다.");
+            throw new CustomException(ErrorMessage.CONFLICT_EXIST_USERNAME);
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            throw new CustomException(ErrorMessage.CONFLICT_EXIST_EMAIL);
         }
 
         User user = new User(request.getUsername(),
@@ -54,11 +56,11 @@ public class UserService {
     public GetUserResponse getUser(Long userId, CustomUserDetails userDetails) {
 
         if (!userId.equals(userDetails.getUserId())) {
-            throw new IllegalArgumentException("다른 사용자의 정보는 조회할 수 없습니다.");
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION);
         }
 
         UserDto user = userRepository.findDtoById(userId).orElseThrow(
-                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+                () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
         return GetUserResponse.from(user);
@@ -80,15 +82,15 @@ public class UserService {
     public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request, CustomUserDetails userDetails) {
 
         if (!userId.equals(userDetails.getUserId())) {
-            throw new IllegalArgumentException("본인만 수정 가능합니다.");
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
         }
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+                () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new CustomException(ErrorMessage.CONFLICT_EXIST_EMAIL);
         }
 
         user.modify(
@@ -106,11 +108,11 @@ public class UserService {
     public void deleteUser(Long userId, CustomUserDetails userDetails) {
 
         if (!userId.equals(userDetails.getUserId())) {
-            throw new IllegalArgumentException("본인만 탈퇴 가능합니다.");
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION);
         }
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
         userRepository.delete(user);
     }
