@@ -25,8 +25,7 @@ public class TeamMember extends BaseTimeEntity {
     private Team team;
 
 
-
-    public TeamMember (Team team, User user) {
+    public TeamMember(Team team, User user) {
         this.team = team;
         this.user = user;
     }

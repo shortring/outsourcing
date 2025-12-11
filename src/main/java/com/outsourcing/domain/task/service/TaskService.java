@@ -15,7 +15,6 @@ import com.outsourcing.domain.task.dto.UpdateTaskStatusRequest;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,13 +35,13 @@ public class TaskService {
 
 
     @Transactional
-    public TaskResponse createTaskApi(CreateTaskRequest request){
+    public TaskResponse createTaskApi(CreateTaskRequest request) {
 
 
-       User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
+        User assigneeUser = userRepository.findById(request.assigneeId())
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
-        Task task=new Task(
+        Task task = new Task(
                 request.title(),
                 request.description(),
                 request.priority(),
@@ -59,21 +58,21 @@ public class TaskService {
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTaskApi(Long currentUserId, Long taskId, UpdateTaskRequest request){
+    public TaskResponse updateTaskApi(Long currentUserId, Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
 
-        User requestUser=userRepository.findById(currentUserId)
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_USER));
+        User requestUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_USER));
 
-        if(!ObjectUtils.nullSafeEquals(requestUser.getRole(),UserRole.ADMIN)){
+        if (!ObjectUtils.nullSafeEquals(requestUser.getRole(), UserRole.ADMIN)) {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
         }
 
-        User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
+        User assigneeUser = userRepository.findById(request.assigneeId())
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
 
         task.update(
@@ -90,10 +89,10 @@ public class TaskService {
 
     // Status를 변경해도 수정일 갱신은 되지 않음.
     @Transactional
-    public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request){
+    public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request) {
 
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         task.changeStatus(request.status());
 
@@ -101,33 +100,33 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTaskApi(Long taskId){
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
+    public void deleteTaskApi(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         taskRepository.delete(task);
     }
 
     // email
-    @Transactional(readOnly=true)
-    public TaskResponse getTaskApi(Long taskId){
-        Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
+    @Transactional(readOnly = true)
+    public TaskResponse getTaskApi(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         return TaskResponse.from(task);
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public PagedResponse<TaskResponse> getListTaskApi(
             int rawPage,
             int rawSize,
             TaskStatus status,
             String keyword,
             Long assigneeId
-    ){
+    ) {
 
         // 1. pageCondition : 정규화.
-        PageCondition pageCondition=PageCondition.of(rawPage, rawSize);
+        PageCondition pageCondition = PageCondition.of(rawPage, rawSize);
 
         // 2. 예외처리
         if (pageCondition.size() == 0) {
@@ -135,11 +134,11 @@ public class TaskService {
         }
 
         // 3. -> Pageable
-        Pageable pageable= PageRequest.of(pageCondition.page(),  pageCondition.size());
+        Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
         // 4. Task -> TaskResponse
-        Page<Task> taskPage=taskQueryRepository.search(pageable, status, keyword, assigneeId);
-        Page<TaskResponse> responseDto=taskPage.map(TaskResponse::from);
+        Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
+        Page<TaskResponse> responseDto = taskPage.map(TaskResponse::from);
 
         // 5. TaskResponse -> PagedResponse
         return PagedResponse.from(responseDto);
