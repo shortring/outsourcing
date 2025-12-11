@@ -1,6 +1,8 @@
 package com.outsourcing.domain.team.service;
 
 import com.outsourcing.common.entity.Team;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
 import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
 import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
@@ -18,7 +20,11 @@ public class TeamService {
 
     // 팀 생성
     @Transactional
-    public CreateTeamResponseDto createTeam (CreateTeamRequestDto requestDto) {
+    public CreateTeamResponseDto createTeam(CreateTeamRequestDto requestDto) {
+        if (teamRepository.existsByName(requestDto.getName())) {
+            throw new CustomException(ErrorMessage.CONFLICT_EXIST_TEAM_NAME);
+        }
+
         Team team = new Team(
                 requestDto.getName(),
                 requestDto.getDescription()
@@ -37,10 +43,9 @@ public class TeamService {
 
     // 팀 수정
     @Transactional
-    public UpdateTeamResponseDto updateTeam (Long id, UpdateTeamRequestDto requestDto) {
+    public UpdateTeamResponseDto updateTeam(Long id, UpdateTeamRequestDto requestDto) {
         Team findTeam = teamRepository.findById(id).orElseThrow
-                (() -> new IllegalArgumentException("존재하지 않는 팀입니다.")
-        );
+                (() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
         findTeam.update(
                 requestDto.getName(),
@@ -58,7 +63,14 @@ public class TeamService {
 
     // 팀 삭제
     @Transactional
-    public void deleteTeam (Long id) {
-        teamRepository.deleteById(id);
+    public void deleteTeam(Long id) {
+        Team findTeam = teamRepository.findById(id).orElseThrow
+                (() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
+
+        if (!findTeam.getMembers().isEmpty()) {
+            throw new CustomException(ErrorMessage.CONFLICT_EXIST_MEMBER_IN_TEAM);
+        }
+
+        teamRepository.deleteById(findTeam.getId());
     }
 }

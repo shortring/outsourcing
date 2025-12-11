@@ -12,6 +12,7 @@ import com.outsourcing.domain.task.dto.UpdateTaskStatusRequest;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 
+import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

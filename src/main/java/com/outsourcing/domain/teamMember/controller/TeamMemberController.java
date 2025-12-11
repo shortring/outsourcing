@@ -38,7 +38,7 @@ public class TeamMemberController {
     }
 
     // 멤버 제거
-    @PostMapping("/{teamId}/members/{userId}")
+    @DeleteMapping("/{teamId}/members/{userId}")
     public ResponseEntity<ApiResponse<?>> removeMemberApi(
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId
@@ -66,7 +66,7 @@ public class TeamMemberController {
 
     // 팀 상세 조회
     @GetMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<GetTeamDetailResponseDto>> getTeamDetailApi(@PathVariable ("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<GetTeamDetailResponseDto>> getTeamDetailApi(@PathVariable("teamId") Long teamId) {
         GetTeamDetailResponseDto responseDto = teamMemberService.getTeamDetail(teamId);
 
         ApiResponse<GetTeamDetailResponseDto> apiResponse = ApiResponse.success("팀 조회 성공", responseDto);
@@ -78,7 +78,7 @@ public class TeamMemberController {
 
     // 팀 멤버 조회
     @GetMapping("/{teamId}/members")
-    public ResponseEntity<ApiResponse<List<GetTeamMemberResponseDto>>> getTeamMemberApi(@PathVariable ("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<List<GetTeamMemberResponseDto>>> getTeamMemberApi(@PathVariable("teamId") Long teamId) {
         List<GetTeamMemberResponseDto> responseDto = teamMemberService.getTeamMember(teamId);
 
         ApiResponse<List<GetTeamMemberResponseDto>> apiResponse = ApiResponse.success("팀 멤버 조회 성공", responseDto);

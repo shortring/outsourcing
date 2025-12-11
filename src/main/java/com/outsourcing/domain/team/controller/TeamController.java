@@ -6,6 +6,7 @@ import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
 import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
 import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
 import com.outsourcing.domain.team.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping ("/api/teams")
+@RequestMapping("/api/teams")
 
 public class TeamController {
 
@@ -21,7 +22,7 @@ public class TeamController {
 
     // 팀 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi (@RequestBody CreateTeamRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi(@Valid @RequestBody CreateTeamRequestDto requestDto) {
         CreateTeamResponseDto responseDto = teamService.createTeam(requestDto);
 
 
@@ -32,8 +33,8 @@ public class TeamController {
     }
 
     @PutMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi (
-            @PathVariable ("teamId") Long teamId,
+    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi(
+            @PathVariable("teamId") Long teamId,
             @RequestBody UpdateTeamRequestDto requestDto) {
 
         UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, requestDto);
@@ -46,7 +47,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTeamApi (@PathVariable ("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTeamApi(@PathVariable("teamId") Long teamId) {
         teamService.deleteTeam(teamId);
 
         ApiResponse<Void> apiResponse = ApiResponse.success("팀이 삭제되었습니다.", null);
