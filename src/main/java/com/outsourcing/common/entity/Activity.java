@@ -1,6 +1,7 @@
 package com.outsourcing.common.entity;
 
 import com.outsourcing.common.entity.task.Task;
+import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.dto.response.ActivitiesResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ public class Activity extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String type;
+    private ActivityType type;
 
     @Column(nullable = false, unique = true)
     private Long userId;
@@ -42,7 +43,7 @@ public class Activity extends BaseTimeEntity {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    public Activity(String type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
+    public Activity(ActivityType type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
         this.type = type;
         this.userId = userId;
         this.taskId = taskId;
@@ -52,7 +53,7 @@ public class Activity extends BaseTimeEntity {
         this.task = task;
     }
 
-    public static Activity of(String type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
+    public static Activity of(ActivityType type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
         return new Activity(type, userId, taskId, timestamp, description, user, task);
     }
 

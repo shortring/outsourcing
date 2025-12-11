@@ -2,22 +2,22 @@ package com.outsourcing.domain.activities.dto.response;
 
 import com.outsourcing.common.entity.Activity;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.domain.activities.dto.ActivityType;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
 @Getter
 public class ActivitiesResponse {
     Long id;
-    String type;
+    ActivityType type;
     Long userId;
     User user;
     Long taskId;
     Instant timestamp;
     String description;
 
-    private ActivitiesResponse(Long id, String type, Long userId, User user, Long taskId, Instant timestamp, String description) {
+    private ActivitiesResponse(Long id, ActivityType type, Long userId, User user, Long taskId, Instant timestamp, String description) {
         this.id = id;
         this.type = type;
         this.userId = userId;
@@ -27,7 +27,7 @@ public class ActivitiesResponse {
         this.description = description;
     }
 
-    public static ActivitiesResponse of(Long id, String type, Long userId, User user, Long taskId, Instant timestamp, String description) {
+    public static ActivitiesResponse of(Long id, ActivityType type, Long userId, User user, Long taskId, Instant timestamp, String description) {
         return new ActivitiesResponse(
                 id,
                 type,
