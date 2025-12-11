@@ -3,6 +3,7 @@ package com.outsourcing.domain.task.controller;
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.task.dto.CreateTaskRequest;
 import com.outsourcing.domain.task.dto.TaskResponse;
 import com.outsourcing.domain.task.dto.UpdateTaskRequest;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,7 +26,9 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TaskResponse>> createTaskApi(@Valid @RequestBody CreateTaskRequest request){
+    public ResponseEntity<ApiResponse<TaskResponse>> createTaskApi(
+            @Valid @RequestBody CreateTaskRequest request
+    ){
         TaskResponse data=taskService.createTaskApi(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("작업이 생성되었습니다.", data)
@@ -32,11 +36,11 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskApi(
+    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskApi(@AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long taskId,
             @Valid @RequestBody UpdateTaskRequest request
     ){
-        TaskResponse data=taskService.updateTaskApi(taskId, request);
+        TaskResponse data=taskService.updateTaskApi(userDetails.getUserId(), taskId, request);
         return ResponseEntity.ok(ApiResponse.success("작업이 수정되었습니다.", data));
     }
 
