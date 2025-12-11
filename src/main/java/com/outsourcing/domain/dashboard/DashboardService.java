@@ -1,6 +1,7 @@
 package com.outsourcing.domain.dashboard;
 
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DashboardService {
     private final DashboardRepository dashboardRepository;
-    private final TempTeamMemberRepository teamMemberRepository;
+    private final TeamMemberRepository teamMemberRepository;
 
     @Transactional
     public StatsDashboardResponse stats(Long id) {
