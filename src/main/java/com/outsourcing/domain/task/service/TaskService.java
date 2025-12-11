@@ -5,6 +5,9 @@ import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.enums.UserRole;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.task.dto.CreateTaskRequest;
 import com.outsourcing.domain.task.dto.TaskResponse;
 import com.outsourcing.domain.task.dto.UpdateTaskRequest;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 
@@ -34,8 +38,9 @@ public class TaskService {
     @Transactional
     public TaskResponse createTaskApi(CreateTaskRequest request){
 
+
        User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new IllegalArgumentException("User not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
         Task task=new Task(
                 request.title(),
@@ -54,14 +59,21 @@ public class TaskService {
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request){
+    public TaskResponse updateTaskApi(Long currentUserId, Long taskId, UpdateTaskRequest request){
         Instant now = Instant.now();
 
+        User requestUser=userRepository.findById(currentUserId)
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_USER));
+
+        if(!ObjectUtils.nullSafeEquals(requestUser.getRole(),UserRole.ADMIN)){
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
+        }
+
         User assigneeUser=userRepository.findById(request.assigneeId())
-                .orElseThrow(()->new IllegalArgumentException("User not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
         Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
 
         task.update(
@@ -81,7 +93,7 @@ public class TaskService {
     public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request){
 
         Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         task.changeStatus(request.status());
 
@@ -91,7 +103,7 @@ public class TaskService {
     @Transactional
     public void deleteTaskApi(Long taskId){
         Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         taskRepository.delete(task);
     }
@@ -100,7 +112,7 @@ public class TaskService {
     @Transactional(readOnly=true)
     public TaskResponse getTaskApi(Long taskId){
         Task task=taskRepository.findById(taskId)
-                .orElseThrow(()->new IllegalArgumentException("Task not found"));
+                .orElseThrow(()->new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         return TaskResponse.from(task);
     }
@@ -117,14 +129,19 @@ public class TaskService {
         // 1. pageCondition : 정규화.
         PageCondition pageCondition=PageCondition.of(rawPage, rawSize);
 
-        // 2. -> Pageable
+        // 2. 예외처리
+        if (pageCondition.size() == 0) {
+            throw new CustomException(ErrorMessage.BAD_REQUEST_WRONG_PARAM);
+        }
+
+        // 3. -> Pageable
         Pageable pageable= PageRequest.of(pageCondition.page(),  pageCondition.size());
 
-        // 3. Task -> TaskResponse
+        // 4. Task -> TaskResponse
         Page<Task> taskPage=taskQueryRepository.search(pageable, status, keyword, assigneeId);
         Page<TaskResponse> responseDto=taskPage.map(TaskResponse::from);
 
-        // 4. TaskResponse -> PagedResponse
+        // 5. TaskResponse -> PagedResponse
         return PagedResponse.from(responseDto);
     }
 }
