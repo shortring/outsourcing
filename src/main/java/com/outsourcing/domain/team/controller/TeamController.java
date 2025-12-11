@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/teams")
+@RequestMapping ("/api/teams")
 
 public class TeamController {
 
@@ -31,6 +31,51 @@ public class TeamController {
         ApiResponse<CreateTeamResponseDto> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
 
         ResponseEntity<ApiResponse<CreateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        return response;
+    }
+
+    // 멤버 추가
+    @PostMapping("/{teamId}/members")
+    public ResponseEntity<ApiResponse<List<TeamAddMemberResponse>>> addMemberApi(
+            @PathVariable("teamId") Long teamId,
+            @RequestBody TeamAddMemberRequest request
+    ) {
+
+        List<TeamAddMemberResponse> responseDto = teamService.addMemberTeam(teamId, request);
+
+        ApiResponse<List<TeamAddMemberResponse>> apiResponse = ApiResponse.success("팀 멤버가 추가되었습니다.", responseDto);
+
+        ResponseEntity<ApiResponse<List<TeamAddMemberResponse>>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
+        return response;
+
+    }
+
+    // 멤버 삭제
+    @PostMapping("/{teamId}/members/{userId}")
+    public ResponseEntity<ApiResponse<?>> removeMemberApi(
+            @PathVariable("teamId") Long teamId,
+            @PathVariable("userId") Long userId
+    ) {
+        teamService.removeMemberTeam(teamId, userId);
+
+        ApiResponse<?> apiResponse = ApiResponse.success("팀 멤버가 제거되었습니다.", null);
+
+        ResponseEntity<ApiResponse<?>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
+        return response;
+    }
+
+
+    // 팀 상세 조회 ()
+    @GetMapping("/{teamId}")
+    public ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> getDetailTeamApi (@PathVariable ("teamId") Long teamId) {
+        GetDetailTeamResponseDto responseDto = teamService.getDetailTeam(teamId);
+
+        ApiResponse<GetDetailTeamResponseDto> apiResponse = ApiResponse.success("팀 조회 성공", responseDto);
+
+        ResponseEntity<ApiResponse<GetDetailTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
         return response;
     }
 
@@ -52,7 +97,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTeamApi(@PathVariable("teamId") Long teamId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTeamApi (@PathVariable ("teamId") Long teamId) {
         teamService.deleteTeam(teamId);
 
         ApiResponse<Void> apiResponse = ApiResponse.success("팀이 삭제되었습니다.", null);
