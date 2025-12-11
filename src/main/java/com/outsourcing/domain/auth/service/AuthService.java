@@ -1,6 +1,8 @@
 package com.outsourcing.domain.auth.service;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.common.utils.JwtUtil;
 import com.outsourcing.domain.auth.repository.AuthRepository;
@@ -25,11 +27,11 @@ public class AuthService {
         String password = request.getPassword();
 
         User user = authRepository.findUserByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 다릅니다.");
+            throw new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_PASSWORD);
         }
 
         return jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
@@ -39,7 +41,7 @@ public class AuthService {
     @Transactional
     public VerifyPasswordResponse verifyPassword(VerifyPasswordRequest request, CustomUserDetails userDetails) {
         User user = authRepository.findById(userDetails.getUserId()).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return new VerifyPasswordResponse(false);
