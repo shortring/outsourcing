@@ -24,4 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             ))
             """)
     List<User> findAvailableUsers(@Param("teamId") Long teamId);
+
+    @Query("""
+           SELECT u
+           FROM User u
+           WHERE u.name LIKE %:query%
+           """)
+    List<User> searchByKeyword(@Param("query") String query);
 }
