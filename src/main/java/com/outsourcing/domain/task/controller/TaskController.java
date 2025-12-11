@@ -27,7 +27,9 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<ApiResponse<TaskResponse>> createTask(@Valid @RequestBody CreateTaskRequest request){
         TaskResponse data=taskService.createTask(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("작업이 생성되었습니다.", data));
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.success("작업이 생성되었습니다.", data)
+        );
     }
 
     @PutMapping("/{taskId}")
@@ -36,7 +38,7 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskRequest request
     ){
         TaskResponse data=taskService.updateTask(taskId, request);
-        return ResponseEntity.ok(ApiResponse.success( "작업이 수정되었습니다.", data));
+        return ResponseEntity.ok(ApiResponse.success("작업이 수정되었습니다.", data));
     }
 
     @PatchMapping("/{taskId}/status")
@@ -45,7 +47,7 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskStatusRequest request
     ){
         TaskResponse data=taskService.updateTaskStatus(taskId, request);
-        return ResponseEntity.ok(ApiResponse.success( "작업 상태가 변경되었습니다.", data));
+        return ResponseEntity.ok(ApiResponse.success("작업 상태가 변경되었습니다.", data));
     }
 
     /*
