@@ -17,7 +17,7 @@ public class SearchController {
     private final SearchService tempService;
 
     @GetMapping("/api/search")
-    public ResponseEntity<ApiResponse<SearchResponse>> searchApi(@RequestParam(value = "query") String query) {
+    public ResponseEntity<ApiResponse<SearchResponse>> searchApi(@RequestParam(value = "query", required = false) String query) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)

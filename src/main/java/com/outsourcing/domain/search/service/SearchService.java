@@ -27,7 +27,7 @@ public class SearchService {
     public SearchResponse search(String query) {
 
         // 검색어가 비어있을 때 예외 처리
-        if (query == null) {
+        if (query == null || query.isBlank()) {
             throw new CustomException(ErrorMessage.BAD_REQUEST_NOT_NULL_SEARCH_KEYWORD);
         }
 
