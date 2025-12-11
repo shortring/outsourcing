@@ -38,20 +38,22 @@ public class Activity extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "task_id")
-//    private Task task;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_id")
+    private Task task;
 
-    public Activity(String type, Long userId, Long taskId, Instant timestamp, String description) {
+    public Activity(String type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
         this.type = type;
         this.userId = userId;
         this.taskId = taskId;
         this.timestamp = timestamp;
         this.description = description;
+        this.user = user;
+        this.task = task;
     }
 
-    public static Activity of(String type, Long userId, Long taskId, Instant timestamp, String description) {
-        return new Activity(type, userId, taskId, timestamp, description);
+    public static Activity of(String type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
+        return new Activity(type, userId, taskId, timestamp, description, user, task);
     }
 
     public static ActivitiesResponse from(Activity activity) {
