@@ -1,7 +1,11 @@
-package com.outsourcing.domain.dashboard;
+package com.outsourcing.domain.dashboard.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
+import com.outsourcing.domain.dashboard.dto.StatsDashboardResponse;
+import com.outsourcing.domain.dashboard.dto.SummaryMyTaskResponse;
+import com.outsourcing.domain.dashboard.dto.WeeklyTaskTrendDashboardResponse;
+import com.outsourcing.domain.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +24,17 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
-    public ResponseEntity<ApiResponse<StatsDashboardResponse>> getStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<StatsDashboardResponse>> getStatsApi(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("대시보드 통계 조회 성공", dashboardService.stats(userDetails.getUserId())));
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<ApiResponse<SummaryMyTaskResponse>> getMyTaskSummary(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<SummaryMyTaskResponse>> getMyTaskSummaryApi(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("내 작업 요약 조회 성공", dashboardService.myTaskSummary(userDetails.getUserId())));
     }
 
     @GetMapping("/tasks/weekly-trend")
-    public ResponseEntity<ApiResponse<List<WeeklyTaskTrendDashboardResponse>>> getWeeklyTaskTrend() {
+    public ResponseEntity<ApiResponse<List<WeeklyTaskTrendDashboardResponse>>> getWeeklyTaskTrendApi() {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("주간 작업 추세 조회 성공", dashboardService.weeklyTaskTrend()));
     }
 

@@ -1,7 +1,8 @@
-package com.outsourcing.domain.dashboard;
+package com.outsourcing.domain.dashboard.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 @Getter
 @RequiredArgsConstructor
 public class StatsDashboardResponse {

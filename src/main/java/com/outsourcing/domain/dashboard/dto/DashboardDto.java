@@ -1,4 +1,4 @@
-package com.outsourcing.domain.dashboard;
+package com.outsourcing.domain.dashboard.dto;
 
 import com.outsourcing.common.entity.task.TaskStatus;
 import lombok.Getter;

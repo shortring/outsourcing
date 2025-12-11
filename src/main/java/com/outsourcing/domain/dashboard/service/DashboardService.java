@@ -1,6 +1,8 @@
-package com.outsourcing.domain.dashboard;
+package com.outsourcing.domain.dashboard.service;
 
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.domain.dashboard.dto.*;
+import com.outsourcing.domain.dashboard.repository.DashboardRepository;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -103,7 +105,7 @@ public class DashboardService {
             if (dto.getDueDate().isBefore(today.minusDays(6))) continue;
 
             for (int i = 0; i < 7; ++i) {
-                LocalDate date = today.minusDays( 6 - i);
+                LocalDate date = today.minusDays(6 - i);
 
                 if (dto.getDueDate().isEqual(date)) {
                     weeklyDtos.get(i).sumTasks();

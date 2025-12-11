@@ -1,4 +1,4 @@
-package com.outsourcing.domain.dashboard;
+package com.outsourcing.domain.dashboard.dto;
 
 import lombok.Getter;
 
@@ -17,16 +17,19 @@ public class SummaryMyTaskResponse {
         this.overdueTasks = overdueTasks;
     }
 
-    public static SummaryMyTaskResponse newResponse(){
-        return new SummaryMyTaskResponse(new ArrayList<>() ,new ArrayList<>(), new ArrayList<>());
+    public static SummaryMyTaskResponse newResponse() {
+        return new SummaryMyTaskResponse(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
-    public void addTodayTasks(SummaryMyTaskDto dto){
+
+    public void addTodayTasks(SummaryMyTaskDto dto) {
         this.todayTasks.add(dto);
     }
-    public void addUpcomingTasks(SummaryMyTaskDto dto){
+
+    public void addUpcomingTasks(SummaryMyTaskDto dto) {
         this.upcomingTasks.add(dto);
     }
-    public void addOverdueTasks(SummaryMyTaskDto dto){
+
+    public void addOverdueTasks(SummaryMyTaskDto dto) {
         this.overdueTasks.add(dto);
     }
 }
