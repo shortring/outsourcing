@@ -25,15 +25,13 @@ public class DashboardService {
         List<DashboardDto> dtos = dashboardRepository.findAllTaskStatus();
         Set<Long> teamMembers = teamMemberRepository.findTeamMemberIdsByUserId(id);
 
-        long total = dtos.size(), complete = 0, inProgress = 0, todo = 0, overdue = 0,
-                myTasksToday = 0;
+        long total = dtos.size(), complete = 0, inProgress = 0, todo = 0, overdue = 0, myTasksToday = 0;
         double userTaskTotal = 0, userTaskDone = 0, teamTaskTotal = 0, teamTaskDone = 0;
 
         LocalDate today = LocalDate.now();
 
         for (DashboardDto dto : dtos) {
-            if (!dto.getStatus().equals(TaskStatus.DONE) &&
-                    dto.getDueDate().isBefore(today)) {
+            if (!dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(today)) {
                 ++overdue;
                 continue;
             }
@@ -71,12 +69,15 @@ public class DashboardService {
         List<SummaryMyTaskDto> tasks = dashboardRepository.findAllMyTaskStatusByUserId(id);
         SummaryMyTaskResponse response = SummaryMyTaskResponse.newResponse();
         LocalDate today = LocalDate.now();
+
         for (SummaryMyTaskDto task : tasks) {
             LocalDate dueDay = LocalDateTime.ofInstant(task.getDueDate(), ZoneId.systemDefault()).toLocalDate();
+
             if (dueDay.equals(today)) {
                 response.addTodayTasks(task);
                 continue;
             }
+
             if (dueDay.isAfter(today)) {
                 response.addUpcomingTasks(task);
                 continue;
@@ -94,8 +95,7 @@ public class DashboardService {
         List<WeeklyTaskDashboardDto> weeklyDtos = new ArrayList<>();
         for (int i = 6; i >= 0; --i) {
             LocalDate date = today.minusDays(i);
-            weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(
-                    date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));
+            weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));
         }
 
         for (DashboardDto dto : dtos) {
@@ -106,13 +106,12 @@ public class DashboardService {
 
                 if (dto.getDueDate().isEqual(date)) {
                     weeklyDtos.get(i).sumTasks();
-                    if (dto.getStatus().equals(TaskStatus.DONE))
-                        weeklyDtos.get(i).sumCompleted();
+                    if (dto.getStatus().equals(TaskStatus.DONE)) weeklyDtos.get(i).sumCompleted();
                 }
             }
         }
 
-        for (WeeklyTaskDashboardDto weeklyDto: weeklyDtos) {
+        for (WeeklyTaskDashboardDto weeklyDto : weeklyDtos) {
             response.add(new WeeklyTaskTrendDashboardResponse(weeklyDto));
         }
         return response;

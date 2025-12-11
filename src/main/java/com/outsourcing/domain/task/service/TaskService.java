@@ -37,13 +37,13 @@ public class TaskService {
        User assigneeUser=userRepository.findById(request.assigneeId())
                 .orElseThrow(()->new IllegalArgumentException("User not found"));
 
-        Task task=new Task(
-                request.title(),
-                request.description(),
-                request.priority(),
-                assigneeUser,
-                request.dueDate()
-        );
+       Task task=new Task(
+               request.title(),
+               request.description(),
+               request.priority(),
+               assigneeUser,
+               request.dueDate()
+       );
 
         task.changeStatus(TaskStatus.TODO);
 
