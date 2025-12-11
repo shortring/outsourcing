@@ -93,16 +93,16 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
         List<WeeklyTaskTrendDashboardResponse> response = new ArrayList<>();
         List<WeeklyTaskDashboardDto> weeklyDtos = new ArrayList<>();
-        for (int i = 6; i >= 0; --i) {
-            LocalDate date = today.minusDays(i);
+        for (int i = 0; i < 7; ++i) {
+            LocalDate date = today.minusDays(6 - i);
             weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));
         }
 
         for (DashboardDto dto : dtos) {
             if (dto.getDueDate().isBefore(today.minusDays(6))) continue;
 
-            for (int i = 6; i >= 0; --i) {
-                LocalDate date = today.minusDays(i);
+            for (int i = 0; i < 7; ++i) {
+                LocalDate date = today.minusDays( 6 - i);
 
                 if (dto.getDueDate().isEqual(date)) {
                     weeklyDtos.get(i).sumTasks();
