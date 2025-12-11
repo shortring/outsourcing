@@ -118,7 +118,7 @@ public class UserService {
     }
 
     //추가 가능한 사용자 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AvailableUserResponse> getAvailableUsers(Long teamId) {
 
         List<User> users = userRepository.findAvailableUsers(teamId);
