@@ -21,36 +21,6 @@ public class ActivitiesService {
     private final ActivityRepository activityRepository;
     private final Logger log = LoggerFactory.getLogger(ActivitiesService.class);
 
-    @CreateLog
-    @Transactional
-    public ActivitiesResponse createLog(Activity activity) {
-        // 시작 시간
-        long startTime = System.currentTimeMillis();
-
-        try {
-            // 데이터 준비
-
-            // 엔티티 생성
-
-            // 저장
-            //repository.save(activity);
-
-//            if (true) {
-//                throw new RuntimeException();     aop에서 감지된 런타임 예외
-//            }
-
-            // response dto 만들기
-            //ActivitiesResponse response = ActivitiesResponse.from(activity);
-        } finally {
-            log.info("로그 출력");
-        }
-
-        //String name = ActivitiesResponse.
-        // 로그 생성 및 저장
-        //activityRepository.save(activity);
-        return null;
-    }
-
     @Transactional
     public Page<ActivitiesResponse> getAllActivitiesLog(ActivityType type, Long taskId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
 
@@ -58,7 +28,6 @@ public class ActivitiesService {
         LocalDateTime startDateTime = startDate == null ? startDate.withYear(1).withMonth(1).withDayOfMonth(1) : startDate;
         LocalDateTime endDateTime = endDate == null ? endDate.withYear(9999).withMonth(12).withDayOfMonth(31) : endDate;
 
-        // activityRepository.filter(startDate, endDate, pageable)
         // 페이징
         Page<Activity> activitiesPage;
 
