@@ -17,22 +17,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    @PostMapping("/auth/login")
+    public ResponseEntity<LoginResponse> loginAip(@RequestBody LoginRequest request) {
 
-        String token = authService.login(request);
+        String token = authService.loginAip(request);
 
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
-    @PostMapping("/verify-password")
-    public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPassword(@RequestBody VerifyPasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @PostMapping("/users/verify-password")
+    public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPasswordAip(@RequestBody VerifyPasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        VerifyPasswordResponse result = authService.verifyPassword(request, userDetails);
+        VerifyPasswordResponse result = authService.verifyPasswordAip(request, userDetails);
         if (!result.isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("비밀번호가 올바르지 않습니다.", result));
         }
