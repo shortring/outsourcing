@@ -27,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
     public String getPassword() {
         return this.password;
     }
-    //스프링 시큐리티의 username = email
+    //스프링 시큐리티의 username = username
     @Override
     public String getUsername() {
         return this.username;

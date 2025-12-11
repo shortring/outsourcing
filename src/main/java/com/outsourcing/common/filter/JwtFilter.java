@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -53,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!jwtUtil.validateToken(jwt)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);//유효하지 않아
             response.getWriter().write("{\"error\": \"Unauthorized\"}");
-
+            return;
         }
 
         String userName = jwtUtil.extractUsername(jwt);
@@ -65,7 +66,12 @@ public class JwtFilter extends OncePerRequestFilter {
         UserRole userRole = UserRole.valueOf(auth);
 
         //Spring Security에서 사용하는 User 객체를 생성했습니다.
-        CustomUserDetails userDetails = new CustomUserDetails(userId, userName, "N/A", List.of(userRole::getRole));
+        CustomUserDetails userDetails = new CustomUserDetails(
+                userId,
+                userName,
+                "N/A",
+                List.of(new SimpleGrantedAuthority(userRole.getRole()))
+        );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,

@@ -31,9 +31,11 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<GetUserResponse>> getUserApi(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<GetUserResponse>> getUserApi(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        GetUserResponse result = userService.getUser(userId ,userDetails);
+        GetUserResponse result = userService.getUser(userId, userDetails);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 정보 조회 성공", result));
     }
@@ -47,7 +49,10 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserApi(@PathVariable Long userId, @Valid @RequestBody UpdateUserRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserApi(
+            @PathVariable Long userId,
+            @Valid @RequestBody UpdateUserRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         UpdateUserResponse result = userService.updateUser(userId, request, userDetails);
 
@@ -55,11 +60,20 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse<Void>> deleteUserApi(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<Void>> deleteUserApi(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         userService.deleteUser(userId, userDetails);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.",null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.", null));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse<List<AvailableUserResponse>>> getAvailableUsers(@RequestParam(required = false) Long teamId) {
+
+        List<AvailableUserResponse> result = userService.getAvailableUsers(teamId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("추가 가능한 사용자 목록 조회 성공", result));
     }
 
 

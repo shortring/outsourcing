@@ -2,10 +2,10 @@ package com.outsourcing.domain.user.service;
 
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.common.utils.JwtUtil;
 import com.outsourcing.domain.user.model.UserDto;
 import com.outsourcing.domain.user.model.request.CreateUserRequest;
 import com.outsourcing.domain.user.model.request.UpdateUserRequest;
+import com.outsourcing.domain.user.model.response.AvailableUserResponse;
 import com.outsourcing.domain.user.model.response.CreateUserResponse;
 import com.outsourcing.domain.user.model.response.GetUserResponse;
 import com.outsourcing.domain.user.model.response.UpdateUserResponse;
@@ -22,7 +22,6 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     //사용자 생성
     @Transactional
@@ -116,4 +115,16 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    //추가 가능한 사용자 조회
+    @Transactional
+    public List<AvailableUserResponse> getAvailableUsers(Long teamId) {
+
+        List<User> users = userRepository.findAvailableUsers(teamId);
+
+        return users.stream()
+                .map(UserDto::from)
+                .map(AvailableUserResponse::from)
+                .toList();
+
+    }
 }
