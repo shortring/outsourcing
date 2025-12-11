@@ -20,13 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
+
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginResponse> loginAip(@RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> loginAip(@RequestBody LoginRequest request) {
 
-        String token = authService.loginAip(request);
+        LoginResponse result = new LoginResponse(authService.loginAip(request));
 
-        return ResponseEntity.ok(new LoginResponse(token));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("로그인 성공", result));
     }
 
     @PostMapping("/users/verify-password")
