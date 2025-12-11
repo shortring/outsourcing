@@ -16,7 +16,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String username;//사용자 아이디
@@ -34,6 +34,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user")
+    private final List<TeamMember> members = new ArrayList<>();
 
     public User(String username, String email, String password, String name, UserRole role) {
         this.username = username;
