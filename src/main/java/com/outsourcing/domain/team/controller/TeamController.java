@@ -1,6 +1,7 @@
 package com.outsourcing.domain.team.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
 import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
 import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,9 +37,12 @@ public class TeamController {
     @PutMapping("/{teamId}")
     public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi(
             @PathVariable("teamId") Long teamId,
-            @RequestBody UpdateTeamRequestDto requestDto) {
+            @RequestBody UpdateTeamRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetails user) {
 
-        UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, requestDto);
+        Long userId = user.getUserId();
+
+        UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, userId, requestDto);
 
         ApiResponse<UpdateTeamResponseDto> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
 

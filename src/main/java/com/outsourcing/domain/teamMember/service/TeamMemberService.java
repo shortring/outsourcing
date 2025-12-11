@@ -6,6 +6,7 @@ import com.outsourcing.common.entity.User;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.team.repository.TeamRepository;
+import com.outsourcing.domain.team.service.TeamValidateService;
 import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
 import com.outsourcing.domain.teamMember.dto.response.*;
 import com.outsourcing.domain.teamMember.mapper.TeamMemberMapper;
@@ -26,10 +27,11 @@ public class TeamMemberService {
     private final TeamMemberRepository teamMemberRepository;
     private final UserRepository userRepository;
     private final TeamMemberMapper teamMemberMapper;
+    private final TeamValidateService teamValidateService;
 
     // 멤버 추가
     @Transactional
-    public AddTeamMemberResponseDto addMemberTeam (Long teamId, AddTeamMemberRequestDto request) {
+    public AddTeamMemberResponseDto addMemberTeam(Long teamId, AddTeamMemberRequestDto request) {
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -52,10 +54,12 @@ public class TeamMemberService {
         return response;
     }
 
-    // 멤버 삭제
+    // 멤버 제거
     @Transactional
-    public void removeMemberTeam (Long teamId, Long userId) {
-        TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(teamId, userId)
+    public void removeMemberTeam(Long teamId, Long pointUserId, Long userId) {
+        teamValidateService.ValidateUser(teamId, userId, ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
+
+        TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(teamId, pointUserId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM_MEMBER));
 
         teamMemberRepository.delete(teamMember);
@@ -63,7 +67,7 @@ public class TeamMemberService {
 
     // 팀 목록 조회
     @Transactional(readOnly = true)
-    public List<GetTeamListResponseDto> getTeamList () {
+    public List<GetTeamListResponseDto> getTeamList() {
 
         List<Team> teamList = teamRepository.findAll();
         List<GetTeamListResponseDto> response = new ArrayList<>();
@@ -91,7 +95,7 @@ public class TeamMemberService {
 
     // 팀 상세 조회
     @Transactional(readOnly = true)
-    public GetTeamDetailResponseDto getTeamDetail (Long teamId) {
+    public GetTeamDetailResponseDto getTeamDetail(Long teamId) {
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
@@ -115,7 +119,7 @@ public class TeamMemberService {
 
     // 팀 멤버 조회
     @Transactional(readOnly = true)
-    public List<GetTeamMemberResponseDto> getTeamMember (Long teamId) {
+    public List<GetTeamMemberResponseDto> getTeamMember(Long teamId) {
 
         List<TeamMember> members = teamMemberRepository.findAllByTeamId(teamId);
 

@@ -1,6 +1,7 @@
 package com.outsourcing.domain.teamMember.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
 import com.outsourcing.domain.teamMember.dto.response.AddTeamMemberResponseDto;
 import com.outsourcing.domain.teamMember.dto.response.GetTeamDetailResponseDto;
@@ -10,6 +11,7 @@ import com.outsourcing.domain.teamMember.service.TeamMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,8 @@ public class TeamMemberController {
     public ResponseEntity<ApiResponse<AddTeamMemberResponseDto>> addMemberApi(
             @PathVariable("teamId") Long teamId,
             @RequestBody AddTeamMemberRequestDto request
+
+
     ) {
 
         AddTeamMemberResponseDto responseDto = teamMemberService.addMemberTeam(teamId, request);
@@ -41,9 +45,12 @@ public class TeamMemberController {
     @DeleteMapping("/{teamId}/members/{userId}")
     public ResponseEntity<ApiResponse<?>> removeMemberApi(
             @PathVariable("teamId") Long teamId,
-            @PathVariable("userId") Long userId
+            @PathVariable("userId") Long pointUserId,
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-        teamMemberService.removeMemberTeam(teamId, userId);
+        Long userId = user.getUserId();
+
+        teamMemberService.removeMemberTeam(teamId, pointUserId, userId);
 
         ApiResponse<?> apiResponse = ApiResponse.success("팀 멤버가 제거되었습니다.", null);
 

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final TeamValidateService teamValidateService;
 
     // 팀 생성
     @Transactional
@@ -43,8 +44,10 @@ public class TeamService {
 
     // 팀 수정
     @Transactional
-    public UpdateTeamResponseDto updateTeam(Long id, UpdateTeamRequestDto requestDto) {
-        Team findTeam = teamRepository.findById(id).orElseThrow
+    public UpdateTeamResponseDto updateTeam(Long teamId, Long userId, UpdateTeamRequestDto requestDto) {
+        teamValidateService.ValidateUser(teamId, userId, ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
+
+        Team findTeam = teamRepository.findById(teamId).orElseThrow
                 (() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
         findTeam.update(
