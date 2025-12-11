@@ -44,8 +44,12 @@ public class ActivitiesController {
 
     // 내 활동 로그 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<ActivitiesResponse>> getAllMyActivitiesLog(HttpServletRequest request, @RequestParam Long userId) {
-        // Jwt토큰에서 추출
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<ApiResponse<Page<ActivitiesResponse>>> getAllMyActivitiesLog(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<ActivitiesResponse> result = activitiesService.getAllMyActivitiesLog(request, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("활동 로그 조회 성공", result));
     }
 }

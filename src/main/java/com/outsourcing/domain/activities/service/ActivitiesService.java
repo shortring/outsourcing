@@ -1,10 +1,12 @@
 package com.outsourcing.domain.activities.service;
 
-import com.outsourcing.common.aop.CreateLog;
+import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.entity.Activity;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.dto.response.ActivitiesResponse;
 import com.outsourcing.domain.activities.repository.ActivityRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -47,6 +49,14 @@ public class ActivitiesService {
         }
 
         // 최종 조회 값 리턴
+        return activitiesPage.map(ActivitiesResponse::from);
+    }
+
+    @Transactional
+    public Page<ActivitiesResponse> getAllMyActivitiesLog(HttpServletRequest request, Pageable pageable) {
+
+        CustomUserDetails userDetails = (CustomUserDetails) request.getUserPrincipal();
+        Page<Activity> activitiesPage = activityRepository.findAllByUserId(userDetails.getUserId(), pageable);
         return activitiesPage.map(ActivitiesResponse::from);
     }
 }

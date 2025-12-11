@@ -21,4 +21,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     Page<Activity> findAllByType(Long taskId, Pageable pageable, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     Page<Activity> findAllByTypeAndTaskId(Long taskId, Pageable pageable, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    Page<Activity> findAllByUserId(Long userId, Pageable pageable);
 }
