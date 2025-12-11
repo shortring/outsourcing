@@ -10,7 +10,7 @@ import java.util.Set;
 public interface TempTeamMemberRepository extends JpaRepository<TeamMember, Long> {
     @Query("""
             SELECT tm2.user.id FROM TeamMember tm1 JOIN TeamMember tm2
-            ON tm1.team.id = tm2.team.id WHERE tm1.user.id = : userId
+            ON tm1.team.id = tm2.team.id WHERE tm1.user.id = :userId
             """)
     Set<Long> findTeamMemberIdsByUserId(@Param("userId") Long userId);
 }
