@@ -23,7 +23,8 @@ public class DashboardService {
     private final DashboardRepository dashboardRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    @Transactional
+    // 대시보드 통계 조회
+    @Transactional(readOnly = true)
     public StatsDashboardResponse stats(Long id) {
         List<DashboardDto> dtos = dashboardRepository.findAllTaskStatus();
         Set<Long> teamMembers = teamMemberRepository.findTeamMemberIdsByUserId(id);
@@ -67,7 +68,8 @@ public class DashboardService {
         return new StatsDashboardResponse(total, complete, inProgress, todo, overdue, teamProgress, myTasksToday, completionRate);
     }
 
-    @Transactional
+    // 내 작업 요약 조회
+    @Transactional(readOnly = true)
     public SummaryMyTaskResponse myTaskSummary(Long id) {
         List<SummaryMyTaskDto> tasks = dashboardRepository.findAllMyTaskStatusByUserId(id);
         SummaryMyTaskResponse response = SummaryMyTaskResponse.newResponse();
@@ -90,7 +92,8 @@ public class DashboardService {
         return response;
     }
 
-    @Transactional
+    //주간 작업 추세 조회
+    @Transactional(readOnly = true)
     public List<WeeklyTaskTrendDashboardResponse> weeklyTaskTrend() {
         List<DashboardDto> dtos = dashboardRepository.findAllTaskStatus();
         LocalDate today = LocalDate.now();
