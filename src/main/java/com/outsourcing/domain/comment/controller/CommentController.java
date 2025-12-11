@@ -1,6 +1,7 @@
 package com.outsourcing.domain.comment.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,17 +24,18 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateCommentResponse>> createComment(
+    public ResponseEntity<ApiResponse<CreateCommentResponse>> createCommentApi(
             @PathVariable Long taskId,
-            @Valid @RequestBody CreateCommentRequest request) {
+            @Valid @RequestBody CreateCommentRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("댓글이 작성되었습니다.", commentService.createComment(taskId, request)));
+                .body(ApiResponse.success("댓글이 작성되었습니다.", commentService.createComment(taskId, request, userDetails)));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<GetCommentResponse>>> getComment(
+    public ResponseEntity<ApiResponse<PageResponse<GetCommentResponse>>> getCommentApi(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -44,22 +47,24 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<UpdateCommentResponse>> updateComment(
+    public ResponseEntity<ApiResponse<UpdateCommentResponse>> updateCommentApi(
             @PathVariable Long taskId,
             @PathVariable Long commentId,
-            @RequestBody UpdateCommentRequest request) {
+            @RequestBody UpdateCommentRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("댓글이 수정되었습니다.", commentService.updateComment(taskId, commentId, request)));
+                .body(ApiResponse.success("댓글이 수정되었습니다.", commentService.updateComment(taskId, commentId, request, userDetails)));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<Void>> deleteComment(
+    public ResponseEntity<ApiResponse<Void>> deleteCommentApi(
             @PathVariable Long taskId,
-            @PathVariable Long commentId) {
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        commentService.deleteComment(taskId, commentId);
+        commentService.deleteComment(taskId, commentId, userDetails);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

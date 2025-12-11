@@ -5,6 +5,7 @@ import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.comment.model.dto.CommentDto;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
@@ -14,7 +15,7 @@ import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.repository.CommentRepository;
 import com.outsourcing.domain.task.TaskRepository;
-import com.outsourcing.domain.user.UserRepository;
+import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,15 +33,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CreateCommentResponse createComment(Long taskId, CreateCommentRequest request) {
-        User findUser = getUserOrThrow(1L); // 임시
-        Task findTask = getTaskOrThrow(taskId);
+    public CreateCommentResponse createComment(Long taskId, CreateCommentRequest request, CustomUserDetails userDetails) {
+        User findUser = getUser(userDetails.getUserId());
+        Task findTask = getTask(taskId);
 
         Comment parentComment = null;
 
         // 일반 댓글이 아닌 답글을 달겠다는 요청일 때
         if (request.getParentId() != null) {
-            parentComment = getCommentOrThrow(request.getParentId());
+            parentComment = getComment(request.getParentId());
             
             // 무한 댓글(답글에 답글...구조)을 막기 위해 parentId의 부모 댓글이 null인지 검증
             // null이 아니면 답글에 또 답글을 달려고 하는 것이므로 예외 처리
@@ -63,9 +64,9 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public PageResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
-        getTaskOrThrow(taskId);
 
-        // 같은 Task에 달린 댓글인지 검증해야함
+        // 요청이 들어온 Task가 존재하는지 검증
+        checkTaskExists(taskId);
         
         Pageable pageable = null;
 
@@ -83,13 +84,17 @@ public class CommentService {
     }
 
     @Transactional
-    public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request) {
-        getTaskOrThrow(taskId);
-        
-        // 인증된 사용자인지 검증
-        // 다른 사용자의 댓글인지 검증
+    public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request, CustomUserDetails userDetails) {
 
-        Comment comment = getCommentOrThrow(commentId);
+        // 요청이 들어온 Task가 존재하는지 검증
+        checkTaskExists(taskId);
+
+        Comment comment = getComment(commentId);
+
+        // 수정하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
+        if (comment.getUser().getId() != userDetails.getUserId()) {
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE_COMMENT);
+        }
 
         comment.updateComment(request.getContent());
 
@@ -101,28 +106,39 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long taskId, Long commentId) {
-        getTaskOrThrow(taskId);
+    public void deleteComment(Long taskId, Long commentId, CustomUserDetails userDetails) {
 
-        // 인증된 사용자인지 검증
-        // 다른 사용자의 댓글인지 검증
+        // 요청이 들어온 Task가 존재하는지 검증
+        checkTaskExists(taskId);
 
-        Comment comment = getCommentOrThrow(commentId);
+        Comment comment = getComment(commentId);
+
+        // 삭제하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
+        if (comment.getUser().getId() != userDetails.getUserId()) {
+            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT);
+        }
 
         commentRepository.delete(comment);
     }
 
-    private User getUserOrThrow(Long userId) {
+    // 요청이 들어온 Task가 존재하는지 검증
+    private void checkTaskExists(Long taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new CustomException(ErrorMessage.NOT_FOUND_TASK);
+        }
+    }
+
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_USER));
     }
 
-    private Task getTaskOrThrow(Long taskId) {
+    private Task getTask(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
     }
 
-    private Comment getCommentOrThrow(Long commentId) {
+    private Comment getComment(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_COMMENT));
     }

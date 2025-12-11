@@ -1,6 +1,7 @@
 package com.outsourcing.domain.comment.model.response;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.UserRole;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +13,7 @@ public class DetailUserResponse {
     private final String username;
     private final String name;
     private final String email;
-    private final String role;
+    private final UserRole role;
 
     public static DetailUserResponse from(User user) {
 
