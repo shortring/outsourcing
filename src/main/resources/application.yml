@@ -1,8 +1,6 @@
 spring:
-  config:
-    import: optional:file:.env
   application:
-    name: NewsFeed
+    name: outsourcing
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -20,4 +18,5 @@ spring:
         generate_statistics: true
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret:
+    key: ${JWT_SECRET}
