@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-//    @EntityGraph(attributePaths = "tasks")
+    @EntityGraph(attributePaths = "tasks")
     Page<Comment> findAllByTaskId(Pageable pageable, Long taskId);
 }

@@ -1,5 +1,6 @@
 package com.outsourcing.domain.comment.service;
 
+import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.Comment;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
@@ -11,7 +12,6 @@ import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
 import com.outsourcing.domain.comment.model.response.GetCommentResponse;
-import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.repository.CommentRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
@@ -69,7 +69,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
+    public PagedResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
 
         // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
@@ -86,7 +86,7 @@ public class CommentService {
 
         Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
 
-        return PageResponse.from(commentResponsePage);
+        return PagedResponse.from(commentResponsePage);
     }
 
     @Transactional
@@ -98,7 +98,7 @@ public class CommentService {
         Comment comment = getComment(commentId);
 
         // 수정하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
-        if (comment.getUser().getId() != userDetails.getUserId()) {
+        if (!comment.getUser().getId().equals(userDetails.getUserId())) {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE_COMMENT);
         }
 
@@ -120,7 +120,7 @@ public class CommentService {
         Comment comment = getComment(commentId);
 
         // 삭제하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
-        if (comment.getUser().getId() != userDetails.getUserId()) {
+        if (!comment.getUser().getId().equals(userDetails.getUserId())) {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT);
         }
 

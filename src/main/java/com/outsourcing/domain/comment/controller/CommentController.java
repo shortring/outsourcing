@@ -1,12 +1,12 @@
 package com.outsourcing.domain.comment.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
+import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
 import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
 import com.outsourcing.domain.comment.model.response.GetCommentResponse;
-import com.outsourcing.domain.comment.model.response.PageResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.comment.service.CommentService;
 import jakarta.validation.Valid;
@@ -35,7 +35,7 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<GetCommentResponse>>> getCommentApi(
+    public ResponseEntity<ApiResponse<PagedResponse<GetCommentResponse>>> getCommentApi(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
