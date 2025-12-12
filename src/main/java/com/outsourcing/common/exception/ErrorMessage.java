@@ -33,6 +33,7 @@ public enum ErrorMessage {
     FORBIDDEN_NO_PERMISSION_UPDATE_COMMENT(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다."),
     FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다."),
     FORBIDDEN_NO_PERMISSION_DELETE_TASK(HttpStatus.FORBIDDEN, "작업을 삭제할 권한이 없습니다."),
+    INVALID_JWT_TOKEN(HttpStatus.FORBIDDEN, "유효하지 않은 JWT 토큰입니다."),
 
     // 404
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
