@@ -104,7 +104,7 @@ public class TaskService {
         if (!request.status().toString().equals(task.getStatus().toString())) {
             Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
             User user = userRepository.getReferenceById(userId);
-            String description = "작업 상태를" + task.getStatus().toString() + "에서" + request.status() + "으로 변경했습니다.";
+            String description = "작업 상태를 " + task.getStatus().toString() + "에서 " + request.status() + "으로 변경했습니다.";
 
             activityRepository.save(Activity.of(ActivityType.COMMENT_DELETED, Instant.now(), description, user, task));
         }
