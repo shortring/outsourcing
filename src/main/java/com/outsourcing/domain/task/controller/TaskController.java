@@ -50,7 +50,6 @@ public class TaskController {
     ) {
         TaskResponse data = taskService.updateTaskStatusApi(taskId, request);
 
-        log.info("==== PATCH /api/tasks/{}/status called with status={}", taskId, request.status());
         return ResponseEntity.ok(ApiResponse.success("작업 상태가 변경되었습니다.", data));
     }
 

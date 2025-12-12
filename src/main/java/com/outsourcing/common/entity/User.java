@@ -1,5 +1,6 @@
 package com.outsourcing.common.entity;
 
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,6 +35,10 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private IsDeleted isDeleted =IsDeleted.FALSE;
+
     @OneToMany(mappedBy = "user")
     private final List<TeamMember> members = new ArrayList<>();
 
@@ -49,5 +54,9 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public void softDelete(IsDeleted isDeleted){
+        this.isDeleted = isDeleted;
     }
 }
