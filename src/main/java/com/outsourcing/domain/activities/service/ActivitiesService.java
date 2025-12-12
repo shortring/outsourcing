@@ -36,16 +36,16 @@ public class ActivitiesService {
         // 설정에 따라 조건 조회
         if (type == null && taskId == null) {
             // 전부 조회
-            activitiesPage = activityRepository.findAll(pageable, startDateTime, endDateTime);
+            activitiesPage = activityRepository.findAll(pageable);
         } else if (type == null) {
             // 작업 id로 조건 조회
             activitiesPage = activityRepository.findAllByTaskId(taskId, pageable, startDateTime, endDateTime);
         } else if (taskId == null) {
             // 타입으로 조건 조회
-            activitiesPage = activityRepository.findAllByType(taskId, pageable, startDateTime, endDateTime);
+            activitiesPage = activityRepository.findAllByType(type, pageable);
         } else {
             // 작업 id && 타입으로 조건 조회
-            activitiesPage = activityRepository.findAllByTypeAndTaskId(taskId, pageable, startDateTime, endDateTime);
+            activitiesPage = activityRepository.findAllByTypeAndTaskId(type, taskId,pageable, startDateTime, endDateTime);
         }
 
         // 최종 조회 값 리턴
