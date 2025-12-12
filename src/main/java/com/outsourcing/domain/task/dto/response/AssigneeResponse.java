@@ -18,9 +18,9 @@ public record AssigneeResponse(
 
     public static AssigneeResponse from(TaskDto task) {
         return new AssigneeResponse(
-                task.assignee().id(),
-                task.assignee().username(),
-                task.assignee().name()
+                task.getAssignee().id(),
+                task.getAssignee().username(),
+                task.getAssignee().name()
         );
     }
 }

@@ -21,18 +21,18 @@ public record TaskResponse(
 ) {
     public static TaskResponse from(TaskDto taskDto) {
         return new TaskResponse(
-                taskDto.id(),
-                taskDto.title(),
-                taskDto.description(),
-                taskDto.status(),
-                taskDto.priority(),
-                taskDto.assigneeId(),
+                taskDto.getId(),
+                taskDto.getTitle(),
+                taskDto.getDescription(),
+                taskDto.getStatus(),
+                taskDto.getPriority(),
+                taskDto.getAssigneeId(),
                 AssigneeResponse.from(
                         taskDto
                 ),
-                taskDto.createdAt(),
-                taskDto.updatedAt(),
-                taskDto.dueDate()
+                taskDto.getCreatedAt(),
+                taskDto.getUpdatedAt(),
+                taskDto.getDueDate()
         );
     }
 
