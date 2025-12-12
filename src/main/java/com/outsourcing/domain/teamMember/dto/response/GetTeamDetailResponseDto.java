@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class GetTeamDetailResponseDto {
-    private final Long teamId;
+    private final Long id;
     private final String name;
     private final String description;
     private final Instant createdAt;

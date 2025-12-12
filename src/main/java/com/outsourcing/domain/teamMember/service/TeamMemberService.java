@@ -5,6 +5,7 @@ import com.outsourcing.common.entity.TeamMember;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
+import com.outsourcing.domain.team.dto.TeamDto;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.team.service.TeamValidateService;
 import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
@@ -14,12 +15,14 @@ import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Controller
+@Service
 @RequiredArgsConstructor
 public class TeamMemberService {
 
@@ -74,7 +77,7 @@ public class TeamMemberService {
 
         for (Team team : teamList) {
 
-            List<TeamMember> members = teamMemberRepository.findAllByTeamId(team.getId());
+            List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(team.getId());
 
             List<GetMemberListResponseDto> memberList = new ArrayList<>();
             for (TeamMember teamMember : members) {
@@ -100,7 +103,8 @@ public class TeamMemberService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
-        List<TeamMember> members = teamMemberRepository.findAllByTeamId(teamId);
+        List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(team.getId());
+
 
         List<GetMemberDetailResponseDto> responseDto = new ArrayList<>();
         for (TeamMember teamMember : members) {
@@ -121,10 +125,11 @@ public class TeamMemberService {
     @Transactional(readOnly = true)
     public List<GetTeamMemberResponseDto> getTeamMember(Long teamId) {
 
-        List<TeamMember> members = teamMemberRepository.findAllByTeamId(teamId);
+        List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(teamId);
 
         List<GetTeamMemberResponseDto> response = new ArrayList<>();
         for (TeamMember teamMember : members) {
+            // (+) if user의 isDeleted가 true면 통과
             response.add(teamMemberMapper.getTeamMemberDto(teamMember));
         }
         return response;

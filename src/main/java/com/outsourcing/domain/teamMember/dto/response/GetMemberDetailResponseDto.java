@@ -9,7 +9,7 @@ import java.time.Instant;
 @Getter
 @RequiredArgsConstructor
 public class GetMemberDetailResponseDto {
-    private final Long memberId;
+    private final Long id;
     private final String username;
     private final String name;
     private final String email;
