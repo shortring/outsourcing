@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,17 +37,19 @@ public class CommentService {
         Task findTask = getTask(taskId);
 
         Comment parentComment = null;
+        Long commentGroup = null;
 
         // 일반 댓글이 아닌 답글을 달겠다는 요청일 때
         if (request.getParentId() != null) {
 
             parentComment = getComment(request.getParentId());
+            commentGroup = parentComment.getCommentGroup(); // 답글일 경우 commentGroup을 부모 댓글 commentGroup으로 설정
 
             // 답글을 달겠다는 요청일 때, 요청의 부모 댓글의 taskId와 pathVariable의 taskId가 같은지 검증
             if (!parentComment.getTask().getId().equals(taskId)) {
                 throw new CustomException(ErrorMessage.BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH);
             }
-            
+
             // 무한 댓글(답글에 답글...구조)을 막기 위해 parentId의 부모 댓글이 null인지 검증
             // null이 아니면 답글에 또 답글을 달려고 하는 것이므로 예외 처리
             if (parentComment.getParentComment() != null) {
@@ -60,10 +61,18 @@ public class CommentService {
                 findUser,
                 findTask,
                 parentComment,
-                request.getContent()
+                request.getContent(),
+                commentGroup
         );
 
-        CommentDto commentDto = CommentDto.from(commentRepository.save(comment));
+        Comment savedComment = commentRepository.save(comment);
+
+        // 부모 댓글일 경우 댓글 생성 후 commentGroup를 자기 id로 설정
+        if (parentComment == null) {
+            savedComment.updateCommentGroup(comment.getId());
+        }
+
+        CommentDto commentDto = CommentDto.from(savedComment);
 
         return CreateCommentResponse.from(commentDto);
     }
@@ -71,28 +80,25 @@ public class CommentService {
     @Transactional(readOnly = true)
     public PagedResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
 
-        // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
-        
-        Pageable pageable = null;
 
-        if (sort.equals("newest")) {
-            pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Comment> comments;
+
+        if ("newest".equals(sort)) {
+            comments = commentRepository.findCommentSortedByNewest(pageable, taskId);
         } else {
-            pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+            comments = commentRepository.findCommentSortedByOldest(pageable, taskId);
         }
 
-        Page<Comment> comments = commentRepository.findAllByTaskId(pageable, taskId);
-
         Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
-
         return PagedResponse.from(commentResponsePage);
     }
 
     @Transactional
     public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request, CustomUserDetails userDetails) {
 
-        // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
 
         Comment comment = getComment(commentId);
@@ -114,7 +120,6 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long taskId, Long commentId, CustomUserDetails userDetails) {
 
-        // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
 
         Comment comment = getComment(commentId);
@@ -124,7 +129,12 @@ public class CommentService {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT);
         }
 
-        commentRepository.delete(comment);
+        // 부모 댓글이면 같은 그룹의 댓글 전부 논리 삭제, 답글이면 해당 답글만 논리 삭제
+        if (comment.getParentComment() == null) {
+            commentRepository.softDeleteWithParentComment(comment.getCommentGroup());
+        } else {
+            commentRepository.softDeleteWithChildComment(comment.getId());
+        }
     }
 
     // 요청이 들어온 Task가 존재하는지 검증
