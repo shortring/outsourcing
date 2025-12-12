@@ -29,9 +29,8 @@ import java.time.Instant;
 @Component
 @RequiredArgsConstructor
 public class LoggingAspect {
-    UserRepository userRepository;
-    TaskRepository taskRepository;
-    ActivityRepository activityRepository;
+    private final TaskRepository taskRepository;
+    private final ActivityRepository activityRepository;
 
     @Pointcut("execution(* com.outsourcing.domain.comment.service.CommentService.*(..))")
     public void allCommentServiceMethods() {
@@ -67,44 +66,36 @@ public class LoggingAspect {
         // 저장할 정보들
         ActivityType status = null;
         Task task = null;
-        User user = null;
+        User user = new User(userId);
         String description = null;
 
         switch (methodName) {
             case "createTaskApi":
 
-                TaskResponse response = (TaskResponse) result;
-                task = taskRepository.getReferenceById(response.getId());
-                user = userRepository.getReferenceById(userId);
-                description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
+                TaskResponse taskResponse = (TaskResponse) result;
+                task = new Task(taskResponse.getId());
+                description = "새로운 작업 \"" + taskResponse.getTitle() + "\"을 생성했습니다.";
                 status = ActivityType.COMMENT_CREATED;
 
                 break;
 
             case "deleteTaskApi":
-
                 Object[] request = joinPoint.getArgs();
-                task = taskRepository.getReferenceById((Long) request[0]);
-                user = userRepository.getReferenceById(userId);
-                description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
+                task = taskRepository.findById((Long) request[0]).orElseThrow();
+                description = "작업 \"" + task.getTitle() + "을 삭제했습니다.";
                 status = ActivityType.TASK_DELETED;
                 break;
 
             case "createCommentApi":
-                if (result instanceof CreateCommentResponse) {
                     CreateCommentResponse commentResponse = (CreateCommentResponse) result;
-                    task = taskRepository.getReferenceById(commentResponse.getTaskId());
-                    user = userRepository.getReferenceById(commentResponse.getUserId());
+                    task = new Task(commentResponse.getTaskId());
                     description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
                     status = ActivityType.COMMENT_CREATED;
-
-                }
                 break;
 
             case "updateCommentApi":
-                UpdateCommentResponse responses = (UpdateCommentResponse) result;
-                task = taskRepository.getReferenceById(responses.getTaskId());
-                user = userRepository.getReferenceById(responses.getUserId());
+                UpdateCommentResponse commentResponses = (UpdateCommentResponse) result;
+                task = new Task(commentResponses.getTaskId());
                 description = "댓글을 수정하였습니다.";
                 status = ActivityType.COMMENT_UPDATED;
 
@@ -112,8 +103,7 @@ public class LoggingAspect {
 
             case "deleteCommentApi":
                 Object[] requests = joinPoint.getArgs();
-                task = taskRepository.getReferenceById((Long) requests[0]);
-                user = userRepository.getReferenceById((Long) requests[1]);
+                task = new Task((Long) requests[0]);
                 description = "댓글을 삭제했습니다.";
                 status = ActivityType.COMMENT_DELETED;
 

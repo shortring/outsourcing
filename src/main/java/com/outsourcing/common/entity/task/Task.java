@@ -105,4 +105,7 @@ public class Task extends BaseTimeEntity {
         this.dataStatus=DataStatus.ARCHIVED;
         this.archivedAt=Instant.now();
     }
+    public Task(Long id){
+        this.id = id;
+    }
 }
