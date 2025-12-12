@@ -4,6 +4,7 @@ import com.outsourcing.common.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -12,7 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("""
            SELECT c
            FROM Comment c
-           WHERE c.task.id = :taskId
+           WHERE c.task.id = :taskId AND c.isDeleted = false
            ORDER BY c.commentGroup DESC,
            CASE WHEN c.parentComment IS NULL THEN 0 ELSE 1 END ASC,
            c.createdAt DESC
@@ -23,10 +24,26 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("""
            SELECT c
            FROM Comment c
-           WHERE c.task.id = :taskId
+           WHERE c.task.id = :taskId AND c.isDeleted = false
            ORDER BY c.commentGroup ASC,
            CASE WHEN c.parentComment IS NULL THEN 0 ELSE 1 END ASC,
            c.createdAt ASC
            """)
     Page<Comment> findCommentSortedByOldest(Pageable pageable, Long taskId);
+
+    @Modifying
+    @Query("""
+           UPDATE Comment
+           SET isDeleted = true
+           WHERE commentGroup = :commentGroup
+           """)
+    void softDeleteWithParentComment(Long commentGroup);
+
+    @Modifying
+    @Query("""
+           UPDATE Comment
+           SET isDeleted = true
+           WHERE id = :id
+           """)
+    void softDeleteWithChildComment(Long id);
 }

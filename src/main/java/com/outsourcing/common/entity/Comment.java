@@ -36,6 +36,9 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "comment_group")
     private Long commentGroup;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     public Comment(User user, Task task, Comment parentComment, String content, Long commentGroup) {
         this.user = user;
         this.task = task;

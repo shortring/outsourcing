@@ -99,7 +99,6 @@ public class CommentService {
     @Transactional
     public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request, CustomUserDetails userDetails) {
 
-        // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
 
         Comment comment = getComment(commentId);
@@ -121,7 +120,6 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long taskId, Long commentId, CustomUserDetails userDetails) {
 
-        // 요청이 들어온 Task가 존재하는지 검증
         checkTaskExists(taskId);
 
         Comment comment = getComment(commentId);
@@ -131,7 +129,12 @@ public class CommentService {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT);
         }
 
-        commentRepository.delete(comment);
+        // 부모 댓글이면 같은 그룹의 댓글 전부 논리 삭제, 답글이면 해당 답글만 논리 삭제
+        if (comment.getParentComment() == null) {
+            commentRepository.softDeleteWithParentComment(comment.getCommentGroup());
+        } else {
+            commentRepository.softDeleteWithChildComment(comment.getId());
+        }
     }
 
     // 요청이 들어온 Task가 존재하는지 검증

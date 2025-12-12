@@ -35,7 +35,7 @@ public class Task extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name="data_status", nullable=false)
-    private DataStatus dataStatus;
+    private DataStatus dataStatus=DataStatus.ACTIVE;
 
     @Column(name="archived_at")
     private Instant archivedAt;
