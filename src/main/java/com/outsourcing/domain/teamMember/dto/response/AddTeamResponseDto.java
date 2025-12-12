@@ -1,19 +1,17 @@
 package com.outsourcing.domain.teamMember.dto.response;
 
-import com.outsourcing.common.enums.UserRole;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class AddTeamMemberResponseDto {
-
+public class AddTeamResponseDto {
     private final Long id;
-    private final String username;
     private final String name;
-    private final String email;
-    private final UserRole role;
+    private final String description;
     private final Instant createdAt;
+    private final List<AddTeamMemberResponseDto> members;
 }

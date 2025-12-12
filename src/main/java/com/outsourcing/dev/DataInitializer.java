@@ -31,8 +31,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        User user1 = new User("test1", "test1@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test1", UserRole.ADMIN);
-        User user2 = new User("test2", "test2@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test2", UserRole.USER);
+        User user1 = new User("test1", "test1@test.com", passwordEncoder.encode("Test1234!"), "choi_test1", UserRole.ADMIN);
+        User user2 = new User("test2", "test2@test.com", passwordEncoder.encode("Test1234!"), "choi_test2", UserRole.USER);
         User user3 = new User("test3", "test3@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test3", UserRole.USER);
         User user4 = new User("test4", "test4@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test4", UserRole.USER);
         User user5 = new User("test5", "test5@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test5", UserRole.USER);

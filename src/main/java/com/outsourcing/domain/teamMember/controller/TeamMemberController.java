@@ -3,7 +3,7 @@ package com.outsourcing.domain.teamMember.controller;
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
-import com.outsourcing.domain.teamMember.dto.response.AddTeamMemberResponseDto;
+import com.outsourcing.domain.teamMember.dto.response.AddTeamResponseDto;
 import com.outsourcing.domain.teamMember.dto.response.GetTeamDetailResponseDto;
 import com.outsourcing.domain.teamMember.dto.response.GetTeamListResponseDto;
 import com.outsourcing.domain.teamMember.dto.response.GetTeamMemberResponseDto;
@@ -25,18 +25,16 @@ public class TeamMemberController {
 
     // 멤버 추가
     @PostMapping("/{teamId}/members")
-    public ResponseEntity<ApiResponse<AddTeamMemberResponseDto>> addMemberApi(
+    public ResponseEntity<ApiResponse<AddTeamResponseDto>> addMemberApi(
             @PathVariable("teamId") Long teamId,
             @RequestBody AddTeamMemberRequestDto request
-
-
     ) {
 
-        AddTeamMemberResponseDto responseDto = teamMemberService.addMemberTeam(teamId, request);
+        AddTeamResponseDto responseDto = teamMemberService.addMemberTeam(teamId, request);
 
-        ApiResponse<AddTeamMemberResponseDto> apiResponse = ApiResponse.success("팀 멤버가 추가되었습니다.", responseDto);
+        ApiResponse<AddTeamResponseDto> apiResponse = ApiResponse.success("팀 멤버가 추가되었습니다.", responseDto);
 
-        ResponseEntity<ApiResponse<AddTeamMemberResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ResponseEntity<ApiResponse<AddTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
         return response;
     }
