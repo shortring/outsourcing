@@ -1,12 +1,10 @@
 package com.outsourcing.domain.user.service;
 
-import com.outsourcing.common.entity.TeamMember;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import com.outsourcing.domain.user.dto.UserDto;
 import com.outsourcing.domain.user.dto.request.CreateUserRequest;
 import com.outsourcing.domain.user.dto.request.UpdateUserRequest;
@@ -27,7 +25,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TeamMemberRepository teamMemberRepository;
+
     //사용자 생성
     @Transactional
     public CreateUserResponse signup(CreateUserRequest request) {

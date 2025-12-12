@@ -3,6 +3,7 @@ package com.outsourcing.domain.teamMember.service;
 import com.outsourcing.common.entity.Team;
 import com.outsourcing.common.entity.TeamMember;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.team.dto.TeamDto;
@@ -107,7 +108,9 @@ public class TeamMemberService {
 
 
         List<GetMemberDetailResponseDto> responseDto = new ArrayList<>();
+
         for (TeamMember teamMember : members) {
+
             responseDto.add(teamMemberMapper.getDetailDto(teamMember));
         }
 
@@ -128,9 +131,13 @@ public class TeamMemberService {
         List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(teamId);
 
         List<GetTeamMemberResponseDto> response = new ArrayList<>();
+
         for (TeamMember teamMember : members) {
-            // (+) if user의 isDeleted가 true면 통과
-            response.add(teamMemberMapper.getTeamMemberDto(teamMember));
+
+            if (teamMember.getUser().getIsDeleted().equals(IsDeleted.TRUE)) {
+
+                response.add(teamMemberMapper.getTeamMemberDto(teamMember));
+            }
         }
         return response;
     }
