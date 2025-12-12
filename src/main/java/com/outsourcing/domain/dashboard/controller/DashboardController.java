@@ -33,7 +33,7 @@ public class DashboardController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("내 작업 요약 조회 성공", dashboardService.myTaskSummary(userDetails.getUserId())));
     }
 
-    @GetMapping("/tasks/weekly-trend")
+    @GetMapping("/weekly-trend")
     public ResponseEntity<ApiResponse<List<WeeklyTaskTrendDashboardResponse>>> getWeeklyTaskTrendApi() {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("주간 작업 추세 조회 성공", dashboardService.weeklyTaskTrend()));
     }

@@ -1,6 +1,7 @@
 package com.outsourcing.domain.activities.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
+import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.dto.response.ActivitiesResponse;
 import com.outsourcing.domain.activities.service.ActivitiesService;
@@ -28,7 +29,7 @@ public class ActivitiesController {
 
     // 전체 활동 로그 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ActivitiesResponse>>> getAllActivitiesLog(
+    public ResponseEntity<ApiResponse<PagedResponse<ActivitiesResponse>>> getAllActivitiesLog(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -38,18 +39,18 @@ public class ActivitiesController {
             @RequestParam(required = false) LocalDateTime endDate) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  // 기본 정렬
-        Page<ActivitiesResponse> result = activitiesService.getAllActivitiesLog(type, taskId, pageable, startDate, endDate);
+        PagedResponse<ActivitiesResponse> result = activitiesService.getAllActivitiesLog(type, taskId, pageable, startDate, endDate);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("활동 로그 조회 성공", result));
     }
 
     // 내 활동 로그 조회
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<Page<ActivitiesResponse>>> getAllMyActivitiesLog(
+    public ResponseEntity<ApiResponse<PagedResponse<ActivitiesResponse>>> getAllMyActivitiesLog(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<ActivitiesResponse> result = activitiesService.getAllMyActivitiesLog(request, pageable);
+        PagedResponse<ActivitiesResponse> result = activitiesService.getAllMyActivitiesLog(request, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("활동 로그 조회 성공", result));
     }
 }
