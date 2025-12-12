@@ -2,6 +2,7 @@ package com.outsourcing.common.entity.task;
 
 import com.outsourcing.common.entity.BaseTimeEntity;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.DataStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

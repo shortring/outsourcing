@@ -3,7 +3,7 @@ package com.outsourcing.domain.task.service;
 import com.outsourcing.common.dto.PageCondition;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.User;
-import com.outsourcing.common.entity.task.DataStatus;
+import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.common.exception.CustomException;
