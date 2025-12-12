@@ -43,7 +43,7 @@ public class ActivitiesController {
     }
 
     // 내 활동 로그 조회
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<ApiResponse<Page<ActivitiesResponse>>> getAllMyActivitiesLog(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int page,

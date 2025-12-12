@@ -12,7 +12,7 @@ public class ActivitiesResponse {
     Long id;
     ActivityType type;
     Long userId;
-    User user;
+    ActivityUserResponse user;
     Long taskId;
     Instant timestamp;
     String description;
@@ -21,7 +21,7 @@ public class ActivitiesResponse {
         this.id = id;
         this.type = type;
         this.userId = userId;
-        this.user = user;
+        this.user = ActivityUserResponse.of(user);
         this.taskId = taskId;
         this.timestamp = timestamp;
         this.description = description;
