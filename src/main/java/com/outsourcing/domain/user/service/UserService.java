@@ -1,6 +1,7 @@
 package com.outsourcing.domain.user.service;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
@@ -29,7 +30,7 @@ public class UserService {
     @Transactional
     public CreateUserResponse signup(CreateUserRequest request) {
 
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByUsername(request.getUsername())){
             throw new CustomException(ErrorMessage.CONFLICT_EXIST_USERNAME);
         }
 
@@ -63,6 +64,9 @@ public class UserService {
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
+        if(user.getIsDeleted()== IsDeleted.TRUE){
+            throw new CustomException(ErrorMessage.NOT_FOUND_USER);
+        }
         return GetUserResponse.from(user);
     }
 
@@ -72,6 +76,7 @@ public class UserService {
 
         return userRepository.findAll()
                 .stream()
+                .filter(user -> user.getIsDeleted() == IsDeleted.FALSE)
                 .map(UserDto::from)
                 .map(GetUserResponse::from)
                 .toList();
@@ -88,6 +93,10 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
+
+        if (user.getIsDeleted().equals(IsDeleted.TRUE)){
+            throw new CustomException(ErrorMessage.NOT_FOUND_USER);
+        }
 
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new CustomException(ErrorMessage.CONFLICT_EXIST_EMAIL);
@@ -114,7 +123,12 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
-        userRepository.delete(user);
+
+        if (user.getIsDeleted().equals(IsDeleted.TRUE)){
+            throw new CustomException(ErrorMessage.NOT_FOUND_USER);
+        }
+
+        user.softDelete(IsDeleted.TRUE);
     }
 
     //추가 가능한 사용자 조회
@@ -124,6 +138,7 @@ public class UserService {
         List<User> users = userRepository.findAvailableUsers(teamId);
 
         return users.stream()
+                .filter(user -> user.getIsDeleted() == IsDeleted.FALSE)
                 .map(UserDto::from)
                 .map(AvailableUserResponse::from)
                 .toList();

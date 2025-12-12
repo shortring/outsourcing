@@ -1,6 +1,7 @@
 package com.outsourcing.domain.user.model;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class UserDto {
     private final String email;
     private final String name;
     private final UserRole role;
+    private final IsDeleted isDeleted;
     private final Instant createdAt;
     private final Instant updatedAt;
 
@@ -25,6 +27,7 @@ public class UserDto {
                 user.getEmail(),
                 user.getName(),
                 user.getRole(),
+                user.getIsDeleted(),
                 user.getCreatedAt(),
                 user.getUpdatedAt());
     }
