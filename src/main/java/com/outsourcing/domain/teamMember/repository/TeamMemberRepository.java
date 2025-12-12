@@ -24,13 +24,22 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     // 추가 시 이미 팀에 속한 유저인지 검증
     boolean existsByTeamAndUser(Team team, User user);
 
+    boolean existsByTeam_IdAndUser_Id(Long teamId, Long userId);
+
+    List<TeamMember> findAllByTeamId(Long teamId);
+
     @Query("""
             SELECT tm2.user.id FROM TeamMember tm1 JOIN TeamMember tm2
             ON tm1.team.id = tm2.team.id WHERE tm1.user.id = :userId
             """)
     Set<Long> findTeamMemberIdsByUserId(@Param("userId") Long userId);
 
-    void deleteByUser(User user);
+    @Query("""
+        select tm
+        from TeamMember tm
+        join fetch tm.user
+        where tm.team.id = :teamId
+    """)
+    List<TeamMember> findAllByTeamIdFetchUser(@Param("teamId") Long teamId);
 
-    List<TeamMember> findByUser(User user);
 }
