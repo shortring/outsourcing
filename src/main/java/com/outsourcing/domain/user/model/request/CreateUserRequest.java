@@ -29,4 +29,5 @@ public class CreateUserRequest {
     private String name;
 
     private final UserRole role = UserRole.USER;
+
 }
