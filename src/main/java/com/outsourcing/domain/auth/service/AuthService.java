@@ -23,7 +23,7 @@ public class AuthService {
 
     //로그인
     @Transactional
-    public String loginApi(LoginRequest request) {
+    public String login(LoginRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
 
@@ -40,7 +40,7 @@ public class AuthService {
     }
 
     @Transactional
-    public VerifyPasswordResponse verifyPasswordApi(VerifyPasswordRequest request, CustomUserDetails userDetails) {
+    public VerifyPasswordResponse verifyPassword(VerifyPasswordRequest request, CustomUserDetails userDetails) {
         User user = authRepository.findById(userDetails.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );

@@ -26,7 +26,7 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<LoginResponse>> loginApi(@RequestBody LoginRequest request) {
 
-        LoginResponse result = new LoginResponse(authService.loginApi(request));
+        LoginResponse result = new LoginResponse(authService.login(request));
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("로그인 성공", result));
     }
@@ -34,7 +34,7 @@ public class AuthController {
     @PostMapping("/users/verify-password")
     public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPasswordApi(@RequestBody VerifyPasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        VerifyPasswordResponse result = authService.verifyPasswordApi(request, userDetails);
+        VerifyPasswordResponse result = authService.verifyPassword(request, userDetails);
         if (!result.isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("비밀번호가 올바르지 않습니다.", result));
         }
