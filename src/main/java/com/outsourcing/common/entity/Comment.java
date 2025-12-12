@@ -33,14 +33,22 @@ public class Comment extends BaseTimeEntity {
 
     private String content;
 
-    public Comment(User user, Task task, Comment parentComment, String content) {
+    @Column(name = "comment_group")
+    private Long commentGroup;
+
+    public Comment(User user, Task task, Comment parentComment, String content, Long commentGroup) {
         this.user = user;
         this.task = task;
         this.parentComment = parentComment;
         this.content = content;
+        this.commentGroup = commentGroup;
     }
 
     public void updateComment(String newContent) {
         this.content = (newContent == null) ? this.content : newContent;
+    }
+
+    public void updateCommentGroup(Long commentGroup) {
+        this.commentGroup = commentGroup;
     }
 }
