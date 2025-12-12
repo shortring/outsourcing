@@ -1,0 +1,52 @@
+package com.outsourcing.domain.search.service;
+
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
+import com.outsourcing.domain.search.model.response.SearchResponse;
+import com.outsourcing.domain.search.model.response.SearchTaskResponse;
+import com.outsourcing.domain.search.model.response.SearchTeamResponse;
+import com.outsourcing.domain.search.model.response.SearchUserResponse;
+import com.outsourcing.domain.task.repository.TaskRepository;
+import com.outsourcing.domain.team.repository.TeamRepository;
+import com.outsourcing.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SearchService {
+
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final TaskRepository taskRepository;
+
+    @Transactional(readOnly = true)
+    public SearchResponse search(String query) {
+
+        // 검색어가 비어있을 때 예외 처리
+        if (query == null || query.isBlank()) {
+            throw new CustomException(ErrorMessage.BAD_REQUEST_NOT_NULL_SEARCH_KEYWORD);
+        }
+
+        List<SearchTaskResponse> tasks = taskRepository.searchByKeyword(query)
+                .stream()
+                .map(SearchTaskResponse::from)
+                .toList();
+
+        List<SearchTeamResponse> teams = teamRepository.searchByKeyword(query)
+                .stream()
+                .map(SearchTeamResponse::from)
+                .toList();
+
+        List<SearchUserResponse> users = userRepository.searchByKeyword(query)
+                .stream()
+                .map(SearchUserResponse::from)
+                .toList();
+
+        return SearchResponse.of(tasks, teams, users);
+    }
+}
+

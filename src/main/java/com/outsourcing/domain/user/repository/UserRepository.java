@@ -1,7 +1,7 @@
 package com.outsourcing.domain.user.repository;
 
 import com.outsourcing.common.entity.User;
-import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.dto.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             ))
             """)
     List<User> findAvailableUsers(@Param("teamId") Long teamId);
+
+    @Query("""
+           SELECT u
+           FROM User u
+           WHERE u.name LIKE %:query%
+           """)
+    List<User> searchByKeyword(@Param("query") String query);
 }

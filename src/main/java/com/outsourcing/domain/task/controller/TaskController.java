@@ -3,19 +3,20 @@ package com.outsourcing.domain.task.controller;
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.task.TaskStatus;
-import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.task.dto.CreateTaskRequest;
-import com.outsourcing.domain.task.dto.TaskResponse;
-import com.outsourcing.domain.task.dto.UpdateTaskRequest;
-import com.outsourcing.domain.task.dto.UpdateTaskStatusRequest;
+import com.outsourcing.domain.task.dto.request.CreateTaskRequest;
+import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
+import com.outsourcing.domain.task.dto.response.TaskResponse;
+import com.outsourcing.domain.task.dto.request.UpdateTaskRequest;
+import com.outsourcing.domain.task.dto.request.UpdateTaskStatusRequest;
 import com.outsourcing.domain.task.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tasks")
@@ -34,11 +35,11 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskApi(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ApiResponse<TaskResponse>> updateTaskApi(
                                                                    @PathVariable Long taskId,
                                                                    @Valid @RequestBody UpdateTaskRequest request
     ) {
-        TaskResponse data = taskService.updateTaskApi(userDetails.getUserId(), taskId, request);
+        TaskResponse data = taskService.updateTaskApi(taskId, request);
         return ResponseEntity.ok(ApiResponse.success("작업이 수정되었습니다.", data));
     }
 
@@ -48,6 +49,7 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskStatusRequest request
     ) {
         TaskResponse data = taskService.updateTaskStatusApi(taskId, request);
+
         return ResponseEntity.ok(ApiResponse.success("작업 상태가 변경되었습니다.", data));
     }
 
@@ -62,8 +64,8 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskResponse>> getTaskApi(@PathVariable Long taskId) {
-        TaskResponse data = taskService.getTaskApi(taskId);
+    public ResponseEntity<ApiResponse<TaskDetailResponse>> getTaskApi(@PathVariable Long taskId) {
+        TaskDetailResponse data = taskService.getTaskApi(taskId);
         return ResponseEntity.ok(ApiResponse.success("작업 조회 성공", data));
     }
 
