@@ -1,4 +1,4 @@
-package com.outsourcing.domain.task.dto;
+package com.outsourcing.domain.task.dto.request;
 
 import com.outsourcing.common.entity.task.TaskStatus;
 

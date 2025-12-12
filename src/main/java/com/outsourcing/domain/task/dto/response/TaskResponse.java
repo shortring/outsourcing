@@ -1,8 +1,8 @@
-package com.outsourcing.domain.task.dto;
+package com.outsourcing.domain.task.dto.response;
 
-import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskPriority;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.domain.task.dto.TaskDto;
 
 import java.time.Instant;
 
@@ -19,20 +19,21 @@ public record TaskResponse(
         Instant updatedAt,
         Instant dueDate
 ) {
-    public static TaskResponse from(Task task) {
+    public static TaskResponse from(TaskDto taskDto) {
         return new TaskResponse(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getStatus(),
-                task.getPriority(),
-                task.getAssigneeId(),
-                AssigneeResponse.of(
-                        task.getAssignee()
+                taskDto.id(),
+                taskDto.title(),
+                taskDto.description(),
+                taskDto.status(),
+                taskDto.priority(),
+                taskDto.assigneeId(),
+                AssigneeResponse.from(
+                        taskDto
                 ),
-                task.getCreatedAt(),
-                task.getUpdatedAt(),
-                task.getDueDate()
+                taskDto.createdAt(),
+                taskDto.updatedAt(),
+                taskDto.dueDate()
         );
     }
+
 }

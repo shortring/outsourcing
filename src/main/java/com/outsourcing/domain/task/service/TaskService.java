@@ -3,15 +3,18 @@ package com.outsourcing.domain.task.service;
 import com.outsourcing.common.dto.PageCondition;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
-import com.outsourcing.common.enums.UserRole;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.domain.task.dto.CreateTaskRequest;
-import com.outsourcing.domain.task.dto.TaskResponse;
-import com.outsourcing.domain.task.dto.UpdateTaskRequest;
-import com.outsourcing.domain.task.dto.UpdateTaskStatusRequest;
+import com.outsourcing.domain.task.dto.TaskDetailDto;
+import com.outsourcing.domain.task.dto.TaskDto;
+import com.outsourcing.domain.task.dto.request.CreateTaskRequest;
+import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
+import com.outsourcing.domain.task.dto.response.TaskResponse;
+import com.outsourcing.domain.task.dto.request.UpdateTaskRequest;
+import com.outsourcing.domain.task.dto.request.UpdateTaskStatusRequest;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
@@ -21,9 +24,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
+import java.time.ZoneId;
+
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +38,8 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TaskQueryRepository taskQueryRepository;
+
+    private static final ZoneId KOREA = ZoneId.of("Asia/Seoul");
 
 
     @Transactional
@@ -46,32 +54,26 @@ public class TaskService {
                 request.description(),
                 request.priority(),
                 assigneeUser,
-                request.dueDate()
+                request.dueDate().atZone(KOREA).toInstant()
         );
 
         task.changeStatus(TaskStatus.TODO);
 
         taskRepository.save(task);
+        TaskDto taskDto=TaskDto.from(task);
 
-        return TaskResponse.from(task);
+        return TaskResponse.from(taskDto);
     }
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTaskApi(Long currentUserId, Long taskId, UpdateTaskRequest request) {
+    public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
-
-        User requestUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_USER));
-
-        if (!ObjectUtils.nullSafeEquals(requestUser.getRole(), UserRole.ADMIN)) {
-            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
-        }
 
         User assigneeUser = userRepository.findById(request.assigneeId())
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
 
@@ -80,40 +82,43 @@ public class TaskService {
                 request.description(),
                 request.priority(),
                 assigneeUser,
-                request.dueDate(),
+                request.dueDate().atZone(KOREA).toInstant(),
                 now
         );
 
-        return TaskResponse.from(task);
+        TaskDto taskDto=TaskDto.from(task);
+        return TaskResponse.from(taskDto);
     }
 
     // Status를 변경해도 수정일 갱신은 되지 않음.
     @Transactional
     public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request) {
 
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         task.changeStatus(request.status());
 
-        return TaskResponse.from(task);
+        TaskDto taskDto=TaskDto.from(task);
+        return TaskResponse.from(taskDto);
     }
 
     @Transactional
     public void deleteTaskApi(Long taskId) {
-        Task task = taskRepository.findById(taskId)
+        Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
-        taskRepository.delete(task);
+        task.isArchived();
     }
 
     // email
     @Transactional(readOnly = true)
-    public TaskResponse getTaskApi(Long taskId) {
-        Task task = taskRepository.findById(taskId)
+    public TaskDetailResponse getTaskApi(Long taskId) {
+        Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
-        return TaskResponse.from(task);
+        TaskDetailDto taskDto=TaskDetailDto.from(task);
+        return TaskDetailResponse.of(taskDto);
     }
 
     @Transactional(readOnly = true)
@@ -137,10 +142,11 @@ public class TaskService {
         Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
         // 4. Task -> TaskResponse
-        Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
-        Page<TaskResponse> responseDto = taskPage.map(TaskResponse::from);
+        Page<Task> taskPage=taskQueryRepository.search(pageable, status, keyword, assigneeId);
+        Page<TaskDto> responseDto=taskPage.map(TaskDto::from);
 
+        Page<TaskResponse> response=responseDto.map(TaskResponse::from);
         // 5. TaskResponse -> PagedResponse
-        return PagedResponse.from(responseDto);
+        return PagedResponse.from(response);
     }
 }
