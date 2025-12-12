@@ -2,19 +2,23 @@ package com.outsourcing.domain.task.service;
 
 import com.outsourcing.common.dto.PageCondition;
 import com.outsourcing.common.dto.PagedResponse;
+import com.outsourcing.common.entity.Activity;
 import com.outsourcing.common.entity.User;
-import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
+import com.outsourcing.common.filter.CustomUserDetails;
+import com.outsourcing.domain.activities.dto.ActivityType;
+import com.outsourcing.domain.activities.repository.ActivityRepository;
 import com.outsourcing.domain.task.dto.TaskDetailDto;
 import com.outsourcing.domain.task.dto.TaskDto;
 import com.outsourcing.domain.task.dto.request.CreateTaskRequest;
-import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
-import com.outsourcing.domain.task.dto.response.TaskResponse;
 import com.outsourcing.domain.task.dto.request.UpdateTaskRequest;
 import com.outsourcing.domain.task.dto.request.UpdateTaskStatusRequest;
+import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
+import com.outsourcing.domain.task.dto.response.TaskResponse;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
@@ -24,13 +28,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneId;
-
-
 
 
 @Service
@@ -40,7 +43,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TaskQueryRepository taskQueryRepository;
-
+    private final ActivityRepository activityRepository;
     private static final ZoneId KOREA = ZoneId.of("Asia/Seoul");
 
 
@@ -62,7 +65,7 @@ public class TaskService {
         task.changeStatus(TaskStatus.TODO);
 
         taskRepository.save(task);
-        TaskDto taskDto=TaskDto.from(task);
+        TaskDto taskDto = TaskDto.from(task);
 
         return TaskResponse.from(taskDto);
     }
@@ -72,7 +75,7 @@ public class TaskService {
     public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
 
-        User assigneeUser = userRepository.findById(request.assigneeId())
+        User assigneeUser = userRepository.findById(request.getAssigneeId())
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
@@ -80,15 +83,21 @@ public class TaskService {
 
 
         task.update(
-                request.title(),
-                request.description(),
-                request.priority(),
+                request.getTitle(),
+                request.getDescription(),
+                request.getPriority(),
                 assigneeUser,
-                request.dueDate().atZone(KOREA).toInstant(),
+                request.getDueDate().atZone(KOREA).toInstant(),
                 now
         );
 
-        TaskDto taskDto=TaskDto.from(task);
+        TaskDto taskDto = TaskDto.from(task);
+
+        Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+        User user = userRepository.getReferenceById(userId);
+        String description = "작업 상태를" + taskDto.getStatus().toString() + "에서" + request.getStatus().toString() + "으로 변경했습니다.";
+
+        activityRepository.save(Activity.of(ActivityType.COMMENT_DELETED, Instant.now(), description, user, task));
 
         return TaskResponse.from(taskDto);
     }
@@ -102,7 +111,7 @@ public class TaskService {
 
         task.changeStatus(request.status());
 
-        TaskDto taskDto=TaskDto.from(task);
+        TaskDto taskDto = TaskDto.from(task);
         return TaskResponse.from(taskDto);
     }
 
@@ -120,7 +129,7 @@ public class TaskService {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
-        TaskDetailDto taskDto=TaskDetailDto.from(task);
+        TaskDetailDto taskDto = TaskDetailDto.from(task);
         return TaskDetailResponse.of(taskDto);
     }
 
@@ -145,10 +154,10 @@ public class TaskService {
         Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
         // 4. Task -> TaskResponse
-        Page<Task> taskPage=taskQueryRepository.search(pageable, status, keyword, assigneeId);
-        Page<TaskDto> responseDto=taskPage.map(TaskDto::from);
+        Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
+        Page<TaskDto> responseDto = taskPage.map(TaskDto::from);
 
-        Page<TaskResponse> response=responseDto.map(TaskResponse::from);
+        Page<TaskResponse> response = responseDto.map(TaskResponse::from);
         // 5. TaskResponse -> PagedResponse
         return PagedResponse.from(response);
     }
