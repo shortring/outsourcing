@@ -22,11 +22,11 @@ public class Activity extends BaseTimeEntity {
     @Column(nullable = false)
     private ActivityType type;
 
-    @Column(nullable = false, unique = true)
-    private Long userId;
-
-    @Column(nullable = false)
-    private Long taskId;
+//    @Column(nullable = false, unique = true)
+//    private Long userId;
+//
+//    @Column(nullable = false)
+//    private Long taskId;
 
     @Column(nullable = false)
     private Instant timestamp;
@@ -43,27 +43,27 @@ public class Activity extends BaseTimeEntity {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    public Activity(ActivityType type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
+    public Activity(ActivityType type, Instant timestamp, String description, User user, Task task) {
         this.type = type;
-        this.userId = userId;
-        this.taskId = taskId;
+//        this.userId = userId;
+//        this.taskId = taskId;
         this.timestamp = timestamp;
         this.description = description;
         this.user = user;
         this.task = task;
     }
 
-    public static Activity of(ActivityType type, Long userId, Long taskId, Instant timestamp, String description, User user, Task task) {
-        return new Activity(type, userId, taskId, timestamp, description, user, task);
+    public static Activity of(ActivityType type, Instant timestamp, String description, User user, Task task) {
+        return new Activity(type, timestamp, description, user, task);
     }
 
     public static ActivitiesResponse from(Activity activity) {
         return ActivitiesResponse.of(
                 activity.id,
                 activity.type,
-                activity.userId,
+                activity.user.getId(),
                 activity.user,
-                activity.taskId,
+                activity.task.getId(),
                 activity.timestamp,
                 activity.description
         );
