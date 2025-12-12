@@ -48,15 +48,15 @@ public class TaskService {
     public TaskResponse createTaskApi(CreateTaskRequest request) {
 
 
-        User assigneeUser = userRepository.findById(request.assigneeId())
+        User assigneeUser = userRepository.findById(request.getAssigneeId())
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_ASSIGNEE));
 
         Task task = new Task(
-                request.title(),
-                request.description(),
-                request.priority(),
+                request.getTitle(),
+                request.getDescription(),
+                request.getPriority(),
                 assigneeUser,
-                request.dueDate().atZone(KOREA).toInstant()
+                request.getDueDate().atZone(KOREA).toInstant()
         );
 
         task.changeStatus(TaskStatus.TODO);
@@ -89,6 +89,7 @@ public class TaskService {
         );
 
         TaskDto taskDto=TaskDto.from(task);
+
         return TaskResponse.from(taskDto);
     }
 
