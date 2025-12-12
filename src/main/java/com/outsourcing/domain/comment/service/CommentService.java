@@ -86,7 +86,7 @@ public class CommentService {
 
         Page<Comment> comments;
 
-        if ("newest".equals(sort)) {
+        if (sort.equals("newest")) {
             comments = commentRepository.findCommentSortedByNewest(pageable, taskId);
         } else {
             comments = commentRepository.findCommentSortedByOldest(pageable, taskId);
