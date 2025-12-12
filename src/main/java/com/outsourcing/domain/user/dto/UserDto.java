@@ -1,4 +1,4 @@
-package com.outsourcing.domain.user.model;
+package com.outsourcing.domain.user.dto;
 
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.IsDeleted;

@@ -1,7 +1,7 @@
-package com.outsourcing.domain.user.model.response;
+package com.outsourcing.domain.user.dto.response;
 
 import com.outsourcing.common.enums.UserRole;
-import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Getter
 @AllArgsConstructor
-public class CreateUserResponse {
+public class UpdateUserResponse {
     private final Long id;
     private final String username;
     private final String email;
@@ -18,8 +18,8 @@ public class CreateUserResponse {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    public static CreateUserResponse from(UserDto dto) {
-        return new CreateUserResponse(
+    public static UpdateUserResponse from(UserDto dto) {
+        return new UpdateUserResponse(
                 dto.getId(),
                 dto.getUsername(),
                 dto.getEmail(),

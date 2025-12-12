@@ -29,4 +29,8 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
             ON tm1.team.id = tm2.team.id WHERE tm1.user.id = :userId
             """)
     Set<Long> findTeamMemberIdsByUserId(@Param("userId") Long userId);
+
+    void deleteByUser(User user);
+
+    List<TeamMember> findByUser(User user);
 }

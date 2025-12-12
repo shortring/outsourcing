@@ -1,17 +1,19 @@
 package com.outsourcing.domain.user.service;
 
+import com.outsourcing.common.entity.TeamMember;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.user.model.UserDto;
-import com.outsourcing.domain.user.model.request.CreateUserRequest;
-import com.outsourcing.domain.user.model.request.UpdateUserRequest;
-import com.outsourcing.domain.user.model.response.AvailableUserResponse;
-import com.outsourcing.domain.user.model.response.CreateUserResponse;
-import com.outsourcing.domain.user.model.response.GetUserResponse;
-import com.outsourcing.domain.user.model.response.UpdateUserResponse;
+import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
+import com.outsourcing.domain.user.dto.UserDto;
+import com.outsourcing.domain.user.dto.request.CreateUserRequest;
+import com.outsourcing.domain.user.dto.request.UpdateUserRequest;
+import com.outsourcing.domain.user.dto.response.AvailableUserResponse;
+import com.outsourcing.domain.user.dto.response.CreateUserResponse;
+import com.outsourcing.domain.user.dto.response.GetUserResponse;
+import com.outsourcing.domain.user.dto.response.UpdateUserResponse;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,12 +27,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final TeamMemberRepository teamMemberRepository;
     //사용자 생성
     @Transactional
     public CreateUserResponse signup(CreateUserRequest request) {
 
-        if (userRepository.existsByUsername(request.getUsername())){
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new CustomException(ErrorMessage.CONFLICT_EXIST_USERNAME);
         }
 
@@ -64,7 +66,7 @@ public class UserService {
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
-        if(user.getIsDeleted()== IsDeleted.TRUE){
+        if (user.getIsDeleted() == IsDeleted.TRUE) {
             throw new CustomException(ErrorMessage.NOT_FOUND_USER);
         }
         return GetUserResponse.from(user);
@@ -94,7 +96,7 @@ public class UserService {
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
-        if (user.getIsDeleted().equals(IsDeleted.TRUE)){
+        if (user.getIsDeleted().equals(IsDeleted.TRUE)) {
             throw new CustomException(ErrorMessage.NOT_FOUND_USER);
         }
 
@@ -124,7 +126,7 @@ public class UserService {
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
-        if (user.getIsDeleted().equals(IsDeleted.TRUE)){
+        if (user.getIsDeleted().equals(IsDeleted.TRUE)) {
             throw new CustomException(ErrorMessage.NOT_FOUND_USER);
         }
 
