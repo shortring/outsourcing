@@ -6,7 +6,11 @@ import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.repository.ActivityRepository;
+import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
+import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
+import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.repository.UserRepository;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -14,11 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 // 관점 (단위)
 @Aspect
 public class LoggingAspect {
-
+    UserRepository userRepository;
+    TaskRepository taskRepository;
+    ActivityRepository activityRepository;
     private final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
     // 포인트 컷
@@ -33,12 +41,19 @@ public class LoggingAspect {
 //    public void trackTimePointCut() {
 //
 //    }
+    @Pointcut("execution(* com.outsourcing.domain.comment.service.CommentService.*(..))")
+    public void allCommentServiceMethods() {}
+    @Pointcut("execution(* com.outsourcing.domain.comment.service.CommentService.getComment(..))")
+    public void getCommentServiceMethods(){}
+    // 작업 서비스 포인트컷. 향후 추가 가능.
+    @Pointcut("""
+            execution(* com.outsourcing.domain.task.service.TaskService.createTaskApi(..))
+            || execution(* com.outsourcing.domain.task.service.TaskService.deleteTaskApi(..))""")
+    public void createAndDeleteTaskMethod(){}
 
     // 작업 서비스 레이어 포인트컷
     @Pointcut("@annotation(com.outsourcing.common.aop.CreateLog)")
-    public void taskServiceLayerPointCut() {
-
-    }
+    public void taskServiceLayerPointCut() {}
 
     // 댓글 서비스 레이어 포인트컷
 //    @Pointcut("@annotation(com.outsourcing.common.aop.CreateLog)")
@@ -93,76 +108,148 @@ public class LoggingAspect {
 
     // 작업 서비스 aop
     // pointcut = "taskServiceLayerPointCut()", returning = "result"
-    @Around("taskServiceLayerPointCut()")
-    public Object afterReturningTaskAop(ProceedingJoinPoint joinPoint) {
 
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+    /**
+     * 저장해줄 정보
+     * id, type, userId, userInfo, taskId, timestamp, description(ex : 새 작업을 생성하였습니다.)
+     * @param joinPoint
+     * @return
+     */
+    @Around("(allCommentServiceMethods() && !getCommentServiceMethods()) || createAndDeleteTaskMethod()")
+    public Object afterReturningTaskAop(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = joinPoint.proceed();
+        String className = joinPoint.getSignature().getClass().getSimpleName();
+        // 저장할 정보들
+        ActivityType status;
+        Task task;
+        User user;
+        String description;
 
-        CreateLog createLog = methodSignature.getMethod().getAnnotation(CreateLog.class);
+        if (className.equals("TaskService")){
+            switch(joinPoint.getSignature().getName()){
+                case "createTask":
+                    CreateCommentResponse response = (CreateCommentResponse) result;
+                    task = taskRepository.getReferenceById(response.getTaskId());
+                    user = userRepository.getReferenceById(response.getUserId());
+                    description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
+                    status = ActivityType.COMMENT_CREATED;
 
-        try {
-            Object result = joinPoint.proceed();
-
-            // Activity 만들어서 repository에 넣어줘야됨
-
-            // 타입 받아오기
-            ActivityType type = createLog.type();
-
-            // userId 받아오기
-            joinPoint.getArgs();
-
-            //timestamp 찍기
-            Instant timestamp = Instant.now();
-
-            // taskId 받아오기
-
-            // 연관관계 객체 받아오기
-            Task task = (Task) result;
-            UserDto userDto = UserDto.from((User) result);
-
-            // timestamp 받아오기
-            // taskStatus 받아오기
-            TaskStatus pastTaskStatus = TaskStatus.IN_PROGRESS; //임시
-            TaskStatus updatedTaskStatus = TaskStatus.DONE;     //임시
-
-            // description 생성해서 넣어주기
-            String description = "";
-            switch(type) {
-                case TASK_CREATED:
-                    description = "새로운 작업 \"" + task.getTitle() + "\"을 생성했습니다.";
+                    activityRepository.save(Activity.of(status, Instant.now(), description, user, task));
                     break;
-                case TASK_UPDATED:
-                    description = "작업 \"" + task.getTitle() + "\"정보를 수정했습니다.";
-                    break;
-                case TASK_DELETED:
-                    description = "작업 " + "테스트 작업" + "을 삭제했습니다.";
-                    break;
-                case TASK_STATUS_CHANGED:
-                    description = "작업 상태를 " + pastTaskStatus.toString() + "에서 " + updatedTaskStatus.toString() + "로 변경했습니다.";
-                    break;
-                case COMMENT_CREATED:
-                    description = "작업 " + "\"대시보드 UI 디자인\"" + "에 댓글을 작성했습니다.";
-                    break;
-                case COMMENT_UPDATED:
-                    description = "댓글을 수정했습니다.";
-                    break;
-                case COMMENT_DELETED:
-                    description = "댓글을 삭제했습니다.";
-                    break;
+                case "deleteTaskApi":
             }
 
-            // User 받아오기
-//            return Activity.of(
-//                    type,
-//
-//            )
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        } finally {
 
+            return result;
         }
-//        ActivityRepository.save();
-        return null;
+
+        if (className.equals("CommentService")){
+            switch(joinPoint.getSignature().getName()){
+                case "createCommentApi":
+                    if (result instanceof CreateCommentResponse){
+                        CreateCommentResponse response = (CreateCommentResponse) result;
+                        task = taskRepository.getReferenceById(response.getTaskId());
+                        user = userRepository.getReferenceById(response.getUserId());
+                        description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
+                        status = ActivityType.COMMENT_CREATED;
+
+                        activityRepository.save(Activity.of(status, Instant.now(), description, user, task));
+                    }
+                    break;
+
+                case "updateCommentApi":
+                    UpdateCommentResponse response = (UpdateCommentResponse) result;
+                    task = taskRepository.getReferenceById(response.getTaskId());
+                    user = userRepository.getReferenceById(response.getUserId());
+                    description = "댓글을 수정하였습니다.";
+                    status = ActivityType.COMMENT_UPDATED;
+
+                    Activity.of(status, Instant.now(), description, user, task);
+                    break;
+
+                case "deleteCommentApi":
+                    Object[] request = joinPoint.getArgs();
+                    task = taskRepository.getReferenceById((Long)request[0]);
+                    user = userRepository.getReferenceById((Long)request[1]);
+                    description = "댓글을 삭제했습니다.";
+                    status = ActivityType.COMMENT_DELETED;
+
+                    Activity.of(status, Instant.now(), description, user, task);
+            }
+
+            return result;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+//
+//        CreateLog createLog = methodSignature.getMethod().getAnnotation(CreateLog.class);
+//
+//        try {
+//            Object result = joinPoint.proceed();
+//
+//            // Activity 만들어서 repository에 넣어줘야됨
+//
+//            // 타입 받아오기
+//            ActivityType type = createLog.type();
+//
+//            // userId 받아오기
+//            joinPoint.getArgs();
+//
+//            //timestamp 찍기
+//            Instant timestamp = Instant.now();
+//
+//            // taskId 받아오기
+//
+//            // 연관관계 객체 받아오기
+//            Task task = (Task) result;
+//            UserDto userDto = UserDto.from((User) result);
+//
+//            // timestamp 받아오기
+//            // taskStatus 받아오기
+//            TaskStatus pastTaskStatus = TaskStatus.IN_PROGRESS; //임시
+//            TaskStatus updatedTaskStatus = TaskStatus.DONE;     //임시
+//
+//            // description 생성해서 넣어주기
+//            String description = "";
+//            switch(type) {
+//                case TASK_CREATED:
+//                    description = "새로운 작업 \"" + task.getTitle() + "\"을 생성했습니다.";
+//                    break;
+//                case TASK_UPDATED:
+//                    description = "작업 \"" + task.getTitle() + "\"정보를 수정했습니다.";
+//                    break;
+//                case TASK_DELETED:
+//                    description = "작업 " + "테스트 작업" + "을 삭제했습니다.";
+//                    break;
+//                case TASK_STATUS_CHANGED:
+//                    description = "작업 상태를 " + pastTaskStatus.toString() + "에서 " + updatedTaskStatus.toString() + "로 변경했습니다.";
+//                    break;
+//                case COMMENT_CREATED:
+//                    description = "작업 " + "\"대시보드 UI 디자인\"" + "에 댓글을 작성했습니다.";
+//                    break;
+//                case COMMENT_UPDATED:
+//                    description = "댓글을 수정했습니다.";
+//                    break;
+//                case COMMENT_DELETED:
+//                    description = "댓글을 삭제했습니다.";
+//                    break;
+//            }
+//        return null;
+        return result;
     }
 
 }
