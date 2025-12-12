@@ -1,17 +1,17 @@
-package com.outsourcing.domain.task.dto;
+package com.outsourcing.domain.task.dto.request;
 
 import com.outsourcing.common.entity.task.TaskPriority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record CreateTaskRequest(
         @NotBlank String title,
         String description,
         TaskPriority priority,
         @NotNull Long assigneeId,
-        Instant dueDate
+        @NotNull LocalDateTime dueDate
 ) {
 }
 /* FE
