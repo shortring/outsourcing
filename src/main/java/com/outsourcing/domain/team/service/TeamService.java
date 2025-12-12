@@ -90,7 +90,6 @@ public class TeamService {
     public GetDetailTeamResponseDto getDetailTeam(Long teamId) {
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
-
         GetDetailTeamResponseDto responseDto = new GetDetailTeamResponseDto(
                 findTeam.getId(),
                 findTeam.getName(),

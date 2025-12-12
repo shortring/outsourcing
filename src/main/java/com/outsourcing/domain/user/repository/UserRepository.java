@@ -1,7 +1,7 @@
 package com.outsourcing.domain.user.repository;
 
 import com.outsourcing.common.entity.User;
-import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.dto.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
