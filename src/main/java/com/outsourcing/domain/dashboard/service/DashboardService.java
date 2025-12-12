@@ -1,6 +1,7 @@
 package com.outsourcing.domain.dashboard.service;
 
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.domain.dashboard.dto.*;
 import com.outsourcing.domain.dashboard.repository.DashboardRepository;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
@@ -35,6 +36,7 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
 
         for (DashboardDto dto : dtos) {
+            if(!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             if (!dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(today)) {
                 ++overdue;
                 continue;
@@ -76,6 +78,7 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
 
         for (SummaryMyTaskDto task : tasks) {
+            if (!task.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             LocalDate dueDay = LocalDateTime.ofInstant(task.getDueDate(), ZoneId.systemDefault()).toLocalDate();
 
             if (dueDay.equals(today)) {
@@ -105,6 +108,7 @@ public class DashboardService {
         }
 
         for (DashboardDto dto : dtos) {
+            if(!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             if (dto.getDueDate().isBefore(today.minusDays(6))) continue;
 
             for (int i = 0; i < 7; ++i) {
