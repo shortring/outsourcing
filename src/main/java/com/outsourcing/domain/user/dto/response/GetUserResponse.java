@@ -1,7 +1,7 @@
-package com.outsourcing.domain.user.model.response;
+package com.outsourcing.domain.user.dto.response;
 
 import com.outsourcing.common.enums.UserRole;
-import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

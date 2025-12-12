@@ -32,7 +32,9 @@ public class AuthController {
     }
 
     @PostMapping("/users/verify-password")
-    public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPasswordApi(@RequestBody VerifyPasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPasswordApi(
+            @RequestBody VerifyPasswordRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         VerifyPasswordResponse result = authService.verifyPassword(request, userDetails);
         if (!result.isValid()) {

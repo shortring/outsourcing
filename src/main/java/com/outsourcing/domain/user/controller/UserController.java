@@ -2,12 +2,12 @@ package com.outsourcing.domain.user.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.user.model.request.CreateUserRequest;
-import com.outsourcing.domain.user.model.request.UpdateUserRequest;
-import com.outsourcing.domain.user.model.response.AvailableUserResponse;
-import com.outsourcing.domain.user.model.response.CreateUserResponse;
-import com.outsourcing.domain.user.model.response.GetUserResponse;
-import com.outsourcing.domain.user.model.response.UpdateUserResponse;
+import com.outsourcing.domain.user.dto.request.CreateUserRequest;
+import com.outsourcing.domain.user.dto.request.UpdateUserRequest;
+import com.outsourcing.domain.user.dto.response.AvailableUserResponse;
+import com.outsourcing.domain.user.dto.response.CreateUserResponse;
+import com.outsourcing.domain.user.dto.response.GetUserResponse;
+import com.outsourcing.domain.user.dto.response.UpdateUserResponse;
 import com.outsourcing.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +69,7 @@ public class UserController {
 
         userService.deleteUser(userId, userDetails);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.", null));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.", null));
     }
 
     @GetMapping("/available")

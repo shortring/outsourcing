@@ -2,8 +2,6 @@ package com.outsourcing.common.filter;
 
 
 import com.outsourcing.common.enums.UserRole;
-import com.outsourcing.common.exception.CustomException;
-import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,11 +27,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     //화이트리스트 추가
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request){
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         String method = request.getMethod();
 
-        return path.equals("/api/auth/login") || (path.equals("/api/users")&& method.equals("POST"));
+        return path.equals("/api/auth/login") || (path.equals("/api/users") && method.equals("POST"));
     }
 
     @Override
@@ -45,7 +43,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.info("Jwt 토큰이 필요 합니다.");
-            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
+            return;
         }
 
         String jwt = authorizationHeader.substring(7);
@@ -53,7 +52,9 @@ public class JwtFilter extends OncePerRequestFilter {
         // 토큰 유효성 검사
         if (!jwtUtil.validateToken(jwt)) {
             log.info("Jwt 토큰이 유효하지 않습니다.");
-            throw new CustomException(ErrorMessage.INVALID_JWT_TOKEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);//유효하지 않아
+            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+            return;
         }
 
         String userName = jwtUtil.extractUsername(jwt);
