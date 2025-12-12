@@ -22,8 +22,6 @@ import com.outsourcing.domain.task.dto.response.TaskResponse;
 import com.outsourcing.domain.task.repository.TaskQueryRepository;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
-
-import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -93,12 +91,6 @@ public class TaskService {
 
         TaskDto taskDto = TaskDto.from(task);
 
-        Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-        User user = userRepository.getReferenceById(userId);
-        String description = "작업 상태를" + taskDto.getStatus().toString() + "에서" + request.getStatus().toString() + "으로 변경했습니다.";
-
-        activityRepository.save(Activity.of(ActivityType.COMMENT_DELETED, Instant.now(), description, user, task));
-
         return TaskResponse.from(taskDto);
     }
 
@@ -109,9 +101,17 @@ public class TaskService {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
+        if (!request.status().toString().equals(task.getStatus().toString())) {
+            Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+            User user = userRepository.getReferenceById(userId);
+            String description = "작업 상태를" + task.getStatus().toString() + "에서" + request.status() + "으로 변경했습니다.";
+
+            activityRepository.save(Activity.of(ActivityType.COMMENT_DELETED, Instant.now(), description, user, task));
+        }
         task.changeStatus(request.status());
 
         TaskDto taskDto = TaskDto.from(task);
+
         return TaskResponse.from(taskDto);
     }
 

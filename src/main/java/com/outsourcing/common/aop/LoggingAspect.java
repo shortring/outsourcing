@@ -3,8 +3,6 @@ package com.outsourcing.common.aop;
 import com.outsourcing.common.entity.Activity;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
-import com.outsourcing.common.entity.task.TaskStatus;
-import com.outsourcing.common.enums.UserRole;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.repository.ActivityRepository;
@@ -12,7 +10,6 @@ import com.outsourcing.domain.comment.model.response.CreateCommentResponse;
 import com.outsourcing.domain.comment.model.response.UpdateCommentResponse;
 import com.outsourcing.domain.task.dto.response.TaskResponse;
 import com.outsourcing.domain.task.repository.TaskRepository;
-import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -47,11 +44,6 @@ public class LoggingAspect {
     public void createAndDeleteTaskMethod() {
     }
 
-    // 작업 서비스 레이어 포인트컷
-    @Pointcut("@annotation(com.outsourcing.common.aop.CreateLog)")
-    public void taskServiceLayerPointCut() {
-    }
-
     /**
      * 저장해줄 정보
      * id, type, userId, userInfo, taskId, timestamp, description(ex : 새 작업을 생성하였습니다.)
@@ -71,29 +63,28 @@ public class LoggingAspect {
 
         switch (methodName) {
             case "createTaskApi":
-
                 TaskResponse taskResponse = (TaskResponse) result;
-                task = new Task(taskResponse.getId());
+                task = taskRepository.getReferenceById(taskResponse.getId());
                 description = "새로운 작업 \"" + taskResponse.getTitle() + "\"을 생성했습니다.";
-                status = ActivityType.COMMENT_CREATED;
+                status = ActivityType.TASK_CREATED;
 
                 break;
 
             case "deleteTaskApi":
                 Object[] request = joinPoint.getArgs();
                 task = taskRepository.findById((Long) request[0]).orElseThrow();
-                description = "작업 \"" + task.getTitle() + "을 삭제했습니다.";
+                description = "작업 \"" + task.getTitle() + "\"을 삭제했습니다.";
                 status = ActivityType.TASK_DELETED;
                 break;
 
-            case "createCommentApi":
-                    CreateCommentResponse commentResponse = (CreateCommentResponse) result;
-                    task = new Task(commentResponse.getTaskId());
-                    description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
-                    status = ActivityType.COMMENT_CREATED;
+            case "createComment":
+                CreateCommentResponse commentResponse = (CreateCommentResponse) result;
+                task = taskRepository.findById(commentResponse.getTaskId()).orElseThrow();
+                description = "작업 \"" + task.getTitle() + "에 댓글을 작성하였습니다.";
+                status = ActivityType.COMMENT_CREATED;
                 break;
 
-            case "updateCommentApi":
+            case "updateComment":
                 UpdateCommentResponse commentResponses = (UpdateCommentResponse) result;
                 task = new Task(commentResponses.getTaskId());
                 description = "댓글을 수정하였습니다.";
@@ -101,7 +92,7 @@ public class LoggingAspect {
 
                 break;
 
-            case "deleteCommentApi":
+            case "deleteComment":
                 Object[] requests = joinPoint.getArgs();
                 task = new Task((Long) requests[0]);
                 description = "댓글을 삭제했습니다.";
@@ -109,8 +100,7 @@ public class LoggingAspect {
 
         }
 
-        if (user != null)
-            activityRepository.save(Activity.of(status, Instant.now(), description, user, task));
+        activityRepository.save(Activity.of(status, Instant.now(), description, user, task));
 
         return result;
     }
