@@ -25,10 +25,19 @@ public class Task extends BaseTimeEntity {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="task_status", nullable=false)
     private TaskStatus status;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="task_priority", nullable=false)
     private TaskPriority priority;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="data_status", nullable=false)
+    private DataStatus dataStatus;
+
+    @Column(name="archived_at")
+    private Instant archivedAt;
 
     // 작성자 권한 근거
 //    @ManyToOne(fetch = FetchType.LAZY)
@@ -87,5 +96,11 @@ public class Task extends BaseTimeEntity {
         this.status = (status != null)
                 ? status
                 : TaskStatus.TODO;
+    }
+
+    public void isArchived(){
+        if(this.dataStatus == DataStatus.ARCHIVED){ return; } // 멱등
+        this.dataStatus=DataStatus.ARCHIVED;
+        this.archivedAt=Instant.now();
     }
 }
