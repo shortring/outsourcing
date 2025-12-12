@@ -134,7 +134,7 @@ public class TeamMemberService {
 
         for (TeamMember teamMember : members) {
 
-            if (teamMember.getUser().getIsDeleted().equals(IsDeleted.TRUE)) {
+            if (teamMember.getUser().getIsDeleted().equals(IsDeleted.FALSE)) {
 
                 response.add(teamMemberMapper.getTeamMemberDto(teamMember));
             }

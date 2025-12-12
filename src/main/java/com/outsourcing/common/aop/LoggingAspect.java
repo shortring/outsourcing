@@ -1,14 +1,14 @@
 package com.outsourcing.common.aop;
 
-import com.outsourcing.common.entity.Activity;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.domain.activities.dto.ActivityType;
-import com.outsourcing.domain.activities.repository.ActivityRepository;
-import com.outsourcing.domain.user.model.UserDto;
+import com.outsourcing.domain.user.dto.UserDto;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
