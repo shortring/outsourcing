@@ -4,6 +4,7 @@ import com.outsourcing.common.entity.QUser;
 import com.outsourcing.common.entity.task.QTask;
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.enums.DataStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +31,17 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        // 2. 키워드
+        // 2. 기본 필터.
+        builder.and(task.dataStatus.eq(DataStatus.ACTIVE));
+
+        // 3. 키워드
         if (keyword != null
                 && !keyword.isBlank()) {
             builder.and(task.title.containsIgnoreCase(keyword)
                     .or(task.description.containsIgnoreCase(keyword)));
         }
 
-        // 3. 상태
+        // 4. 상태
         if (status != null) {
             builder.and(task.status.eq(status));
         }

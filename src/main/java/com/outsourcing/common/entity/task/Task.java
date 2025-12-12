@@ -35,7 +35,7 @@ public class Task extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name="data_status", nullable=false)
-    private DataStatus dataStatus=DataStatus.ACTIVE;
+    private DataStatus dataStatus;
 
     @Column(name="archived_at")
     private Instant archivedAt;
@@ -79,6 +79,7 @@ public class Task extends BaseTimeEntity {
         this.dueDate = dueDate == null
                 ? Instant.now()
                 : dueDate;
+        this.dataStatus = DataStatus.ACTIVE;
     }
 
     public void update(String title, String description, TaskPriority priority, User assignee, Instant dueDate, Instant now) {
