@@ -51,7 +51,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .subject(userId.toString())
-                .claim("role", role)
+                .claim("role", role.name())
                 .claim("username", username)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + TOKEN_TIME))

@@ -1,18 +1,20 @@
-package com.outsourcing.domain.task.dto;
+package com.outsourcing.domain.task.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.outsourcing.common.entity.task.TaskPriority;
 import com.outsourcing.common.entity.task.TaskStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record UpdateTaskRequest(
-        String title,
+        @NotBlank String title,
         String description,
         TaskStatus status,
         TaskPriority priority,
-        Long assigneeId,
-        Instant dueDate
+        @NotNull Long assigneeId,
+        @NotNull LocalDateTime dueDate
 ) {
 }

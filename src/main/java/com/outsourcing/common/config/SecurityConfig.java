@@ -25,12 +25,6 @@ public class SecurityConfig {
     private final UrlBasedCorsConfigurationSource configurationSource;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        // BCrypt Encoder 사용
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -45,4 +39,11 @@ public class SecurityConfig {
                 )
                 .build();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // BCrypt Encoder 사용
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
 }

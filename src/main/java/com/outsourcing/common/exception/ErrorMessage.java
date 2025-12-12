@@ -17,6 +17,8 @@ public enum ErrorMessage {
     BAD_REQUEST_WRONG_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
     BAD_REQUEST_WRONG_EMAIL_FORM(HttpStatus.BAD_REQUEST, "올바른 이메일 형식이 아닙니다."),
     BAD_REQUEST_WRONG_PARAM(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
+    BAD_REQUEST_REPLY_TO_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "답글에 또 다시 답글을 달 수 없습니다."),
+    BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH(HttpStatus.BAD_REQUEST, "작업이 일치하지 않습니다."),
 
     // 401
     UNAUTHORIZED_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),
@@ -31,6 +33,7 @@ public enum ErrorMessage {
     FORBIDDEN_NO_PERMISSION_UPDATE_COMMENT(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다."),
     FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다."),
     FORBIDDEN_NO_PERMISSION_DELETE_TASK(HttpStatus.FORBIDDEN, "작업을 삭제할 권한이 없습니다."),
+    INVALID_JWT_TOKEN(HttpStatus.FORBIDDEN, "유효하지 않은 JWT 토큰입니다."),
 
     // 404
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),

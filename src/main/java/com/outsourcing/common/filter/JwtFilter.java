@@ -2,8 +2,6 @@ package com.outsourcing.common.filter;
 
 
 import com.outsourcing.common.enums.UserRole;
-import com.outsourcing.common.exception.CustomException;
-import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,32 +25,33 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
+    //화이트리스트 추가
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        return path.equals("/api/auth/login") || (path.equals("/api/users") && method.equals("POST"));
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //토큰을 발급 받는 로그인의 경우에는 토큰 검사를 하지 않아도 통과
-        String requestURI = request.getRequestURI();
-        //화이트리스트 추가하기
-        if (requestURI.equals("/api/auth/login") || (requestURI.equals("/api/users") && request.getMethod().equals("POST"))) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // 토큰 유/무 검사
+        //authorizationHeader  유/무 검사
         String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || authorizationHeader.isBlank()) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.info("Jwt 토큰이 필요 합니다.");
-            throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION);
-            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
-            //return;
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
+            return;
         }
 
         String jwt = authorizationHeader.substring(7);
 
         // 토큰 유효성 검사
         if (!jwtUtil.validateToken(jwt)) {
+            log.info("Jwt 토큰이 유효하지 않습니다.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);//유효하지 않아
             response.getWriter().write("{\"error\": \"Unauthorized\"}");
             return;

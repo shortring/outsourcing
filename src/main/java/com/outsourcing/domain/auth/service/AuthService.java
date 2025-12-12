@@ -1,6 +1,7 @@
 package com.outsourcing.domain.auth.service;
 
 import com.outsourcing.common.entity.User;
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
@@ -23,13 +24,17 @@ public class AuthService {
 
     //로그인
     @Transactional
-    public String loginApi(LoginRequest request) {
+    public String login(LoginRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
 
         User user = authRepository.findUserByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
+
+        if(user.getIsDeleted().equals(IsDeleted.TRUE)){
+            throw new CustomException(ErrorMessage.NOT_FOUND_USER);
+        }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_PASSWORD);
@@ -40,7 +45,7 @@ public class AuthService {
     }
 
     @Transactional
-    public VerifyPasswordResponse verifyPasswordApi(VerifyPasswordRequest request, CustomUserDetails userDetails) {
+    public VerifyPasswordResponse verifyPassword(VerifyPasswordRequest request, CustomUserDetails userDetails) {
         User user = authRepository.findById(userDetails.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
