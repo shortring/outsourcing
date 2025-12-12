@@ -27,11 +27,20 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
+    //화이트리스트 추가
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request){
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        return path.equals("/api/auth/login") || (path.equals("/api/users")&& method.equals("POST"));
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 토큰 유/무 검사
+        //authorizationHeader  유/무 검사
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
