@@ -1,5 +1,6 @@
 package com.outsourcing.domain.activities.service;
 
+import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.Activity;
 import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
@@ -25,7 +26,7 @@ public class ActivitiesService {
     private final Logger log = LoggerFactory.getLogger(ActivitiesService.class);
 
     @Transactional
-    public Page<ActivitiesResponse> getAllActivitiesLog(ActivityType type, Long taskId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
+    public PagedResponse<ActivitiesResponse> getAllActivitiesLog(ActivityType type, Long taskId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
 
         // 조회 기간 설정
         LocalDateTime startDateTime = startDate == null ? LocalDateTime.of(1, 1, 1, 0, 0) : startDate;
@@ -50,16 +51,16 @@ public class ActivitiesService {
         }
 
         // 최종 조회 값 리턴
-        return activitiesPage.map(ActivitiesResponse::from);
+        return PagedResponse.from(activitiesPage.map(ActivitiesResponse::from));
     }
 
     @Transactional
-    public Page<ActivitiesResponse> getAllMyActivitiesLog(HttpServletRequest request, Pageable pageable) {
+    public PagedResponse<ActivitiesResponse> getAllMyActivitiesLog(HttpServletRequest request, Pageable pageable) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
         Page<Activity> activitiesPage = activityRepository.findAllByUserId(user.getUserId(), pageable);
-        return activitiesPage.map(ActivitiesResponse::from);
+        return PagedResponse.from(activitiesPage.map(ActivitiesResponse::from));
     }
 }

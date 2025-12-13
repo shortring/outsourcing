@@ -59,4 +59,8 @@ public class User extends BaseTimeEntity {
     public void softDelete(IsDeleted isDeleted){
         this.isDeleted = isDeleted;
     }
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
