@@ -2,10 +2,10 @@ package com.outsourcing.domain.team.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
-import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
-import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
-import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
+import com.outsourcing.domain.team.dto.request.CreateTeamRequest;
+import com.outsourcing.domain.team.dto.request.UpdateTeamRequest;
+import com.outsourcing.domain.team.dto.response.CreateTeamResponse;
+import com.outsourcing.domain.team.dto.response.UpdateTeamResponse;
 import com.outsourcing.domain.team.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,29 +24,29 @@ public class TeamController {
 
     // 팀 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi(@Valid @RequestBody CreateTeamRequestDto requestDto) {
-        CreateTeamResponseDto responseDto = teamService.createTeam(requestDto);
+    public ResponseEntity<ApiResponse<CreateTeamResponse>> createTeamApi(@Valid @RequestBody CreateTeamRequest requestDto) {
+        CreateTeamResponse responseDto = teamService.createTeam(requestDto);
 
 
-        ApiResponse<CreateTeamResponseDto> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
+        ApiResponse<CreateTeamResponse> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
 
-        ResponseEntity<ApiResponse<CreateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        ResponseEntity<ApiResponse<CreateTeamResponse>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         return response;
     }
 
     @PutMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi(
+    public ResponseEntity<ApiResponse<UpdateTeamResponse>> updateTeamApi(
             @PathVariable("teamId") Long teamId,
-            @RequestBody UpdateTeamRequestDto requestDto,
+            @RequestBody UpdateTeamRequest requestDto,
             @AuthenticationPrincipal CustomUserDetails user) {
 
         Long userId = user.getUserId();
 
-        UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, userId, requestDto);
+        UpdateTeamResponse responseDto = teamService.updateTeam(teamId, userId, requestDto);
 
-        ApiResponse<UpdateTeamResponseDto> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
+        ApiResponse<UpdateTeamResponse> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
 
-        ResponseEntity<ApiResponse<UpdateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ResponseEntity<ApiResponse<UpdateTeamResponse>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
         return response;
     }
