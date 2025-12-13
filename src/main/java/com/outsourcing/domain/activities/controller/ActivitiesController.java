@@ -2,6 +2,7 @@ package com.outsourcing.domain.activities.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.dto.PagedResponse;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.dto.response.ActivitiesResponse;
 import com.outsourcing.domain.activities.service.ActivitiesService;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,9 +40,11 @@ public class ActivitiesController {
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  // 기본 정렬
-        PagedResponse<ActivitiesResponse> result = activitiesService.getAllActivitiesLog(type, taskId, pageable, startDate, endDate);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("활동 로그 조회 성공", result));
+        PagedResponse<ActivitiesResponse> result =
+                activitiesService.getAllActivitiesLog(
+                        page, size, type, taskId, startDate, endDate);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.success("활동 로그 조회 성공", result));
     }
 
     // 내 활동 로그 조회
