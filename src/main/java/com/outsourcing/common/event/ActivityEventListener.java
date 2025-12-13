@@ -9,6 +9,8 @@ import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import com.outsourcing.common.entity.User;
@@ -24,8 +26,11 @@ public class ActivityEventListener {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
+
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase= TransactionPhase.AFTER_COMMIT)
-    public void on(ActivityCreatedEvent event){
+    public void handle(ActivityCreatedEvent event){
 
         User user = (event.userId()==null)
                 ? null

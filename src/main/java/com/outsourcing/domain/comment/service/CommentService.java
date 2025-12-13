@@ -8,6 +8,7 @@ import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
+import com.outsourcing.common.threadlocal.ActivityContextHolder;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.comment.model.dto.CommentDto;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -77,9 +80,13 @@ public class CommentService {
 
         CommentDto commentDto = CommentDto.from(savedComment);
 
+        String desc = "댓글이 생성되었습니다.";
+        ActivityContextHolder.setTaskId(comment.getTask().getId());
+        ActivityContextHolder.setDescription(desc);
+
         return CreateCommentResponse.from(commentDto);
     }
-    @ActivityLog(type= ActivityType.COMMENT_UPDATED)
+
     @Transactional(readOnly = true)
     public PagedResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
 
@@ -99,6 +106,7 @@ public class CommentService {
         return PagedResponse.from(commentResponsePage);
     }
 
+    @ActivityLog(type= ActivityType.COMMENT_UPDATED)
     @Transactional
     public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request, CustomUserDetails userDetails) {
 
@@ -117,9 +125,17 @@ public class CommentService {
 
         CommentDto commentDto = CommentDto.from(comment);
 
+        // Activity
+        if(Objects.equals(request.getContent(), comment.getContent())) {
+            String desc = "댓글이 수정되었습니다.";
+            ActivityContextHolder.setTaskId(comment.getTask().getId());
+            ActivityContextHolder.setDescription(desc);
+        }
+
         return UpdateCommentResponse.from(commentDto);
     }
 
+    @ActivityLog(type= ActivityType.COMMENT_DELETED)
     @Transactional
     public void deleteComment(Long taskId, Long commentId, CustomUserDetails userDetails) {
 
@@ -138,6 +154,10 @@ public class CommentService {
         } else {
             commentRepository.softDeleteWithChildComment(comment.getId());
         }
+        // Activity
+        String desc = "댓글이 삭제되었습니다.";
+        ActivityContextHolder.setTaskId(comment.getTask().getId());
+        ActivityContextHolder.setDescription(desc);
     }
 
     // 요청이 들어온 Task가 존재하는지 검증

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -39,10 +40,10 @@ public class ActivitiesController {
             @RequestParam(required = false) Long taskId,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime startDate,
+            LocalDate startDate,
             @RequestParam(required = false)
             @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime endDate
+            LocalDate endDate
     ) {
 
         PagedResponse<ActivitiesResponse> result =
@@ -60,8 +61,8 @@ public class ActivitiesController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) ActivityType type,
             @RequestParam(required = false) Long taskId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) LocalDate endDate
     ) {
         PagedResponse<ActivitiesResponse> result
                 = activitiesService.getAllMyActivitiesLog(

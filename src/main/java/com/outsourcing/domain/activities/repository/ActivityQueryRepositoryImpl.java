@@ -50,8 +50,7 @@ public class ActivityQueryRepositoryImpl {
 
         BooleanBuilder where = new BooleanBuilder();
 
-        // 0. 기본 필터
-        where.and(activity.task.dataStatus.eq(DataStatus.ACTIVE));
+        // 0. 기본 필터 : 삭제 확정의 경우, DELETED로. : 보충 필요.
 
         // 1. userId
         if(userId!=null){
@@ -76,7 +75,7 @@ public class ActivityQueryRepositoryImpl {
             where.and(activity.timestamp.goe(from));
         } // 3-2. from이 비어있는 경우
         else if (to != null) { // loe <= / lt <   이미 존재하는 활동 기록 > = to
-            where.and(activity.timestamp.loe(to));
+            where.and(activity.timestamp.lt(to));
         }
 
         // -- 여기까지가 검색 조건 -- //

@@ -82,7 +82,14 @@ public class Task extends BaseTimeEntity {
         this.dataStatus = DataStatus.ACTIVE;
     }
 
-    public void update(String title, String description, TaskPriority priority, User assignee, Instant dueDate, Instant now) {
+    public void update(
+            String title,
+            String description,
+            TaskPriority priority,
+            User assignee,
+            Instant dueDate,
+            Instant now
+    ) {
         this.title = title;
         this.description = description;
         this.priority = (priority != null)
@@ -104,8 +111,5 @@ public class Task extends BaseTimeEntity {
         if(this.dataStatus == DataStatus.ARCHIVED){ return; } // 멱등
         this.dataStatus=DataStatus.ARCHIVED;
         this.archivedAt=Instant.now();
-    }
-    public Task(Long id){
-        this.id = id;
     }
 }

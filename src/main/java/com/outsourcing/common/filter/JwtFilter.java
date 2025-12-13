@@ -43,7 +43,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.info("Jwt 토큰이 필요 합니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt 토큰이 필요 합니다.");
+//            return;
+            filterChain.doFilter(request, response);
             return;
         }
 

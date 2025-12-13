@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.outsourcing.common.dto.PageCondition;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -35,16 +36,16 @@ public class ActivitiesService {
             int size,
             ActivityType type,
             Long taskId,
-            LocalDateTime startDate,
-            LocalDateTime endDate
+            LocalDate startDate,
+            LocalDate endDate
     ) {
         // 1. 시간 정규화
         Instant from = (startDate==null) // startDate null 이면
                 ? null
-                : startDate.atZone(KOREA).toInstant(); //
+                : startDate.atStartOfDay(KOREA).toInstant(); //
         Instant to = (endDate == null)
                 ? null
-                : endDate.atZone(KOREA).toInstant();
+                : endDate.plusDays(1).atStartOfDay(KOREA).toInstant();
 
         // 2. 페이지 정규화
         PageCondition pageCondition = PageCondition.of(page, size);
@@ -69,8 +70,8 @@ public class ActivitiesService {
             int size,
             ActivityType type,
             Long taskId,
-            LocalDateTime startDate,
-            LocalDateTime endDate
+            LocalDate startDate,
+            LocalDate endDate
     ) {
         // 1. 유저 객체 생성
         User user = userRepository.findById(userId).orElseThrow(
@@ -80,10 +81,10 @@ public class ActivitiesService {
         // 2. 시간 정규화
         Instant from = (startDate==null) // startDate null 이면
                 ? null
-                : startDate.atZone(KOREA).toInstant(); //
+                : startDate.atStartOfDay(KOREA).toInstant(); //
         Instant to = (endDate == null)
                 ? null
-                : endDate.atZone(KOREA).toInstant();
+                : endDate.plusDays(1).atStartOfDay(KOREA).toInstant();
 
         // 3. 페이지 정규화
         PageCondition pageCondition = PageCondition.of(page, size);

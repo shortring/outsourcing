@@ -12,22 +12,24 @@ import java.time.Instant;
 
 @Entity
 @Getter
-@Table(name = "activities")
+@Table(name = "activities",
+        indexes={
+                // taskTime
+                @Index(name="idx_activities_task_time", columnList="task_id, timestamp"),
+                // ActivityType
+                @Index(name="idx_activities_type_time", columnList = "type, timestamp"),
+                // user
+                @Index(name="idx_activities_user_time", columnList="user_id, timestamp")
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Activity extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 40)
     private ActivityType type;
-
-//    @Column(nullable = false, unique = true)
-//    private Long userId;
-//
-//    @Column(nullable = false)
-//    private Long taskId;
 
     @Column(nullable = false)
     private Instant timestamp;
@@ -46,8 +48,6 @@ public class Activity extends BaseTimeEntity {
 
     public Activity(ActivityType type, Instant timestamp, String description, User user, Task task) {
         this.type = type;
-//        this.userId = userId;
-//        this.taskId = taskId;
         this.timestamp = timestamp;
         this.description = description;
         this.user = user;
@@ -56,6 +56,12 @@ public class Activity extends BaseTimeEntity {
 
     public static Activity of(ActivityType type, Instant timestamp, String description, User user, Task task) {
         return new Activity(type, timestamp, description, user, task);
+    }
+
+    // 2025-12-13 : Time.
+    @PrePersist
+    void prePersist() {
+        if (timestamp == null) timestamp = Instant.now();
     }
 
     public static ActivitiesResponse from(Activity activity) {
