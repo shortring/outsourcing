@@ -1,6 +1,9 @@
 package com.outsourcing.common.config;
 
 import com.outsourcing.common.aop.LoggingAspect;
+import com.outsourcing.domain.activities.repository.ActivityRepository;
+import com.outsourcing.domain.task.repository.TaskRepository;
+import com.outsourcing.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import com.outsourcing.common.aop.LoggingAspect;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +28,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);                  //preflight 요청의 유효시간 설정(설정 안 해도됨, 기본적으로 30븐이 설정 되어있음)
     }
 
-    @Bean
-    public LoggingAspect aspectConfig() {
-        return new LoggingAspect();
-    }
+//    @Bean
+//    public LoggingAspect aspectConfig() {
+//        return new LoggingAspect(TaskRepository, ActivityRepository);
+//    }
 }
