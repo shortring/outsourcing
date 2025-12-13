@@ -1,5 +1,6 @@
 package com.outsourcing.domain.comment.service;
 
+import com.outsourcing.common.aop.ActivityLog;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.Comment;
 import com.outsourcing.common.entity.User;
@@ -7,6 +8,7 @@ import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
+import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.comment.model.dto.CommentDto;
 import com.outsourcing.domain.comment.model.request.CreateCommentRequest;
 import com.outsourcing.domain.comment.model.request.UpdateCommentRequest;
@@ -31,6 +33,7 @@ public class CommentService {
     private final TaskRepository taskRepository;
     private final CommentRepository commentRepository;
 
+    @ActivityLog(type= ActivityType.COMMENT_CREATED)
     @Transactional
     public CreateCommentResponse createComment(Long taskId, CreateCommentRequest request, CustomUserDetails userDetails) {
         User findUser = getUser(userDetails.getUserId());
@@ -76,7 +79,7 @@ public class CommentService {
 
         return CreateCommentResponse.from(commentDto);
     }
-
+    @ActivityLog(type= ActivityType.COMMENT_UPDATED)
     @Transactional(readOnly = true)
     public PagedResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
 

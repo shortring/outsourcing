@@ -4,7 +4,6 @@ import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.domain.task.dto.request.CreateTaskRequest;
-import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
 import com.outsourcing.domain.task.dto.response.TaskResponse;
 import com.outsourcing.domain.task.dto.request.UpdateTaskRequest;
 import com.outsourcing.domain.task.dto.request.UpdateTaskStatusRequest;
@@ -64,8 +63,8 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<ApiResponse<TaskDetailResponse>> getTaskApi(@PathVariable Long taskId) {
-        TaskDetailResponse data = taskService.getTaskApi(taskId);
+    public ResponseEntity<ApiResponse<TaskResponse>> getTaskApi(@PathVariable Long taskId) {
+        TaskResponse data = taskService.getTaskApi(taskId);
         return ResponseEntity.ok(ApiResponse.success("작업 조회 성공", data));
     }
 

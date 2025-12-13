@@ -43,7 +43,6 @@ public class JwtUtil {
                 .build();
     }
 
-
     // 토큰 생성
     public String generateToken(String username, UserRole role, Long userId) {
 

@@ -7,8 +7,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME) // 런타임 중에 계속 살려둠
-public @interface CreateLog {
-    ActivityType type();
-}
+//@Target({ElementType.METHOD})
+//@Retention(RetentionPolicy.RUNTIME) // 런타임 중에 계속 살려둠
+//public @interface CreateLog {
+//    ActivityType type();
+//    String description();
+//    String taskIdArg();
+//}

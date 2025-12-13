@@ -5,20 +5,19 @@ import com.outsourcing.common.entity.task.TaskPriority;
 import com.outsourcing.common.entity.task.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Getter
+// 2025-12-13 : 작성자 : 탁진수
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UpdateTaskRequest {
-    @NotBlank
-    String title;
-    String description;
-    TaskStatus status;
-    TaskPriority priority;
-    @NotNull
-    Long assigneeId;
-    @NotNull
-    LocalDateTime dueDate;
+public record UpdateTaskRequest(
+        @NotBlank String title,
+        String description,
+        TaskStatus status,
+        TaskPriority priority,
+        @NotNull Long assigneeId,
+        @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dueDate
+
+) {
 }

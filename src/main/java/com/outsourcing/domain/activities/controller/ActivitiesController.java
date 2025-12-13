@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,13 +33,17 @@ public class ActivitiesController {
     // 전체 활동 로그 조회
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<ActivitiesResponse>>> getAllActivitiesLog(
-            HttpServletRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) ActivityType type,
             @RequestParam(required = false) Long taskId,
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate) {
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime startDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime endDate
+    ) {
 
         PagedResponse<ActivitiesResponse> result =
                 activitiesService.getAllActivitiesLog(
@@ -50,11 +55,19 @@ public class ActivitiesController {
     // 내 활동 로그 조회
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<PagedResponse<ActivitiesResponse>>> getAllMyActivitiesLog(
-            HttpServletRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        PagedResponse<ActivitiesResponse> result = activitiesService.getAllMyActivitiesLog(request, pageable);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) ActivityType type,
+            @RequestParam(required = false) Long taskId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+    ) {
+        PagedResponse<ActivitiesResponse> result
+                = activitiesService.getAllMyActivitiesLog(
+                        userDetails.getUserId(),
+                page, size, type, taskId, startDate, endDate
+        );
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("활동 로그 조회 성공", result));
     }
 }
