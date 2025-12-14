@@ -32,6 +32,7 @@ public class CommentService {
     private final TaskRepository taskRepository;
     private final CommentRepository commentRepository;
 
+    // 댓글 생성
     @Transactional
     public CreateCommentResponse createComment(Long taskId, CreateCommentRequest request, CustomUserDetails userDetails) {
         User findUser = getUser(userDetails.getUserId());
@@ -40,19 +41,15 @@ public class CommentService {
         Comment parentComment = null;
         Long commentGroup = null;
 
-        // 일반 댓글이 아닌 답글을 달겠다는 요청일 때
         if (request.getParentId() != null) {
 
             parentComment = getComment(request.getParentId());
-            commentGroup = parentComment.getCommentGroup(); // 답글일 경우 commentGroup을 부모 댓글 commentGroup으로 설정
+            commentGroup = parentComment.getCommentGroup();
 
-            // 답글을 달겠다는 요청일 때, 요청의 부모 댓글의 taskId와 pathVariable의 taskId가 같은지 검증
             if (!parentComment.getTask().getId().equals(taskId)) {
                 throw new CustomException(ErrorMessage.BAD_REQUEST_PARENT_COMMENT_TASK_MISMATCH);
             }
 
-            // 무한 댓글(답글에 답글...구조)을 막기 위해 parentId의 부모 댓글이 null인지 검증
-            // null이 아니면 답글에 또 답글을 달려고 하는 것이므로 예외 처리
             if (parentComment.getParentComment() != null) {
                 throw new CustomException(ErrorMessage.BAD_REQUEST_REPLY_TO_REPLY_NOT_ALLOWED);
             }
@@ -68,7 +65,6 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
 
-        // 부모 댓글일 경우 댓글 생성 후 commentGroup를 자기 id로 설정
         if (parentComment == null) {
             savedComment.updateCommentGroup(comment.getId());
         }
@@ -78,6 +74,7 @@ public class CommentService {
         return CreateCommentResponse.from(commentDto);
     }
 
+    // 댓글 목록 조회
     @Transactional(readOnly = true)
     public PagedResponse<GetCommentResponse> getComment(Long taskId, Integer page, Integer size, String sort) {
 
@@ -94,9 +91,11 @@ public class CommentService {
         }
 
         Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
+
         return PagedResponse.from(commentResponsePage);
     }
 
+    // 댓글 수정
     @Transactional
     public UpdateCommentResponse updateComment(Long taskId, Long commentId, UpdateCommentRequest request, CustomUserDetails userDetails) {
 
@@ -104,20 +103,18 @@ public class CommentService {
 
         Comment comment = getComment(commentId);
 
-        // 수정하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
         if (!comment.getUser().getId().equals(userDetails.getUserId())) {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE_COMMENT);
         }
 
         comment.updateComment(request.getContent());
-
         commentRepository.flush();
 
         CommentDto commentDto = CommentDto.from(comment);
-
         return UpdateCommentResponse.from(commentDto);
     }
 
+    // 댓글 삭제
     @Transactional
     public void deleteComment(Long taskId, Long commentId, CustomUserDetails userDetails) {
 
@@ -125,12 +122,10 @@ public class CommentService {
 
         Comment comment = getComment(commentId);
 
-        // 삭제하려는 댓글이 자신의(로그인 된 유저의) 댓글이 맞는지 검증
         if (!comment.getUser().getId().equals(userDetails.getUserId())) {
             throw new CustomException(ErrorMessage.FORBIDDEN_NO_PERMISSION_REMOVE_COMMENT);
         }
 
-        // 부모 댓글이면 같은 그룹의 댓글 전부 논리 삭제, 답글이면 해당 답글만 논리 삭제
         if (comment.getParentComment() == null) {
             commentRepository.softDeleteWithParentComment(comment.getCommentGroup(), IsDeleted.TRUE);
         } else {
@@ -138,7 +133,6 @@ public class CommentService {
         }
     }
 
-    // 요청이 들어온 Task가 존재하는지 검증
     private void checkTaskExists(Long taskId) {
         if (!taskRepository.existsById(taskId)) {
             throw new CustomException(ErrorMessage.NOT_FOUND_TASK);

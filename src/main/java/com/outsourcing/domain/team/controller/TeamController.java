@@ -24,16 +24,17 @@ public class TeamController {
 
     // 팀 생성
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateTeamResponseDto>> createTeamApi(@Valid @RequestBody CreateTeamRequestDto requestDto) {
-        CreateTeamResponseDto responseDto = teamService.createTeam(requestDto);
+    public ResponseEntity<ApiResponse<CreateTeamResponse>> createTeamApi(@Valid @RequestBody CreateTeamRequest request) {
+        CreateTeamResponse responseDto = teamService.createTeam(request);
 
 
-        ApiResponse<CreateTeamResponseDto> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
+        ApiResponse<CreateTeamResponse> apiResponse = ApiResponse.success("팀이 생성되었습니다.", responseDto);
 
-        ResponseEntity<ApiResponse<CreateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        ResponseEntity<ApiResponse<CreateTeamResponse>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         return response;
     }
 
+    // 팀 정보 수정
     @PutMapping("/{teamId}")
     public ResponseEntity<ApiResponse<UpdateTeamResponse>> updateTeamApi(
             @PathVariable("teamId") Long teamId,
@@ -51,6 +52,7 @@ public class TeamController {
         return response;
     }
 
+    // 팀 삭제
     @DeleteMapping("/{teamId}")
     public ResponseEntity<ApiResponse<Void>> deleteTeamApi(@PathVariable("teamId") Long teamId) {
         teamService.deleteTeam(teamId);
@@ -61,6 +63,4 @@ public class TeamController {
 
         return response;
     }
-
-
 }

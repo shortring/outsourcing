@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class WeeklyTaskDashboardDto {
+
     private String name;
     private Long tasks;
     private Long completed;

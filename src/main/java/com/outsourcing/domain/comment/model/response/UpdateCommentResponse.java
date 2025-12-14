@@ -12,18 +12,12 @@ import java.time.Instant;
 public class UpdateCommentResponse {
 
     private final Long id;
-
     private final Long taskId;
-
     private final Long userId;
-
     private final String content;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Long parentId;
-
     private final Instant createdAt;
-
     private final Instant updatedAt;
 
     public static UpdateCommentResponse from(CommentDto comment) {

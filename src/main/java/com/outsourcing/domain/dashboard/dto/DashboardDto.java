@@ -10,6 +10,7 @@ import java.time.ZoneId;
 
 @Getter
 public class DashboardDto {
+
     private final Long assigneeId;
     private final TaskStatus status;
     private final LocalDate dueDate;

@@ -13,6 +13,7 @@ public class TeamValidateService {
 
     private final TeamMemberRepository teamMemberRepository;
 
+    // 팀 중복 검사
     @Transactional(readOnly = true)
     public void ValidateUser(Long teamId, Long userId, ErrorMessage errorMessage) {
 

@@ -26,7 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    //사용자 생성
+    // 회원 가입
     @Transactional
     public CreateUserResponse signup(CreateUserRequest request) {
 
@@ -52,7 +52,7 @@ public class UserService {
         return CreateUserResponse.from(dto);
     }
 
-    //프로필 조회
+    // 프로필 조회
     @Transactional(readOnly = true)
     public GetUserResponse getUser(Long userId, CustomUserDetails userDetails) {
 
@@ -70,7 +70,7 @@ public class UserService {
         return GetUserResponse.from(user);
     }
 
-    //사용자 전체 조회
+    // 사용자 전체 조회
     @Transactional(readOnly = true)
     public List<GetUserResponse> getAllUser() {
 
@@ -115,7 +115,7 @@ public class UserService {
         return UpdateUserResponse.from(dto);
     }
 
-    //회원 탈퇴
+    // 회원 탈퇴
     @Transactional
     public void deleteUser(Long userId, CustomUserDetails userDetails) {
 
@@ -134,7 +134,7 @@ public class UserService {
         user.softDelete(IsDeleted.TRUE);
     }
 
-    //추가 가능한 사용자 조회
+    // 추가 가능한 사용자 조회
     @Transactional(readOnly = true)
     public List<AvailableUserResponse> getAvailableUsers(Long teamId) {
 

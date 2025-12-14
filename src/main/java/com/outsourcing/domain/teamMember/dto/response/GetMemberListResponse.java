@@ -16,5 +16,4 @@ public class GetMemberListResponse {
     private final String email;
     private final UserRole role;
     private final Instant createdAt;
-
 }

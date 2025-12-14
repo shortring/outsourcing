@@ -13,7 +13,7 @@ public record TaskDetailResponse(
         TaskStatus status,
         TaskPriority priority,
         Long assigneeId,
-        AssigneeDetailResponse assignee, // id, username
+        AssigneeDetailResponse assignee,
         Instant createdAt,
         Instant updatedAt,
         Instant dueDate

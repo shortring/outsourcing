@@ -3,8 +3,9 @@ package com.outsourcing.domain.task.dto.response;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.domain.task.dto.TaskDetailDto;
 
-// FE Mock User 필드. : id username, email, name, role, createdAt
+
 public record AssigneeDetailResponse(
+
         Long id,
         String username,
         String name,

@@ -12,20 +12,13 @@ import java.time.Instant;
 public class GetCommentResponse {
 
     private final Long id;
-
     private final String content;
-
     private final Long taskId;
-
     private final Long userId;
-
     private final DetailUserResponse user;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Long parentId;
-
     private final Instant createdAt;
-
     private final Instant updatedAt;
 
     public static GetCommentResponse from(Comment comment) {
@@ -43,5 +36,4 @@ public class GetCommentResponse {
                 comment.getUpdatedAt()
         );
     }
-
 }

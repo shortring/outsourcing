@@ -10,8 +10,8 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name="teams")
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@Table(name = "teams")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team extends BaseTimeEntity {
 
     @Id
@@ -26,7 +26,6 @@ public class Team extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "team")
     private List<TeamMember> members = new ArrayList<>();
-
 
     public Team(String name, String description) {
         this.name = name;

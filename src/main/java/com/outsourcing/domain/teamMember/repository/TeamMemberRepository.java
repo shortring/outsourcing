@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
+
     @Query("""
                 select tm.user
                 from TeamMember tm
@@ -21,7 +22,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     Optional<TeamMember> findByTeamIdAndUserId(Long teamId, Long userId);
 
-    // 추가 시 이미 팀에 속한 유저인지 검증
     boolean existsByTeamAndUser(Team team, User user);
 
     boolean existsByTeam_IdAndUser_Id(Long teamId, Long userId);
@@ -35,11 +35,11 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     Set<Long> findTeamMemberIdsByUserId(@Param("userId") Long userId);
 
     @Query("""
-        select tm
-        from TeamMember tm
-        join fetch tm.user
-        where tm.team.id = :teamId
-    """)
+                select tm
+                from TeamMember tm
+                join fetch tm.user
+                where tm.team.id = :teamId
+            """)
     List<TeamMember> findAllByTeamIdFetchUser(@Param("teamId") Long teamId);
 
 }

@@ -20,7 +20,7 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;//사용자 아이디
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -29,7 +29,7 @@ public class User extends BaseTimeEntity {
     private String password;
 
     @Column(nullable = false)
-    private String name;//실명
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private IsDeleted isDeleted =IsDeleted.FALSE;
+    private IsDeleted isDeleted = IsDeleted.FALSE;
 
     @OneToMany(mappedBy = "user")
     private final List<TeamMember> members = new ArrayList<>();
@@ -55,7 +55,7 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    public void softDelete(IsDeleted isDeleted){
+    public void softDelete(IsDeleted isDeleted) {
         this.isDeleted = isDeleted;
     }
 }

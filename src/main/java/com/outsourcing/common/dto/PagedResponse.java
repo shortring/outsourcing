@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public record PagedResponse<T>(
+
         List<T> content,
         long totalElements,
         int totalPages,
@@ -12,6 +13,7 @@ public record PagedResponse<T>(
         int number
 ) {
     public static <T> PagedResponse<T> from(Page<T> page) {
+
         return new PagedResponse<>(
                 page.getContent(),
                 page.getTotalElements(),
@@ -21,13 +23,3 @@ public record PagedResponse<T>(
         );
     }
 }
-/* FE
-export interface PagedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}
-export interface PagedApiResponse<T> extends ApiResponse<PagedResponse<T>> {}
-*/

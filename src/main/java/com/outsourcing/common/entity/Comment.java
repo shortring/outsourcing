@@ -43,6 +43,7 @@ public class Comment extends BaseTimeEntity {
     private IsDeleted isDeleted = IsDeleted.FALSE;
 
     public Comment(User user, Task task, Comment parentComment, String content, Long commentGroup) {
+
         this.user = user;
         this.task = task;
         this.parentComment = parentComment;
@@ -51,10 +52,12 @@ public class Comment extends BaseTimeEntity {
     }
 
     public void updateComment(String newContent) {
+
         this.content = (newContent == null) ? this.content : newContent;
     }
 
     public void updateCommentGroup(Long commentGroup) {
+
         this.commentGroup = commentGroup;
     }
 }

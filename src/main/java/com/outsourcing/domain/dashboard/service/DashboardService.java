@@ -20,12 +20,14 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
+
     private final DashboardRepository dashboardRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     // 대시보드 통계 조회
     @Transactional(readOnly = true)
     public StatsDashboardResponse stats(Long id) {
+
         List<DashboardDto> dtos = dashboardRepository.findAllTaskStatus();
         Set<Long> teamMembers = teamMemberRepository.findTeamMemberIdsByUserId(id);
 
@@ -63,6 +65,7 @@ public class DashboardService {
                     break;
             }
         }
+
         long completionRate = userTaskTotal != 0 ? Math.round((userTaskDone / userTaskTotal) * 10000) / 100 : 0;
         long teamProgress = teamTaskTotal != 0 ? Math.round((teamTaskDone / teamTaskTotal) * 10000) / 100 : 0;
         return new StatsDashboardResponse(total, complete, inProgress, todo, overdue, teamProgress, myTasksToday, completionRate);
@@ -71,6 +74,7 @@ public class DashboardService {
     // 내 작업 요약 조회
     @Transactional(readOnly = true)
     public SummaryMyTaskResponse myTaskSummary(Long id) {
+
         List<SummaryMyTaskDto> tasks = dashboardRepository.findAllMyTaskStatusByUserId(id);
         SummaryMyTaskResponse response = SummaryMyTaskResponse.newResponse();
         LocalDate today = LocalDate.now();
@@ -95,10 +99,12 @@ public class DashboardService {
     //주간 작업 추세 조회
     @Transactional(readOnly = true)
     public List<WeeklyTaskTrendDashboardResponse> weeklyTaskTrend() {
+
         List<DashboardDto> dtos = dashboardRepository.findAllTaskStatus();
         LocalDate today = LocalDate.now();
         List<WeeklyTaskTrendDashboardResponse> response = new ArrayList<>();
         List<WeeklyTaskDashboardDto> weeklyDtos = new ArrayList<>();
+
         for (int i = 0; i < 7; ++i) {
             LocalDate date = today.minusDays(6 - i);
             weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));

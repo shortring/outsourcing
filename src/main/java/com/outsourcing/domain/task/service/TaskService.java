@@ -68,7 +68,7 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
-    // Task 수정 요청을 하면 updatedAt이 변경됨.
+    // 작업 수정
     @Transactional
     public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
@@ -94,7 +94,7 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
-    // Status를 변경해도 수정일 갱신은 되지 않음.
+    // 작업 상태 변경
     @Transactional
     public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request, Long userId) {
 
@@ -141,23 +141,19 @@ public class TaskService {
             Long assigneeId
     ) {
 
-        // 1. pageCondition : 정규화.
         PageCondition pageCondition = PageCondition.of(rawPage, rawSize);
 
-        // 2. 예외처리
         if (pageCondition.size() == 0) {
             throw new CustomException(ErrorMessage.BAD_REQUEST_WRONG_PARAM);
         }
 
-        // 3. -> Pageable
         Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
-        // 4. Task -> TaskResponse
         Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
         Page<TaskDto> responseDto = taskPage.map(TaskDto::from);
 
         Page<TaskResponse> response = responseDto.map(TaskResponse::from);
-        // 5. TaskResponse -> PagedResponse
+
         return PagedResponse.from(response);
     }
 }

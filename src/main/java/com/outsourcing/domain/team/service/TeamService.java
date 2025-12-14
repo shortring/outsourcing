@@ -21,14 +21,15 @@ public class TeamService {
 
     // 팀 생성
     @Transactional
-    public CreateTeamResponseDto createTeam(CreateTeamRequestDto requestDto) {
-        if (teamRepository.existsByName(requestDto.getName())) {
+    public CreateTeamResponse createTeam(CreateTeamRequest request) {
+
+        if (teamRepository.existsByName(request.getName())) {
             throw new CustomException(ErrorMessage.CONFLICT_EXIST_TEAM_NAME);
         }
 
         Team team = new Team(
-                requestDto.getName(),
-                requestDto.getDescription()
+                request.getName(),
+                request.getDescription()
         );
 
         Team savedTeam = teamRepository.save(team);
@@ -68,6 +69,7 @@ public class TeamService {
     // 팀 삭제
     @Transactional
     public void deleteTeam(Long id) {
+
         Team findTeam = teamRepository.findById(id).orElseThrow
                 (() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 

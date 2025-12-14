@@ -12,13 +12,14 @@ import java.time.Instant;
 @Getter
 @AllArgsConstructor
 public class TaskDto {
+
     Long id;
     String title;
     String description;
     TaskStatus status;
     TaskPriority priority;
     Long assigneeId;
-    AssigneeDetailResponse assignee; // id, username
+    AssigneeDetailResponse assignee;
     Instant createdAt;
     Instant updatedAt;
     Instant dueDate;

@@ -23,19 +23,12 @@ public class Activity extends BaseTimeEntity {
     @Column(nullable = false)
     private ActivityType type;
 
-//    @Column(nullable = false, unique = true)
-//    private Long userId;
-//
-//    @Column(nullable = false)
-//    private Long taskId;
-
     @Column(nullable = false)
     private Instant timestamp;
 
     @Column(nullable = false)
     private String description;
 
-    // user, task 연관관계 검토 필요
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -46,8 +39,6 @@ public class Activity extends BaseTimeEntity {
 
     public Activity(ActivityType type, Instant timestamp, String description, User user, Task task) {
         this.type = type;
-//        this.userId = userId;
-//        this.taskId = taskId;
         this.timestamp = timestamp;
         this.description = description;
         this.user = user;

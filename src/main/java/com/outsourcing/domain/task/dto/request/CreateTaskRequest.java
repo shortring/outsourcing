@@ -24,11 +24,3 @@ public class CreateTaskRequest {
     @NotNull
     LocalDateTime dueDate;
 }
-/* FE
-* export interface CreateTaskRequest {
-  title: string;
-  description?: string;
-  priority: TaskPriority;
-  assigneeId: number;
-  dueDate?: string;
-}*/

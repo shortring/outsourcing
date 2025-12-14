@@ -32,7 +32,8 @@ public class TeamMemberService {
 
     // 멤버 추가
     @Transactional
-    public AddTeamResponseDto addMemberTeam(Long teamId, AddTeamMemberRequestDto request) {
+    public AddTeamResponse addMemberTeam(Long teamId, AddTeamMemberRequest request) {
+
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -44,7 +45,6 @@ public class TeamMemberService {
         }
 
         TeamMember teamMember = new TeamMember(findTeam, findUser);
-
         teamMemberRepository.save(teamMember);
 
         List<User> members = teamMemberRepository.findUsersByTeamId(teamId);
@@ -76,6 +76,7 @@ public class TeamMemberService {
     // 멤버 제거
     @Transactional
     public void removeMemberTeam(Long teamId, Long pointUserId, Long userId) {
+
         teamValidateService.ValidateUser(teamId, userId, ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
 
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(teamId, pointUserId)
@@ -154,6 +155,7 @@ public class TeamMemberService {
                 response.add(teamMemberMapper.getTeamMemberDto(teamMember));
             }
         }
+
         return response;
     }
 }

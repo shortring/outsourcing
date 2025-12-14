@@ -1,6 +1,7 @@
 package com.outsourcing.domain.activities.dto;
 
 public enum ActivityType {
+
     TASK_CREATED("작업 생성"),
     TASK_UPDATED("작업 수정"),
     TASK_DELETED("작업 삭제"),
