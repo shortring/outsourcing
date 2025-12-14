@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface DashboardRepository extends JpaRepository<Task, Long> {
+
     @Query("SELECT new com.outsourcing.domain.dashboard.dto.DashboardDto(t.assignee.id, t.status, t.dueDate, t.createdAt, t.updatedAt) FROM Task t " +
             "WHERE t.dataStatus = com.outsourcing.common.enums.DataStatus.ACTIVE")
     List<DashboardDto> findAllTaskStatus();

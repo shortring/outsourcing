@@ -26,41 +26,27 @@ public class Task extends BaseTimeEntity {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="task_status", nullable=false)
+    @Column(name = "task_status", nullable = false)
     private TaskStatus status;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="task_priority", nullable=false)
+    @Column(name = "task_priority", nullable = false)
     private TaskPriority priority;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="data_status", nullable=false)
+    @Column(name = "data_status", nullable = false)
     private DataStatus dataStatus = DataStatus.ACTIVE;
 
-    @Column(name="archived_at")
+    @Column(name = "archived_at")
     private Instant archivedAt;
 
-    // 작성자 권한 근거
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "created_by_id", nullable = false)
-//    private User createdBy;
-
-    // 담당자 : JPA
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id", nullable = false)
     private User assignee;
 
-
-    // 팀
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "team_id", nullable = false)
-//    private Team team;
-
     @Column
     private Instant dueDate;
 
-
-    // 편의 메서드 : FE/DTO : assigneeId
     public Long getAssigneeId() {
         return assignee != null
                 ? assignee.getId()
@@ -69,6 +55,7 @@ public class Task extends BaseTimeEntity {
 
     public Task(String title, String description, TaskPriority priority,
                 User assignee, Instant dueDate) {
+
         this.title = title;
         this.description = description;
         this.status = TaskStatus.TODO;
@@ -83,6 +70,7 @@ public class Task extends BaseTimeEntity {
     }
 
     public void update(String title, String description, TaskPriority priority, User assignee, Instant dueDate, Instant now) {
+
         this.title = title;
         this.description = description;
         this.priority = (priority != null)
@@ -93,16 +81,19 @@ public class Task extends BaseTimeEntity {
         this.updatedAt = now;
     }
 
-    // 스테이터스 변경.
     public void changeStatus(TaskStatus status) {
+
         this.status = (status != null)
                 ? status
                 : TaskStatus.TODO;
     }
 
-    public void isArchived(){
-        if(this.dataStatus == DataStatus.ARCHIVED){ return; } // 멱등
-        this.dataStatus=DataStatus.ARCHIVED;
-        this.archivedAt=Instant.now();
+    public void isArchived() {
+
+        if (this.dataStatus == DataStatus.ARCHIVED) {
+            return;
+        }
+        this.dataStatus = DataStatus.ARCHIVED;
+        this.archivedAt = Instant.now();
     }
 }

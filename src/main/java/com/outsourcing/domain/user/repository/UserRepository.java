@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
@@ -26,9 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAvailableUsers(@Param("teamId") Long teamId);
 
     @Query("""
-           SELECT u
-           FROM User u
-           WHERE u.name LIKE %:query%
-           """)
+            SELECT u
+            FROM User u
+            WHERE u.name LIKE %:query%
+            """)
     List<User> searchByKeyword(@Param("query") String query);
 }

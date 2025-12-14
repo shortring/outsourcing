@@ -7,6 +7,7 @@ import java.util.List;
 
 @Getter
 public class SummaryMyTaskResponse {
+
     private final List<SummaryMyTaskDto> todayTasks;
     private final List<SummaryMyTaskDto> upcomingTasks;
     private final List<SummaryMyTaskDto> overdueTasks;

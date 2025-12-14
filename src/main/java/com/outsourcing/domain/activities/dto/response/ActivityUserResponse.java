@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ActivityUserResponse {
+
     Long id;
     String username;
     String name;

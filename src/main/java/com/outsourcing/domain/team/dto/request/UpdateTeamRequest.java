@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UpdateTeamRequestDto {
+public class UpdateTeamRequest {
 
     private String name;
+
     private String description;
 }

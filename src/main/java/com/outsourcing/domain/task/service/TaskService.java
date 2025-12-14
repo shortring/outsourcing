@@ -9,7 +9,6 @@ import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.repository.ActivityRepository;
 import com.outsourcing.domain.task.dto.TaskDetailDto;
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +42,9 @@ public class TaskService {
     private final ActivityRepository activityRepository;
     private static final ZoneId KOREA = ZoneId.of("Asia/Seoul");
 
-
+    // 작업 생성
     @Transactional
-    public TaskResponse createTaskApi(CreateTaskRequest request) {
+    public TaskResponse createTask(CreateTaskRequest request) {
 
 
         User assigneeUser = userRepository.findById(request.getAssigneeId())
@@ -68,9 +66,9 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
-    // Task 수정 요청을 하면 updatedAt이 변경됨.
+    // 작업 수정
     @Transactional
-    public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request) {
+    public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
 
         User assigneeUser = userRepository.findById(request.getAssigneeId())
@@ -94,15 +92,14 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
-    // Status를 변경해도 수정일 갱신은 되지 않음.
+    // 작업 상태 변경
     @Transactional
-    public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request) {
+    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request, Long userId) {
 
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         if (!request.status().toString().equals(task.getStatus().toString())) {
-            Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
             User user = userRepository.getReferenceById(userId);
             String description = "작업 상태를 " + task.getStatus().toString() + "에서 " + request.status() + "으로 변경했습니다.";
 
@@ -115,17 +112,18 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
+    // 작업 제거
     @Transactional
-    public void deleteTaskApi(Long taskId) {
+    public void deleteTask(Long taskId) {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         task.isArchived();
     }
 
-    // email
+    // 작업 조회
     @Transactional(readOnly = true)
-    public TaskDetailResponse getTaskApi(Long taskId) {
+    public TaskDetailResponse getTask(Long taskId) {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
@@ -133,8 +131,9 @@ public class TaskService {
         return TaskDetailResponse.of(taskDto);
     }
 
+    // 작업 목록 조회
     @Transactional(readOnly = true)
-    public PagedResponse<TaskResponse> getListTaskApi(
+    public PagedResponse<TaskResponse> getListTask(
             int rawPage,
             int rawSize,
             TaskStatus status,
@@ -142,23 +141,19 @@ public class TaskService {
             Long assigneeId
     ) {
 
-        // 1. pageCondition : 정규화.
         PageCondition pageCondition = PageCondition.of(rawPage, rawSize);
 
-        // 2. 예외처리
         if (pageCondition.size() == 0) {
             throw new CustomException(ErrorMessage.BAD_REQUEST_WRONG_PARAM);
         }
 
-        // 3. -> Pageable
         Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
-        // 4. Task -> TaskResponse
         Page<Task> taskPage = taskQueryRepository.search(pageable, status, keyword, assigneeId);
         Page<TaskDto> responseDto = taskPage.map(TaskDto::from);
 
         Page<TaskResponse> response = responseDto.map(TaskResponse::from);
-        // 5. TaskResponse -> PagedResponse
+
         return PagedResponse.from(response);
     }
 }

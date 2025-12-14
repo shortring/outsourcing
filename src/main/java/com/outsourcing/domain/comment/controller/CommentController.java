@@ -23,6 +23,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    //댓글 생성
     @PostMapping
     public ResponseEntity<ApiResponse<CreateCommentResponse>> createCommentApi(
             @PathVariable Long taskId,
@@ -34,6 +35,7 @@ public class CommentController {
                 .body(ApiResponse.success("댓글이 작성되었습니다.", commentService.createComment(taskId, request, userDetails)));
     }
 
+    //댓글 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<GetCommentResponse>>> getCommentApi(
             @PathVariable Long taskId,
@@ -46,6 +48,7 @@ public class CommentController {
                 .body(ApiResponse.success("댓글 목록을 조회했습니다.", commentService.getComment(taskId, page, size, sort)));
     }
 
+    //댓글 수정
     @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<UpdateCommentResponse>> updateCommentApi(
             @PathVariable Long taskId,
@@ -58,6 +61,7 @@ public class CommentController {
                 .body(ApiResponse.success("댓글이 수정되었습니다.", commentService.updateComment(taskId, commentId, request, userDetails)));
     }
 
+    //댓글 삭제
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteCommentApi(
             @PathVariable Long taskId,

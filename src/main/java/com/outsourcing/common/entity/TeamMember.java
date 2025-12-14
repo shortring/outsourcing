@@ -24,10 +24,8 @@ public class TeamMember extends BaseTimeEntity {
     @JoinColumn(nullable = false, name = "team_id")
     private Team team;
 
-    public TeamMember (Team team, User user) {
+    public TeamMember(Team team, User user) {
         this.team = team;
         this.user = user;
     }
-
-
 }

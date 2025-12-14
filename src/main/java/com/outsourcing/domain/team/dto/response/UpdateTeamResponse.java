@@ -7,7 +7,8 @@ import java.time.Instant;
 
 @Getter
 @RequiredArgsConstructor
-public class CreateTeamResponseDto {
+public class UpdateTeamResponse {
+
     private final Long id;
     private final String name;
     private final String description;

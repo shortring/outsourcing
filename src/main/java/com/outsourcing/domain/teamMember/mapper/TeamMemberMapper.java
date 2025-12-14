@@ -1,16 +1,16 @@
 package com.outsourcing.domain.teamMember.mapper;
 
 import com.outsourcing.common.entity.TeamMember;
-import com.outsourcing.domain.teamMember.dto.response.GetMemberDetailResponseDto;
-import com.outsourcing.domain.teamMember.dto.response.GetMemberListResponseDto;
-import com.outsourcing.domain.teamMember.dto.response.GetTeamMemberResponseDto;
+import com.outsourcing.domain.teamMember.dto.response.GetMemberDetailResponse;
+import com.outsourcing.domain.teamMember.dto.response.GetMemberListResponse;
+import com.outsourcing.domain.teamMember.dto.response.GetTeamMemberResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TeamMemberMapper {
 
-    public GetMemberListResponseDto getListDto(TeamMember teamMember) {
-        return new GetMemberListResponseDto(
+    public GetMemberListResponse getListDto(TeamMember teamMember) {
+        return new GetMemberListResponse(
                 teamMember.getUser().getId(),
                 teamMember.getUser().getUsername(),
                 teamMember.getUser().getName(),
@@ -20,8 +20,8 @@ public class TeamMemberMapper {
         );
     }
 
-    public GetMemberDetailResponseDto getDetailDto(TeamMember teamMember) {
-        return new GetMemberDetailResponseDto(
+    public GetMemberDetailResponse getDetailDto(TeamMember teamMember) {
+        return new GetMemberDetailResponse(
                 teamMember.getUser().getId(),
                 teamMember.getUser().getUsername(),
                 teamMember.getUser().getName(),
@@ -30,8 +30,8 @@ public class TeamMemberMapper {
         );
     }
 
-    public GetTeamMemberResponseDto getTeamMemberDto(TeamMember teamMember) {
-        return new GetTeamMemberResponseDto(
+    public GetTeamMemberResponse getTeamMemberDto(TeamMember teamMember) {
+        return new GetTeamMemberResponse(
                 teamMember.getUser().getId(),
                 teamMember.getUser().getUsername(),
                 teamMember.getUser().getName(),

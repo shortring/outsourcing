@@ -23,11 +23,11 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-// 관점 (단위)
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class LoggingAspect {
+
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
@@ -40,45 +40,47 @@ public class LoggingAspect {
     public void getCommentServiceMethods() {
     }
 
-    // 작업 서비스 포인트컷. 향후 추가 가능.
     @Pointcut("""
-            execution(* com.outsourcing.domain.task.service.TaskService.createTaskApi(..))
-            || execution(* com.outsourcing.domain.task.service.TaskService.updateTaskApi(..))
-            || execution(* com.outsourcing.domain.task.service.TaskService.deleteTaskApi(..))""")
+            execution(* com.outsourcing.domain.task.service.TaskService.createTask(..))
+            || execution(* com.outsourcing.domain.task.service.TaskService.updateTask(..))
+            || execution(* com.outsourcing.domain.task.service.TaskService.deleteTask(..))""")
     public void createAndDeleteTaskMethod() {
     }
 
-    /**
-     * 저장해줄 정보
-     * id, type, userId, userInfo, taskId, timestamp, description(ex : 새 작업을 생성하였습니다.)
-     *
-     */
+    //Task 및 Comment 관련 작업 수행 후 사용자 활동 로그를 기록
     @Around("(allCommentServiceMethods() && !getCommentServiceMethods()) || createAndDeleteTaskMethod()")
     public Object afterReturningTaskAop(ProceedingJoinPoint joinPoint) throws Throwable {
+
         Object result = joinPoint.proceed();
+
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String methodName = signature.getMethod().getName();
+
         Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-        // 저장할 정보들
+
+        User user = userRepository.getReferenceById(userId);
+
         ActivityType status = null;
         Task task = null;
-        User user = userRepository.getReferenceById(userId);
         String description = null;
         Object[] request = joinPoint.getArgs();
+
         switch (methodName) {
-            case "createTaskApi":
+
+            case "createTask":
                 TaskResponse taskResponse = (TaskResponse) result;
                 task = taskRepository.getReferenceById(taskResponse.getId());
                 description = "새로운 작업 \"" + taskResponse.getTitle() + "\"을 생성했습니다.";
                 status = ActivityType.TASK_CREATED;
                 break;
-            case "updateTaskApi":
+
+            case "updateTask":
                 task = taskRepository.findById((Long) request[0]).orElseThrow();
                 description = "작업 \"" + ((UpdateTaskRequest) request[1]).getTitle() + "\" 정보를 수정했습니다.";
                 status = ActivityType.TASK_UPDATED;
                 break;
 
-            case "deleteTaskApi":
+            case "deleteTask":
                 task = taskRepository.findById((Long) request[0]).orElseThrow();
                 description = "작업 \"" + task.getTitle() + "\"을 삭제했습니다.";
                 status = ActivityType.TASK_DELETED;
@@ -103,7 +105,6 @@ public class LoggingAspect {
                 task = taskRepository.getReferenceById((Long) request[0]);
                 description = "댓글을 삭제했습니다.";
                 status = ActivityType.COMMENT_DELETED;
-
         }
 
         activityRepository.save(Activity.of(status, Instant.now(), description, user, task));

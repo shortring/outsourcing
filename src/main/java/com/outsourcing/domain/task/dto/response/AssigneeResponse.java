@@ -4,6 +4,7 @@ import com.outsourcing.common.entity.User;
 import com.outsourcing.domain.task.dto.TaskDto;
 
 public record AssigneeResponse(
+
         Long id,
         String username,
         String name

@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @Getter
 public class ActivitiesResponse {
+
     Long id;
     ActivityType type;
     Long userId;

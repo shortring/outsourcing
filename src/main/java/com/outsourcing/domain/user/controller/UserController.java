@@ -25,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
 
+    // 회원 가입
     @PostMapping
     public ResponseEntity<ApiResponse<CreateUserResponse>> createUserApi(@Valid @RequestBody CreateUserRequest request) {
 
@@ -33,6 +34,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("회원가입이 완료되었습니다.", result));
     }
 
+    // 프로필 조회
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<GetUserResponse>> getUserApi(
             @PathVariable Long userId,
@@ -43,6 +45,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 정보 조회 성공", result));
     }
 
+    // 사용자 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<GetUserResponse>>> getUsersApi() {
 
@@ -51,6 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 목록 조회 성공", result));
     }
 
+    // 사용자 수정
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserApi(
             @PathVariable Long userId,
@@ -62,6 +66,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("사용자 목록 조회 성공", result));
     }
 
+    // 회원 탈퇴
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteUserApi(
             @PathVariable Long userId,
@@ -72,6 +77,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("회원 탈퇴가 완료되었습니다.", null));
     }
 
+    // 추가 가능한 사용자 목록 조회
     @GetMapping("/available")
     public ResponseEntity<ApiResponse<List<AvailableUserResponse>>> getAvailableUsers(@RequestParam(required = false) Long teamId) {
 

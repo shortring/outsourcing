@@ -7,13 +7,14 @@ import com.outsourcing.domain.task.dto.TaskDetailDto;
 import java.time.Instant;
 
 public record TaskDetailResponse(
+
         Long id,
         String title,
         String description,
         TaskStatus status,
         TaskPriority priority,
         Long assigneeId,
-        AssigneeDetailResponse assignee, // id, username
+        AssigneeDetailResponse assignee,
         Instant createdAt,
         Instant updatedAt,
         Instant dueDate

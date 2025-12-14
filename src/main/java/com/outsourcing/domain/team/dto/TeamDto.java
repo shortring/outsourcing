@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class TeamDto {
+
     private Long id;
     private String name;
     private String description;

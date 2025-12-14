@@ -1,66 +1,89 @@
 package com.outsourcing.domain.activities.service;
 
+import com.outsourcing.common.dto.PageCondition;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.Activity;
-import com.outsourcing.common.filter.CustomUserDetails;
+import com.outsourcing.common.entity.User;
+import com.outsourcing.common.exception.CustomException;
+import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.activities.dto.ActivityType;
+import com.outsourcing.domain.activities.dto.response.ActivitiesAllResponse;
 import com.outsourcing.domain.activities.dto.response.ActivitiesResponse;
-import com.outsourcing.domain.activities.repository.ActivityRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import com.outsourcing.domain.activities.repository.ActivityQueryRepositoryImpl;
+import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
 public class ActivitiesService {
-    private final ActivityRepository activityRepository;
-    private final Logger log = LoggerFactory.getLogger(ActivitiesService.class);
 
-    @Transactional
-    public PagedResponse<ActivitiesResponse> getAllActivitiesLog(ActivityType type, Long taskId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
+    private final ActivityQueryRepositoryImpl queryRepository;
+    private final UserRepository userRepository;
+    private static final ZoneId KOREA = ZoneId.of("Asia/Seoul");
 
-        // 조회 기간 설정
-        LocalDateTime startDateTime = startDate == null ? LocalDateTime.of(1, 1, 1, 0, 0) : startDate;
-        LocalDateTime endDateTime = endDate == null ? LocalDateTime.of(9999, 12, 31, 23, 59) : endDate;
+    // 전체 활동 로그 조회
+    @Transactional(readOnly = true)
+    public PagedResponse<ActivitiesResponse> getAllActivitiesLog(
+            int page,
+            int size,
+            ActivityType type,
+            Long taskId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        Instant from = (startDate == null) ? null : startDate.atStartOfDay(KOREA).toInstant();
+        Instant to = (endDate == null) ? null : endDate.plusDays(1).atStartOfDay(KOREA).toInstant();
 
-        // 페이징
-        Page<Activity> activitiesPage;
+        PageCondition pageCondition = PageCondition.of(page, size);
 
-        // 설정에 따라 조건 조회
-        if (type == null && taskId == null) {
-            // 전부 조회
-            activitiesPage = activityRepository.findAll(pageable);
-        } else if (type == null) {
-            // 작업 id로 조건 조회
-            activitiesPage = activityRepository.findAllByTaskId(taskId, pageable, startDateTime, endDateTime);
-        } else if (taskId == null) {
-            // 타입으로 조건 조회
-            activitiesPage = activityRepository.findAllByType(type, pageable);
-        } else {
-            // 작업 id && 타입으로 조건 조회
-            activitiesPage = activityRepository.findAllByTypeAndTaskId(type, taskId,pageable, startDateTime, endDateTime);
-        }
+        Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
 
-        // 최종 조회 값 리턴
-        return PagedResponse.from(activitiesPage.map(ActivitiesResponse::from));
+        Page<Activity> activityPage = queryRepository.search(type, taskId, from, to, pageable);
+
+        Page<ActivitiesResponse> response = activityPage.map(ActivitiesResponse::from);
+
+        return PagedResponse.from(response);
     }
 
-    @Transactional
-    public PagedResponse<ActivitiesResponse> getAllMyActivitiesLog(HttpServletRequest request, Pageable pageable) {
+    // 내 활동 로그 조회
+    @Transactional(readOnly = true)
+    public PagedResponse<ActivitiesAllResponse> getAllMyActivitiesLog(
+            Long userId,
+            int page,
+            int size,
+            ActivityType type,
+            Long taskId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
+        );
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        Instant from = (startDate == null)
+                ? null
+                : startDate.atStartOfDay(KOREA).toInstant();
 
-        Page<Activity> activitiesPage = activityRepository.findAllByUserId(user.getUserId(), pageable);
-        return PagedResponse.from(activitiesPage.map(ActivitiesResponse::from));
+        Instant to = (endDate == null)
+                ? null
+                : endDate.plusDays(1).atStartOfDay(KOREA).toInstant();
+
+        PageCondition pageCondition = PageCondition.of(page, size);
+        Pageable pageable = PageRequest.of(pageCondition.page(), pageCondition.size());
+
+        Page<Activity> activityPage = queryRepository.search(user.getId(), type, taskId, from, to, pageable);
+
+        Page<ActivitiesAllResponse> response = activityPage.map(ActivitiesAllResponse::from);
+
+        return PagedResponse.from(response);
     }
 }

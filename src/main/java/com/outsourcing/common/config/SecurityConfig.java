@@ -21,11 +21,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+
     private final JwtFilter jwtFilter;
     private final UrlBasedCorsConfigurationSource configurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -38,12 +40,14 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .build();
+
     }
 
+    //비밀번호 암호화
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // BCrypt Encoder 사용
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+    }
 }

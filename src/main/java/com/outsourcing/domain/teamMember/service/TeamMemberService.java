@@ -8,7 +8,7 @@ import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.team.service.TeamValidateService;
-import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
+import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequest;
 import com.outsourcing.domain.teamMember.dto.response.*;
 import com.outsourcing.domain.teamMember.mapper.TeamMemberMapper;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
@@ -32,7 +32,8 @@ public class TeamMemberService {
 
     // 멤버 추가
     @Transactional
-    public AddTeamResponseDto addMemberTeam(Long teamId, AddTeamMemberRequestDto request) {
+    public AddTeamResponse addMemberTeam(Long teamId, AddTeamMemberRequest request) {
+
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -44,14 +45,13 @@ public class TeamMemberService {
         }
 
         TeamMember teamMember = new TeamMember(findTeam, findUser);
-
         teamMemberRepository.save(teamMember);
 
         List<User> members = teamMemberRepository.findUsersByTeamId(teamId);
 
-        List<AddTeamMemberResponseDto> memberResponse = new ArrayList<>();
+        List<AddTeamMemberResponse> memberResponse = new ArrayList<>();
         for (User user : members) {
-            AddTeamMemberResponseDto membersDto = new AddTeamMemberResponseDto(
+            AddTeamMemberResponse membersDto = new AddTeamMemberResponse(
                     user.getId(),
                     user.getUsername(),
                     user.getName(),
@@ -62,7 +62,7 @@ public class TeamMemberService {
             memberResponse.add(membersDto);
         }
 
-        AddTeamResponseDto response = new AddTeamResponseDto(
+        AddTeamResponse response = new AddTeamResponse(
                 findTeam.getId(),
                 findTeam.getName(),
                 findTeam.getDescription(),
@@ -76,6 +76,7 @@ public class TeamMemberService {
     // 멤버 제거
     @Transactional
     public void removeMemberTeam(Long teamId, Long pointUserId, Long userId) {
+
         teamValidateService.ValidateUser(teamId, userId, ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
 
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(teamId, pointUserId)
@@ -86,21 +87,21 @@ public class TeamMemberService {
 
     // 팀 목록 조회
     @Transactional(readOnly = true)
-    public List<GetTeamListResponseDto> getTeamList() {
+    public List<GetTeamListResponse> getTeamList() {
 
         List<Team> teamList = teamRepository.findAll();
-        List<GetTeamListResponseDto> response = new ArrayList<>();
+        List<GetTeamListResponse> response = new ArrayList<>();
 
         for (Team team : teamList) {
 
             List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(team.getId());
 
-            List<GetMemberListResponseDto> memberList = new ArrayList<>();
+            List<GetMemberListResponse> memberList = new ArrayList<>();
             for (TeamMember teamMember : members) {
                 memberList.add(teamMemberMapper.getListDto(teamMember));
             }
 
-            GetTeamListResponseDto responseDto = new GetTeamListResponseDto(
+            GetTeamListResponse responseDto = new GetTeamListResponse(
                     team.getId(),
                     team.getName(),
                     team.getDescription(),
@@ -114,7 +115,7 @@ public class TeamMemberService {
 
     // 팀 상세 조회
     @Transactional(readOnly = true)
-    public GetTeamDetailResponseDto getTeamDetail(Long teamId) {
+    public GetTeamDetailResponse getTeamDetail(Long teamId) {
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
@@ -122,14 +123,14 @@ public class TeamMemberService {
         List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(team.getId());
 
 
-        List<GetMemberDetailResponseDto> responseDto = new ArrayList<>();
+        List<GetMemberDetailResponse> responseDto = new ArrayList<>();
 
         for (TeamMember teamMember : members) {
 
             responseDto.add(teamMemberMapper.getDetailDto(teamMember));
         }
 
-        GetTeamDetailResponseDto response = new GetTeamDetailResponseDto(
+        GetTeamDetailResponse response = new GetTeamDetailResponse(
                 team.getId(),
                 team.getName(),
                 team.getDescription(),
@@ -141,11 +142,11 @@ public class TeamMemberService {
 
     // 팀 멤버 조회
     @Transactional(readOnly = true)
-    public List<GetTeamMemberResponseDto> getTeamMember(Long teamId) {
+    public List<GetTeamMemberResponse> getTeamMember(Long teamId) {
 
         List<TeamMember> members = teamMemberRepository.findAllByTeamIdFetchUser(teamId);
 
-        List<GetTeamMemberResponseDto> response = new ArrayList<>();
+        List<GetTeamMemberResponse> response = new ArrayList<>();
 
         for (TeamMember teamMember : members) {
 
@@ -154,6 +155,7 @@ public class TeamMemberService {
                 response.add(teamMemberMapper.getTeamMemberDto(teamMember));
             }
         }
+
         return response;
     }
 }

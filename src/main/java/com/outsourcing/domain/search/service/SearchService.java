@@ -23,10 +23,10 @@ public class SearchService {
     private final TeamRepository teamRepository;
     private final TaskRepository taskRepository;
 
+    // 톨합 검색
     @Transactional(readOnly = true)
     public SearchResponse search(String query) {
 
-        // 검색어가 비어있을 때 예외 처리
         if (query == null || query.isBlank()) {
             throw new CustomException(ErrorMessage.BAD_REQUEST_NOT_NULL_SEARCH_KEYWORD);
         }

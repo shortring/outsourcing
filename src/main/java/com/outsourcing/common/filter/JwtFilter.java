@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //authorizationHeader  유/무 검사
+
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -49,10 +49,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwt = authorizationHeader.substring(7);
 
-        // 토큰 유효성 검사
+
         if (!jwtUtil.validateToken(jwt)) {
             log.info("Jwt 토큰이 유효하지 않습니다.");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);//유효하지 않아
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("{\"error\": \"Unauthorized\"}");
             return;
         }
@@ -65,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         UserRole userRole = UserRole.valueOf(auth);
 
-        //Spring Security에서 사용하는 User 객체를 생성했습니다.
+
         CustomUserDetails userDetails = new CustomUserDetails(
                 userId,
                 userName,
@@ -82,7 +82,5 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
-
-
     }
 }

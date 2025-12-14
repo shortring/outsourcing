@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class StatsDashboardResponse {
+
     private final Long totalTasks;
     private final Long completedTasks;
     private final Long inProgressTasks;

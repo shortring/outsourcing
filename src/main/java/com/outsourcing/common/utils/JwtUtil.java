@@ -19,16 +19,13 @@ import java.util.Date;
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-    //기본 셋팅
-    public static final String BEARER_PREFIX = "Bearer ";
 
-    private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    public static final String BEARER_PREFIX = "Bearer ";
+    private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKeyString;
-
     private SecretKey key;
-
     private JwtParser parser;
 
 
@@ -42,7 +39,6 @@ public class JwtUtil {
                 .verifyWith(this.key)
                 .build();
     }
-
 
     // 토큰 생성
     public String generateToken(String username, UserRole role, Long userId) {
@@ -84,7 +80,7 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
 
-        return extractAllClaims(token).get("username",String.class);
+        return extractAllClaims(token).get("username", String.class);
     }
 
     public String extractRole(String token) {

@@ -25,34 +25,27 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
     @Override
     public Page<Task> search(Pageable pageable, TaskStatus status, String keyword, Long assigneeId) {
 
-        // 1. Q클래스 선언.
         QTask task = QTask.task;
         QUser assignee = QUser.user;
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        // 2. 기본 필터.
         builder.and(task.dataStatus.eq(DataStatus.ACTIVE));
 
-        // 3. 키워드
         if (keyword != null
                 && !keyword.isBlank()) {
             builder.and(task.title.containsIgnoreCase(keyword)
                     .or(task.description.containsIgnoreCase(keyword)));
         }
 
-        // 4. 상태
         if (status != null) {
             builder.and(task.status.eq(status));
         }
 
-        // 5. 담당자 : assignedId
         if (assigneeId != null) {
             builder.and(task.assignee.id.eq(assigneeId));
         }
 
-
-        // 6. 리스트
         List<Task> tasks = jpaQueryFactory
                 .selectFrom(task)
                 .leftJoin(task.assignee, assignee).fetchJoin()
@@ -61,20 +54,6 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
                 .limit(pageable.getPageSize())
                 .orderBy(task.createdAt.desc())
                 .fetch();
-
-        // 7. 합계.
-//        Long total=jpaQueryFactory
-//                .select(task.count())
-//                .from(task)
-//                .where(builder)
-//                .fetchOne(); // Long
-//
-//        // 8. Page
-//        return new PageImpl<>(tasks,
-//                pageable,
-//                Optional.ofNullable(total)
-//                        .orElse(0L)
-//        );
 
         return PageableExecutionUtils.getPage(
                 tasks,
@@ -85,6 +64,5 @@ public class TaskQueryRepositoryImpl implements TaskQueryRepository {
                         .where(builder)
                         .fetchOne()
                 ).orElse(0L));
-
     }
 }

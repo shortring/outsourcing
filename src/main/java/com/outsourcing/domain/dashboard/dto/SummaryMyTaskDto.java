@@ -10,6 +10,7 @@ import java.time.Instant;
 @Getter
 @RequiredArgsConstructor
 public class SummaryMyTaskDto {
+
     private final Long id;
     private final String title;
     private final TaskStatus status;

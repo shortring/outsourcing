@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -25,6 +26,7 @@ public class AuthService {
     //로그인
     @Transactional
     public String login(LoginRequest request) {
+
         String username = request.getUsername();
         String password = request.getPassword();
 
@@ -32,7 +34,7 @@ public class AuthService {
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
 
-        if(user.getIsDeleted().equals(IsDeleted.TRUE)){
+        if (user.getIsDeleted().equals(IsDeleted.TRUE)) {
             throw new CustomException(ErrorMessage.NOT_FOUND_USER);
         }
 
@@ -44,12 +46,16 @@ public class AuthService {
 
     }
 
+    //비밀번호 검증
     @Transactional
     public VerifyPasswordResponse verifyPassword(VerifyPasswordRequest request, CustomUserDetails userDetails) {
+
         User user = authRepository.findById(userDetails.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_ID_PASSWORD)
         );
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+
             return new VerifyPasswordResponse(false);
         }
 

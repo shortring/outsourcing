@@ -10,10 +10,10 @@ import java.util.List;
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @Query("""
-           SELECT t
-           FROM Team t
-           WHERE t.name LIKE %:query% OR t.description LIKE %:query%
-           """)
+            SELECT t
+            FROM Team t
+            WHERE t.name LIKE %:query% OR t.description LIKE %:query%
+            """)
     List<Team> searchByKeyword(@Param("query") String query);
 
     boolean existsByName(String name);

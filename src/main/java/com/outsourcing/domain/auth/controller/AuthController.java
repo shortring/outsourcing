@@ -23,6 +23,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    //로그인
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<LoginResponse>> loginApi(@RequestBody LoginRequest request) {
 
@@ -31,15 +32,19 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("로그인 성공", result));
     }
 
+    //비밀번호 검증
     @PostMapping("/users/verify-password")
     public ResponseEntity<ApiResponse<VerifyPasswordResponse>> verifyPasswordApi(
             @RequestBody VerifyPasswordRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         VerifyPasswordResponse result = authService.verifyPassword(request, userDetails);
+
         if (!result.isValid()) {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("비밀번호가 올바르지 않습니다.", result));
         }
+
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("비밀번호가 확인되었습니다.", result));
     }
 

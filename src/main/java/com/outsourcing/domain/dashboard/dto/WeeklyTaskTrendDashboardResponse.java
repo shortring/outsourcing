@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @RequiredArgsConstructor
 public class WeeklyTaskTrendDashboardResponse {
+
     private final String name;
     private final Long tasks;
     private final Long completed;
