@@ -50,10 +50,9 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
-    public void modify(String name, String email, String password) {
+    public void modify(String name, String email) {
         this.name = name;
         this.email = email;
-        this.password = password;
     }
 
     public void softDelete(IsDeleted isDeleted){

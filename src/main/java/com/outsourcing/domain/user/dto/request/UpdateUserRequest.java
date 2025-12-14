@@ -12,7 +12,11 @@ public class UpdateUserRequest {
     @NotBlank(message = "이름을 입력해주세요")
     String name;
 
-    @Email(message = "올바른 이메일 형식이 아닙니다.")
+    @Email
+    @Pattern(
+            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "이메일 형식이 올바르지 않습니다."
+    )
     @NotBlank(message = "email을 입력해주세요")
     String email;
 

@@ -94,6 +94,10 @@ public class UserService {
                 () -> new CustomException(ErrorMessage.NOT_FOUND_USER)
         );
 
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new CustomException(ErrorMessage.UNAUTHORIZED_WRONG_PASSWORD);
+        }
+
         if (user.getIsDeleted().equals(IsDeleted.TRUE)) {
             throw new CustomException(ErrorMessage.NOT_FOUND_USER);
         }
@@ -104,8 +108,7 @@ public class UserService {
 
         user.modify(
                 request.getName(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()));
+                request.getEmail());
 
         UserDto dto = UserDto.from(user);
 
