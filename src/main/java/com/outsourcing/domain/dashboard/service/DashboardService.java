@@ -104,17 +104,20 @@ public class DashboardService {
             weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));
         }
 
-        for (DashboardDto dto : dtos) {
-            if (dto.getDueDate().isBefore(today.minusDays(6))) continue;
+        for (WeeklyTaskDashboardDto weeklyDto : weeklyDtos) {
+            LocalDate date = weeklyDto.getDate();
 
-            for (int i = 0; i < 7; ++i) {
-                LocalDate date = today.minusDays(6 - i);
+            long tasks = dtos.stream()
+                    .filter(dto -> !dto.getCreatedAt().isAfter(date))
+                    .count();
 
-                if (dto.getDueDate().isEqual(date)) {
-                    weeklyDtos.get(i).sumTasks();
-                    if (dto.getStatus().equals(TaskStatus.DONE)) weeklyDtos.get(i).sumCompleted();
-                }
-            }
+            long completed = dtos.stream()
+                    .filter(dto -> dto.getStatus() == TaskStatus.DONE
+                            && !dto.getUpdatedAt().isAfter(date))
+                    .count();
+
+            weeklyDto.setTasks(tasks);
+            weeklyDto.setCompleted(completed);
         }
 
         for (WeeklyTaskDashboardDto weeklyDto : weeklyDtos) {

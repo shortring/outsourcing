@@ -35,7 +35,7 @@ public class Task extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name="data_status", nullable=false)
-    private DataStatus dataStatus;
+    private DataStatus dataStatus = DataStatus.ACTIVE;
 
     @Column(name="archived_at")
     private Instant archivedAt;
@@ -104,8 +104,5 @@ public class Task extends BaseTimeEntity {
         if(this.dataStatus == DataStatus.ARCHIVED){ return; } // 멱등
         this.dataStatus=DataStatus.ARCHIVED;
         this.archivedAt=Instant.now();
-    }
-    public Task(Long id){
-        this.id = id;
     }
 }
