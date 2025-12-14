@@ -1,5 +1,8 @@
 package com.outsourcing.domain.activities.dto;
 
+import lombok.Getter;
+
+@Getter
 public enum ActivityType {
 
     TASK_CREATED("작업 생성"),

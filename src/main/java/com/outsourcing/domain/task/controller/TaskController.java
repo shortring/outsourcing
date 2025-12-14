@@ -31,7 +31,7 @@ public class TaskController {
     public ResponseEntity<ApiResponse<TaskResponse>> createTaskApi(
             @Valid @RequestBody CreateTaskRequest request
     ) {
-        TaskResponse data = taskService.createTaskApi(request);
+        TaskResponse data = taskService.createTask(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("작업이 생성되었습니다.", data)
         );

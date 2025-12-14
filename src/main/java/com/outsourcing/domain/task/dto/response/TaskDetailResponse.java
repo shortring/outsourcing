@@ -7,6 +7,7 @@ import com.outsourcing.domain.task.dto.TaskDetailDto;
 import java.time.Instant;
 
 public record TaskDetailResponse(
+
         Long id,
         String title,
         String description,

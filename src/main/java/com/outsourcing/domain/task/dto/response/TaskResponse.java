@@ -1,6 +1,5 @@
 package com.outsourcing.domain.task.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.outsourcing.common.entity.task.TaskPriority;
 import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.domain.task.dto.TaskDto;

@@ -9,7 +9,6 @@ import com.outsourcing.common.entity.task.TaskStatus;
 import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.activities.dto.ActivityType;
 import com.outsourcing.domain.activities.repository.ActivityRepository;
 import com.outsourcing.domain.task.dto.TaskDetailDto;
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +42,7 @@ public class TaskService {
     private final ActivityRepository activityRepository;
     private static final ZoneId KOREA = ZoneId.of("Asia/Seoul");
 
-
+    // 작업 생성
     @Transactional
     public TaskResponse createTask(CreateTaskRequest request) {
 
@@ -114,6 +112,7 @@ public class TaskService {
         return TaskResponse.from(taskDto);
     }
 
+    // 작업 제거
     @Transactional
     public void deleteTask(Long taskId) {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
@@ -132,6 +131,7 @@ public class TaskService {
         return TaskDetailResponse.of(taskDto);
     }
 
+    // 작업 목록 조회
     @Transactional(readOnly = true)
     public PagedResponse<TaskResponse> getListTask(
             int rawPage,
