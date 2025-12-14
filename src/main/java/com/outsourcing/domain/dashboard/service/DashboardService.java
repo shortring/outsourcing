@@ -1,7 +1,6 @@
 package com.outsourcing.domain.dashboard.service;
 
 import com.outsourcing.common.entity.task.TaskStatus;
-import com.outsourcing.common.enums.DataStatus;
 import com.outsourcing.domain.dashboard.dto.*;
 import com.outsourcing.domain.dashboard.repository.DashboardRepository;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
@@ -36,7 +35,6 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
 
         for (DashboardDto dto : dtos) {
-            if (!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             if (!dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(today)) {
                 ++overdue;
                 continue;
@@ -78,7 +76,6 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
 
         for (SummaryMyTaskDto task : tasks) {
-            if (!task.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             LocalDate dueDay = LocalDateTime.ofInstant(task.getDueDate(), ZoneId.systemDefault()).toLocalDate();
 
             if (dueDay.equals(today)) {
@@ -107,16 +104,20 @@ public class DashboardService {
             weeklyDtos.add(WeeklyTaskDashboardDto.dateSet(date.getDayOfWeek().getDisplayName(TextStyle.NARROW, Locale.KOREAN), date));
         }
 
-        for (DashboardDto dto : dtos) {
-            if (!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
+        for (WeeklyTaskDashboardDto weeklyDto : weeklyDtos) {
+            LocalDate date = weeklyDto.getDate();
 
-            for (int i = 0; i < 7; ++i) {
-                LocalDate date = weeklyDtos.get(i).getDate();
-                if (dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(date)) continue;
+            long tasks = dtos.stream()
+                    .filter(dto -> !dto.getCreatedAt().isAfter(date))
+                    .count();
 
-                weeklyDtos.get(i).sumTasks();
-                if (dto.getStatus().equals(TaskStatus.DONE)) weeklyDtos.get(i).sumCompleted();
-            }
+            long completed = dtos.stream()
+                    .filter(dto -> dto.getStatus() == TaskStatus.DONE
+                            && !dto.getUpdatedAt().isAfter(date))
+                    .count();
+
+            weeklyDto.setTasks(tasks);
+            weeklyDto.setCompleted(completed);
         }
 
         for (WeeklyTaskDashboardDto weeklyDto : weeklyDtos) {

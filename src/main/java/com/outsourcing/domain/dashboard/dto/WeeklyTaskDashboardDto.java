@@ -13,14 +13,6 @@ public class WeeklyTaskDashboardDto {
     private Long completed;
     private LocalDate date;
 
-    public void sumTasks() {
-        this.tasks += 1;
-    }
-
-    public void sumCompleted() {
-        this.completed += 1;
-    }
-
     public WeeklyTaskDashboardDto(String name, Long tasks, Long completed, LocalDate date) {
         this.name = name;
         this.tasks = tasks;

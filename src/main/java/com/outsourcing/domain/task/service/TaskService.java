@@ -106,7 +106,7 @@ public class TaskService {
             User user = userRepository.getReferenceById(userId);
             String description = "작업 상태를 " + task.getStatus().toString() + "에서 " + request.status() + "으로 변경했습니다.";
 
-            activityRepository.save(Activity.of(ActivityType.COMMENT_DELETED, Instant.now(), description, user, task));
+            activityRepository.save(Activity.of(ActivityType.TASK_STATUS_CHANGED, Instant.now(), description, user, task));
         }
         task.changeStatus(request.status());
 
