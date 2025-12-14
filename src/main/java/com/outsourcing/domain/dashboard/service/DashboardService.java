@@ -36,7 +36,7 @@ public class DashboardService {
         LocalDate today = LocalDate.now();
 
         for (DashboardDto dto : dtos) {
-            if(!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
+            if (!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
             if (!dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(today)) {
                 ++overdue;
                 continue;
@@ -108,16 +108,14 @@ public class DashboardService {
         }
 
         for (DashboardDto dto : dtos) {
-            if(!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
-            if (dto.getDueDate().isBefore(today.minusDays(6))) continue;
+            if (!dto.getIsActivity().equals(DataStatus.ACTIVE)) continue;
 
             for (int i = 0; i < 7; ++i) {
-                LocalDate date = today.minusDays(6 - i);
+                LocalDate date = weeklyDtos.get(i).getDate();
+                if (dto.getStatus().equals(TaskStatus.DONE) && dto.getDueDate().isBefore(date)) continue;
 
-                if (dto.getDueDate().isEqual(date)) {
-                    weeklyDtos.get(i).sumTasks();
-                    if (dto.getStatus().equals(TaskStatus.DONE)) weeklyDtos.get(i).sumCompleted();
-                }
+                weeklyDtos.get(i).sumTasks();
+                if (dto.getStatus().equals(TaskStatus.DONE)) weeklyDtos.get(i).sumCompleted();
             }
         }
 
