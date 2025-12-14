@@ -42,9 +42,9 @@ public class LoggingAspect {
 
     // 작업 서비스 포인트컷. 향후 추가 가능.
     @Pointcut("""
-            execution(* com.outsourcing.domain.task.service.TaskService.createTaskApi(..))
-            || execution(* com.outsourcing.domain.task.service.TaskService.updateTaskApi(..))
-            || execution(* com.outsourcing.domain.task.service.TaskService.deleteTaskApi(..))""")
+            execution(* com.outsourcing.domain.task.service.TaskService.createTask(..))
+            || execution(* com.outsourcing.domain.task.service.TaskService.updateTask(..))
+            || execution(* com.outsourcing.domain.task.service.TaskService.deleteTask(..))""")
     public void createAndDeleteTaskMethod() {
     }
 
@@ -78,7 +78,7 @@ public class LoggingAspect {
                 status = ActivityType.TASK_UPDATED;
                 break;
 
-            case "deleteTaskApi":
+            case "deleteTask":
                 task = taskRepository.findById((Long) request[0]).orElseThrow();
                 description = "작업 \"" + task.getTitle() + "\"을 삭제했습니다.";
                 status = ActivityType.TASK_DELETED;

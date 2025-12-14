@@ -96,13 +96,12 @@ public class TaskService {
 
     // Status를 변경해도 수정일 갱신은 되지 않음.
     @Transactional
-    public TaskResponse updateTaskStatusApi(Long taskId, UpdateTaskStatusRequest request) {
+    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request, Long userId) {
 
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         if (!request.status().toString().equals(task.getStatus().toString())) {
-            Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
             User user = userRepository.getReferenceById(userId);
             String description = "작업 상태를 " + task.getStatus().toString() + "에서 " + request.status() + "으로 변경했습니다.";
 

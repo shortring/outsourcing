@@ -3,6 +3,7 @@ package com.outsourcing.domain.task.controller;
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.task.TaskStatus;
+import com.outsourcing.common.filter.CustomUserDetails;
 import com.outsourcing.domain.task.dto.request.CreateTaskRequest;
 import com.outsourcing.domain.task.dto.response.TaskDetailResponse;
 import com.outsourcing.domain.task.dto.response.TaskResponse;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -46,9 +48,11 @@ public class TaskController {
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<ApiResponse<TaskResponse>> updateTaskStatusApi(
             @PathVariable Long taskId,
-            @Valid @RequestBody UpdateTaskStatusRequest request
-    ) {
-        TaskResponse data = taskService.updateTaskStatusApi(taskId, request);
+            @Valid @RequestBody UpdateTaskStatusRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            ) {
+
+        TaskResponse data = taskService.updateTaskStatus(taskId, request, userDetails.getUserId());
 
         return ResponseEntity.ok(ApiResponse.success("작업 상태가 변경되었습니다.", data));
     }

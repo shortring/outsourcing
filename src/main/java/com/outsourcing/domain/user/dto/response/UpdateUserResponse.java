@@ -10,6 +10,7 @@ import java.time.Instant;
 @Getter
 @AllArgsConstructor
 public class UpdateUserResponse {
+
     private final Long id;
     private final String username;
     private final String email;
