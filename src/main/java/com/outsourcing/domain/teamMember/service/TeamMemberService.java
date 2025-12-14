@@ -6,7 +6,6 @@ import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.domain.team.dto.TeamDto;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.team.service.TeamValidateService;
 import com.outsourcing.domain.teamMember.dto.request.AddTeamMemberRequestDto;
@@ -15,13 +14,11 @@ import com.outsourcing.domain.teamMember.mapper.TeamMemberMapper;
 import com.outsourcing.domain.teamMember.repository.TeamMemberRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +32,7 @@ public class TeamMemberService {
 
     // 멤버 추가
     @Transactional
-    public AddTeamMemberResponseDto addMemberTeam(Long teamId, AddTeamMemberRequestDto request) {
+    public AddTeamResponseDto addMemberTeam(Long teamId, AddTeamMemberRequestDto request) {
         Team findTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TEAM));
 
@@ -50,11 +47,29 @@ public class TeamMemberService {
 
         teamMemberRepository.save(teamMember);
 
-        AddTeamMemberResponseDto response = new AddTeamMemberResponseDto(
-                findUser.getId(),
-                findUser.getUsername(),
-                findUser.getName()
+        List<User> members = teamMemberRepository.findUsersByTeamId(teamId);
+
+        List<AddTeamMemberResponseDto> memberResponse = new ArrayList<>();
+        for (User user : members) {
+            AddTeamMemberResponseDto membersDto = new AddTeamMemberResponseDto(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getCreatedAt()
+            );
+            memberResponse.add(membersDto);
+        }
+
+        AddTeamResponseDto response = new AddTeamResponseDto(
+                findTeam.getId(),
+                findTeam.getName(),
+                findTeam.getDescription(),
+                findTeam.getCreatedAt(),
+                memberResponse
         );
+
         return response;
     }
 
@@ -134,7 +149,7 @@ public class TeamMemberService {
 
         for (TeamMember teamMember : members) {
 
-            if (teamMember.getUser().getIsDeleted().equals(IsDeleted.TRUE)) {
+            if (teamMember.getUser().getIsDeleted().equals(IsDeleted.FALSE)) {
 
                 response.add(teamMemberMapper.getTeamMemberDto(teamMember));
             }

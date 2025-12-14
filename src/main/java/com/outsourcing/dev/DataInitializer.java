@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         User user1 = new User("test1", "test1@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test1", UserRole.ADMIN);
         User user2 = new User("test2", "test2@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test2", UserRole.USER);
         User user3 = new User("test3", "test3@test.com", passwordEncoder.encode("123456789Aa!"), "choi_test3", UserRole.USER);
@@ -94,6 +94,7 @@ public class DataInitializer implements CommandLineRunner {
         task10.changeStatus(TaskStatus.TODO);
         task11.changeStatus(TaskStatus.TODO);
         task12.changeStatus(TaskStatus.DONE);
+
         futureTask.changeStatus(TaskStatus.IN_PROGRESS);
         todayTask.changeStatus(TaskStatus.TODO);
         overdueTask.changeStatus(TaskStatus.IN_PROGRESS);
@@ -115,9 +116,6 @@ public class DataInitializer implements CommandLineRunner {
 //        Task todayTask = "2025-12-11T23:59:59Z"));
 //        Task overdueTask = "2025-12-09T23:59:59Z"));
 
-        taskRepository.save(futureTask);
-        taskRepository.save(todayTask);
-        taskRepository.save(overdueTask);
 
         taskRepository.save(task1);
         taskRepository.save(task2);
@@ -131,5 +129,9 @@ public class DataInitializer implements CommandLineRunner {
         taskRepository.save(task10);
         taskRepository.save(task11);
         taskRepository.save(task12);
+
+        taskRepository.save(futureTask);
+        taskRepository.save(todayTask);
+        taskRepository.save(overdueTask);
     }
 }

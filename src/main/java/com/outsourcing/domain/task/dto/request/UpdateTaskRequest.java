@@ -5,16 +5,20 @@ import com.outsourcing.common.entity.task.TaskPriority;
 import com.outsourcing.common.entity.task.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record UpdateTaskRequest(
-        @NotBlank String title,
-        String description,
-        TaskStatus status,
-        TaskPriority priority,
-        @NotNull Long assigneeId,
-        @NotNull LocalDateTime dueDate
-) {
+public class UpdateTaskRequest {
+    @NotBlank
+    String title;
+    String description;
+    TaskStatus status;
+    TaskPriority priority;
+    @NotNull
+    Long assigneeId;
+    @NotNull
+    LocalDateTime dueDate;
 }
