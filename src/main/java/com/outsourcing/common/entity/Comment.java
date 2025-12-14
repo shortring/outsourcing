@@ -1,6 +1,7 @@
 package com.outsourcing.common.entity;
 
 import com.outsourcing.common.entity.task.Task;
+import com.outsourcing.common.enums.IsDeleted;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,11 +20,11 @@ public class Comment extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,13 +32,15 @@ public class Comment extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment parentComment;
 
+    @Column(nullable = false)
     private String content;
 
     @Column(name = "comment_group")
     private Long commentGroup;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "is_deleted", nullable = false)
+    private IsDeleted isDeleted = IsDeleted.FALSE;
 
     public Comment(User user, Task task, Comment parentComment, String content, Long commentGroup) {
         this.user = user;

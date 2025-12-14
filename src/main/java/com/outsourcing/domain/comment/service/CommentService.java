@@ -4,6 +4,7 @@ import com.outsourcing.common.dto.PagedResponse;
 import com.outsourcing.common.entity.Comment;
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.entity.task.Task;
+import com.outsourcing.common.enums.IsDeleted;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
 import com.outsourcing.common.filter.CustomUserDetails;
@@ -87,9 +88,9 @@ public class CommentService {
         Page<Comment> comments;
 
         if (sort.equals("newest")) {
-            comments = commentRepository.findCommentSortedByNewest(pageable, taskId);
+            comments = commentRepository.findCommentSortedByNewest(pageable, taskId, IsDeleted.FALSE);
         } else {
-            comments = commentRepository.findCommentSortedByOldest(pageable, taskId);
+            comments = commentRepository.findCommentSortedByOldest(pageable, taskId, IsDeleted.FALSE);
         }
 
         Page<GetCommentResponse> commentResponsePage = comments.map(GetCommentResponse::from);
@@ -131,9 +132,9 @@ public class CommentService {
 
         // 부모 댓글이면 같은 그룹의 댓글 전부 논리 삭제, 답글이면 해당 답글만 논리 삭제
         if (comment.getParentComment() == null) {
-            commentRepository.softDeleteWithParentComment(comment.getCommentGroup());
+            commentRepository.softDeleteWithParentComment(comment.getCommentGroup(), IsDeleted.TRUE);
         } else {
-            commentRepository.softDeleteWithChildComment(comment.getId());
+            commentRepository.softDeleteWithChildComment(comment.getId(), IsDeleted.TRUE);
         }
     }
 

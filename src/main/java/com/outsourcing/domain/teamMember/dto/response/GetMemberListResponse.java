@@ -8,11 +8,13 @@ import java.time.Instant;
 
 @Getter
 @RequiredArgsConstructor
-public class GetTeamMemberResponseDto {
+public class GetMemberListResponse {
+
     private final Long id;
     private final String username;
     private final String name;
     private final String email;
     private final UserRole role;
     private final Instant createdAt;
+
 }

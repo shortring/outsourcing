@@ -3,10 +3,10 @@ package com.outsourcing.domain.team.service;
 import com.outsourcing.common.entity.Team;
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
-import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
-import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
-import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
+import com.outsourcing.domain.team.dto.request.CreateTeamRequest;
+import com.outsourcing.domain.team.dto.request.UpdateTeamRequest;
+import com.outsourcing.domain.team.dto.response.CreateTeamResponse;
+import com.outsourcing.domain.team.dto.response.UpdateTeamResponse;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class TeamService {
 
         Team savedTeam = teamRepository.save(team);
 
-        CreateTeamResponseDto response = new CreateTeamResponseDto(
+        CreateTeamResponse response = new CreateTeamResponse(
                 savedTeam.getId(),
                 savedTeam.getName(),
                 savedTeam.getDescription(),
@@ -44,7 +44,8 @@ public class TeamService {
 
     // 팀 수정
     @Transactional
-    public UpdateTeamResponseDto updateTeam(Long teamId, Long userId, UpdateTeamRequestDto requestDto) {
+    public UpdateTeamResponse updateTeam(Long teamId, Long userId, UpdateTeamRequest requestDto) {
+
         teamValidateService.ValidateUser(teamId, userId, ErrorMessage.FORBIDDEN_NO_PERMISSION_UPDATE);
 
         Team findTeam = teamRepository.findById(teamId).orElseThrow
@@ -55,7 +56,7 @@ public class TeamService {
                 requestDto.getDescription()
         );
 
-        UpdateTeamResponseDto responseDto = new UpdateTeamResponseDto(
+        UpdateTeamResponse responseDto = new UpdateTeamResponse(
                 findTeam.getId(),
                 findTeam.getName(),
                 findTeam.getDescription(),

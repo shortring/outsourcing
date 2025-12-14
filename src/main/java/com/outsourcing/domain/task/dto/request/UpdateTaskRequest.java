@@ -14,11 +14,16 @@ import java.time.LocalDateTime;
 public class UpdateTaskRequest {
     @NotBlank
     String title;
+
     String description;
+
     TaskStatus status;
+
     TaskPriority priority;
+
     @NotNull
     Long assigneeId;
+
     @NotNull
     LocalDateTime dueDate;
 }

@@ -2,10 +2,10 @@ package com.outsourcing.domain.team.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.team.dto.request.CreateTeamRequestDto;
-import com.outsourcing.domain.team.dto.request.UpdateTeamRequestDto;
-import com.outsourcing.domain.team.dto.response.CreateTeamResponseDto;
-import com.outsourcing.domain.team.dto.response.UpdateTeamResponseDto;
+import com.outsourcing.domain.team.dto.request.CreateTeamRequest;
+import com.outsourcing.domain.team.dto.request.UpdateTeamRequest;
+import com.outsourcing.domain.team.dto.response.CreateTeamResponse;
+import com.outsourcing.domain.team.dto.response.UpdateTeamResponse;
 import com.outsourcing.domain.team.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,18 +35,18 @@ public class TeamController {
     }
 
     @PutMapping("/{teamId}")
-    public ResponseEntity<ApiResponse<UpdateTeamResponseDto>> updateTeamApi(
+    public ResponseEntity<ApiResponse<UpdateTeamResponse>> updateTeamApi(
             @PathVariable("teamId") Long teamId,
-            @RequestBody UpdateTeamRequestDto requestDto,
+            @RequestBody UpdateTeamRequest requestDto,
             @AuthenticationPrincipal CustomUserDetails user) {
 
         Long userId = user.getUserId();
 
-        UpdateTeamResponseDto responseDto = teamService.updateTeam(teamId, userId, requestDto);
+        UpdateTeamResponse responseDto = teamService.updateTeam(teamId, userId, requestDto);
 
-        ApiResponse<UpdateTeamResponseDto> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
+        ApiResponse<UpdateTeamResponse> apiResponse = ApiResponse.success("팀 정보가 수정되었습니다.", responseDto);
 
-        ResponseEntity<ApiResponse<UpdateTeamResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        ResponseEntity<ApiResponse<UpdateTeamResponse>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
         return response;
     }

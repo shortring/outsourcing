@@ -46,7 +46,7 @@ public class TaskService {
 
 
     @Transactional
-    public TaskResponse createTaskApi(CreateTaskRequest request) {
+    public TaskResponse createTask(CreateTaskRequest request) {
 
 
         User assigneeUser = userRepository.findById(request.getAssigneeId())
@@ -70,7 +70,7 @@ public class TaskService {
 
     // Task 수정 요청을 하면 updatedAt이 변경됨.
     @Transactional
-    public TaskResponse updateTaskApi(Long taskId, UpdateTaskRequest request) {
+    public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
         Instant now = Instant.now();
 
         User assigneeUser = userRepository.findById(request.getAssigneeId())
@@ -116,16 +116,16 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTaskApi(Long taskId) {
+    public void deleteTask(Long taskId) {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
         task.isArchived();
     }
 
-    // email
+    // 작업 조회
     @Transactional(readOnly = true)
-    public TaskDetailResponse getTaskApi(Long taskId) {
+    public TaskDetailResponse getTask(Long taskId) {
         Task task = taskRepository.findByIdAndDataStatus(taskId, DataStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorMessage.NOT_FOUND_TASK));
 
@@ -134,7 +134,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public PagedResponse<TaskResponse> getListTaskApi(
+    public PagedResponse<TaskResponse> getListTask(
             int rawPage,
             int rawSize,
             TaskStatus status,

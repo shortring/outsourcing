@@ -10,11 +10,19 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class CreateTaskRequest {
-    @NotBlank String title;
+
+    @NotBlank
+    String title;
+
     String description;
+
     TaskPriority priority;
-    @NotNull Long assigneeId;
-    @NotNull LocalDateTime dueDate;
+
+    @NotNull
+    Long assigneeId;
+
+    @NotNull
+    LocalDateTime dueDate;
 }
 /* FE
 * export interface CreateTaskRequest {

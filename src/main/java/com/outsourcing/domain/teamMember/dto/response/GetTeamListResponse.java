@@ -8,10 +8,13 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class AddTeamResponseDto {
+public class GetTeamListResponse {
+
     private final Long id;
     private final String name;
     private final String description;
     private final Instant createdAt;
-    private final List<AddTeamMemberResponseDto> members;
+    private final List<GetMemberListResponse> members;
 }
+
+
