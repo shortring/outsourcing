@@ -1,4 +1,4 @@
-package com.outsourcing.domain.search.model.response;
+package com.outsourcing.domain.search.dto.response;
 
 import com.outsourcing.common.entity.task.Task;
 import com.outsourcing.common.entity.task.TaskStatus;

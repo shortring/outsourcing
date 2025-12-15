@@ -1,8 +1,5 @@
-package com.outsourcing.domain.search.model.response;
+package com.outsourcing.domain.search.dto.response;
 
-import com.outsourcing.domain.search.model.response.SearchTaskResponse;
-import com.outsourcing.domain.search.model.response.SearchTeamResponse;
-import com.outsourcing.domain.search.model.response.SearchUserResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

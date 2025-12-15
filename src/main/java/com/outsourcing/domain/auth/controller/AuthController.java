@@ -2,10 +2,10 @@ package com.outsourcing.domain.auth.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
 import com.outsourcing.common.filter.CustomUserDetails;
-import com.outsourcing.domain.auth.model.request.LoginRequest;
-import com.outsourcing.domain.auth.model.request.VerifyPasswordRequest;
-import com.outsourcing.domain.auth.model.response.LoginResponse;
-import com.outsourcing.domain.auth.model.response.VerifyPasswordResponse;
+import com.outsourcing.domain.auth.dto.request.LoginRequest;
+import com.outsourcing.domain.auth.dto.request.VerifyPasswordRequest;
+import com.outsourcing.domain.auth.dto.response.LoginResponse;
+import com.outsourcing.domain.auth.dto.response.VerifyPasswordResponse;
 import com.outsourcing.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

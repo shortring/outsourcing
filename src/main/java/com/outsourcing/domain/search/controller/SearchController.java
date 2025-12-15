@@ -1,7 +1,7 @@
 package com.outsourcing.domain.search.controller;
 
 import com.outsourcing.common.dto.ApiResponse;
-import com.outsourcing.domain.search.model.response.SearchResponse;
+import com.outsourcing.domain.search.dto.response.SearchResponse;
 import com.outsourcing.domain.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

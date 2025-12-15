@@ -1,4 +1,4 @@
-package com.outsourcing.domain.comment.model.response;
+package com.outsourcing.domain.comment.dto.response;
 
 import com.outsourcing.common.entity.User;
 import com.outsourcing.common.enums.UserRole;

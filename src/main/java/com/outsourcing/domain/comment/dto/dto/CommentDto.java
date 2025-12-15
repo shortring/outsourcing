@@ -1,4 +1,4 @@
-package com.outsourcing.domain.comment.model.dto;
+package com.outsourcing.domain.comment.dto.dto;
 
 import com.outsourcing.common.entity.Comment;
 import com.outsourcing.common.entity.User;

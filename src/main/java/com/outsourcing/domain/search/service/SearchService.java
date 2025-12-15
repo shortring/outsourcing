@@ -2,10 +2,10 @@ package com.outsourcing.domain.search.service;
 
 import com.outsourcing.common.exception.CustomException;
 import com.outsourcing.common.exception.ErrorMessage;
-import com.outsourcing.domain.search.model.response.SearchResponse;
-import com.outsourcing.domain.search.model.response.SearchTaskResponse;
-import com.outsourcing.domain.search.model.response.SearchTeamResponse;
-import com.outsourcing.domain.search.model.response.SearchUserResponse;
+import com.outsourcing.domain.search.dto.response.SearchResponse;
+import com.outsourcing.domain.search.dto.response.SearchTaskResponse;
+import com.outsourcing.domain.search.dto.response.SearchTeamResponse;
+import com.outsourcing.domain.search.dto.response.SearchUserResponse;
 import com.outsourcing.domain.task.repository.TaskRepository;
 import com.outsourcing.domain.team.repository.TeamRepository;
 import com.outsourcing.domain.user.repository.UserRepository;
