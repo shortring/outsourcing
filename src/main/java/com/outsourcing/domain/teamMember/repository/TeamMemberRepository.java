@@ -1,0 +1,45 @@
+package com.outsourcing.domain.teamMember.repository;
+
+import com.outsourcing.common.entity.Team;
+import com.outsourcing.common.entity.TeamMember;
+import com.outsourcing.common.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
+
+    @Query("""
+                select tm.user
+                from TeamMember tm
+                where tm.team.id = :teamId
+            """)
+    List<User> findUsersByTeamId(Long teamId);
+
+    Optional<TeamMember> findByTeamIdAndUserId(Long teamId, Long userId);
+
+    boolean existsByTeamAndUser(Team team, User user);
+
+    boolean existsByTeam_IdAndUser_Id(Long teamId, Long userId);
+
+    List<TeamMember> findAllByTeamId(Long teamId);
+
+    @Query("""
+            SELECT tm2.user.id FROM TeamMember tm1 JOIN TeamMember tm2
+            ON tm1.team.id = tm2.team.id WHERE tm1.user.id = :userId
+            """)
+    Set<Long> findTeamMemberIdsByUserId(@Param("userId") Long userId);
+
+    @Query("""
+                select tm
+                from TeamMember tm
+                join fetch tm.user
+                where tm.team.id = :teamId
+            """)
+    List<TeamMember> findAllByTeamIdFetchUser(@Param("teamId") Long teamId);
+
+}
